@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>新增资质-客户-客户管理</title>
+    <meta name="keywords" content="新增资质-资质-客户管理"/>
+    <meta name="description" content="新增资质-资质-客户管理"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../../static/css/global.css"/>
+    <link rel="stylesheet" href="../../static/css/ClientManage.css"/>
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../../static/lib/webuploader.min.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/js/ClientManage.js"></script>
+</head>
+<body>
+<nav class="header">
+    <div class="scroll scroll-nav">
+        <a class="nav" href="javascript:void(0)" >客户管理 &gt;</a>
+        <a class="nav" href="javascript:void(0)" data-route="ViewCustomer1">资质 &gt;</a>
+        <a class="nav" href="javascript:void(0)" data-route="ViewCustomer1">资质列表 &gt;</a>
+        <a class="nav active" href="javascript:void(0)">新增资质</a>
+    </div>
+</nav>
+<div class="container" ng-controller="QualificationAddCtrl">
+    <form class="form">
+        <div class="header-title">
+            <div class="header-message">选择客户</div>
+        </div>
+
+        <div class="form-group">
+            <label for="" class="yc-col-2 control-label"> <span>*</span> 选择客户：</label>
+            <div class="yc-col-10">
+                <div yc-select="childListSel" width="160" add="全部" resname="{{query.customerName}}" value="clientResult" key="id" name="customerName" placeholder="客户名称" group="qualification-list"></div>
+                <span class="msg">提交之后，不可修改</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="" class="yc-col-2 control-label"> <span>*</span> 所属行业：</label>
+            <div class="yc-col-10">
+                <div yc-select="industrySel" width="160" value="industryId" placeholder="请选择行业"></div> &nbsp;
+                <div ng-show="industrySel2.list && industrySel2.list.length > 0 " yc-select="industrySel2" width="160" value="industryId" key="id" placeholder="请选择行业" group="qualification-list"></div>
+            </div>
+        </div>
+
+        <div class="header-title">
+            <div class="header-message">上传资质</div>
+        </div>
+
+        <div class="form-group">
+            <label for="" class="yc-col-2 control-label"> <span>*</span> 资质：</label>
+            <div class="yc-col-10">
+                <div class="yc-btn" ng-click="fileAdd()">增加资质</div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="" class="yc-col-2 control-label">  </label>
+            <div class="yc-col-10">
+                <table class="yc-table">
+                    <tr>
+                        <th> &emsp; </th>
+                        <th>资质名称</th>
+                        <th>上传资质文件</th>
+                        <th> &emsp;&emsp;&emsp;&emsp; </th>
+                    </tr>
+                    <tr ng-repeat="file in files" repeat-finish="filesList">
+                        <td>
+                            <i class="yc-icon pointer" ng-show="$index != 0" ng-click="fileRemove(file.id)">&#xe611;</i>
+                        </td>
+                        <td>
+                            <input class="form-control" type="text" ng-model="file.name" ng-placeholder="请输入资质名称">
+                        </td>
+                        <td>
+                            <div class="yc-btn-web" id="{{file.id}}">上传</div>
+                            <span class="msg">图片格式为.jpg、.gif、.png</span>
+                        </td>
+                        <th>
+                            <div style="width: 60px;height:60px;" class="{{file.id}}">
+
+                            </div>
+                        </th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="form-group-btn">
+            <label class="yc-col-2 control-label"></label>
+            <div class="yc-col-10">
+                <a href="javascript:void(0)" class="yc-btn" ng-click="postEdit()">提 交</a>
+                <a href="javascript:void(0)" data-route="ViewCustomer1" class="yc-btn-out">取 消</a>
+            </div>
+        </div>
+
+    </form>
+</div>
+</body>
+</html>

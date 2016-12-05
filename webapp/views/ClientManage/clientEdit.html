@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>编辑客户-客户-客户管理</title>
+    <meta name="keywords" content="修改客户-客户-客户管理"/>
+    <meta name="description" content="修改客户-客户-客户管理"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../../static/css/global.css"/>
+    <link rel="stylesheet" href="../../static/css/ClientManage.css"/>
+
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../../static/lib/validation/jquery.validate.js"></script>
+    <script type="text/javascript" src="../../static/lib/validation/jquery.validate.messages.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/js/ClientManage.js"></script>
+</head>
+<body ng-controller="clientLimitCtrl">
+<nav class="header">
+    <div class="scroll scroll-nav">
+        <a class="nav" href="javascript:void(0)" >客户管理 &gt;</a>
+        <a class="nav" href="javascript:void(0)" data-route="ViewCustomer">客户 &gt;</a>
+        <a class="nav" href="javascript:void(0)" data-route="ViewCustomer">客户列表 &gt;</a>
+        <a class="nav active" href="javascript:void(0)">编辑客户</a>
+    </div>
+</nav>
+<div class="container" ng-controller="clientEditCtrl">
+    <form class="form">
+        <div class="header-title">
+            <div class="header-message">基本信息</div>
+        </div>
+
+        <div class="form-group">
+            <label class="yc-col-2 control-label"> <span>*</span> 客户名称：</label>
+            <div class="yc-col-10">
+                <input class="form-control" name="clientName" type="text" ng-placeholder="请输入客户名称" ng-model="clientModel.customerName">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="yc-col-2 control-label"> <span>*</span> 客户类型：</label>
+            <div class="yc-col-10">
+                <div yc-select="clientTypeSel" width="260" query="clientModel" resname="{{clientModel.customerType | customerTypeFtr}}" value="customerType" key="id" placeholder="客户类型"></div>
+                <span class="error" ng-show="!clientModel.customerType && validShow">请选择客户类型</span>
+            </div>
+        </div>
+        <div class="form-group" ng-show="clientModel.customerType==3">
+            <label class="yc-col-2 control-label"> <span>*</span> 代理名称：</label>
+            <div class="yc-col-10">
+                <div yc-select="childListSel" width="260" query="clientModel" resname="{{clientModel.parentName}}" name="customerName" value="parentId" key="id" placeholder="代理名称"></div>
+                <span class="error" ng-show="!clientModel.parentId && validShow">请选择代理名称</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="yc-col-2 control-label"> 官网地址：</label>
+            <div class="yc-col-10">
+                <input class="form-control" name="myUrl" type="text" ng-model="clientModel.companyUrl">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="yc-col-2 control-label"> 客户属性：</label>
+            <div class="yc-col-10">
+                <input class="form-control" name="customerAttr" type="text" ng-model="clientModel.customerProperty">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="yc-col-2 control-label"> 备注：</label>
+            <div class="yc-col-10">
+                <textarea class="form-control" name="myText" id="departName" ng-model="clientModel.remark"></textarea>
+            </div>
+        </div>
+
+        <div class="header-title">
+            <div class="header-message">业务信息</div>
+        </div>
+
+        <div class="form-group">
+            <label class="yc-col-2 control-label"> 客户等级：</label>
+            <div class="yc-col-10">
+                <label class="radio"> <input class="form-control" type="radio" ng-model="clientModel.customerLevel" value="1"> 底 </label>
+                <label class="radio"> <input class="form-control" type="radio" ng-model="clientModel.customerLevel" value="2"> 中 </label>
+                <label class="radio"> <input class="form-control" type="radio" ng-model="clientModel.customerLevel" value="3"> 高 </label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="yc-col-2 control-label"> 折扣比例：</label>
+            <div class="yc-col-10">
+                <div class="input-group">
+                    <input class="form-control" type="text" name="discount" ng-model="clientModel.discount" ng-pattern="/^[0-9]*$/">
+                    <span class="input-group-addon">%</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="yc-col-2 control-label"> <span>*</span> 业务员名称：</label>
+            <div class="yc-col-10">
+                <span class="tag" ng-repeat="label in labelClientList track by $index">
+                    {{label.trueName}}
+                    <span>
+                        <i class="yc-icon pointer" ng-click="deleteInfo($index)"> &#xe61b;</i>
+                    </span>
+                </span>
+                <div>
+                    <div class="yc-btn" ng-click="showAdClient()">
+                        选择业务员
+                    </div>
+                    <span class="error" ng-show="labelClientList.length == 0 && validShow">请选择业务员</span>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="header-title">
+            <div class="header-message">联系信息</div>
+        </div>
+
+        <div class="form-group">
+            <label class="yc-col-2 control-label"> 添加联系人：</label>
+            <div class="yc-col-10">
+                <div class="yc-btn" ng-click="addContact()">
+                    点击添加
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="yc-col-2 control-label"> </label>
+            <div class="yc-col-10">
+                <table class="yc-table">
+                    <thead>
+                    <tr>
+                        <th>联系人</th>
+                        <th class="th120">职位</th>
+                        <th>手机</th>
+                        <th>座机</th>
+                        <th>邮箱</th>
+                        <th class="th140">备注</th>
+                        <th class="center th70-min">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="client in clientList track by $index">
+                        <td><label><input class="form-control short" name="contactUser" type="text" ng-model="client.contactUser" ng-placeholder="请输入联系人"></label></td>
+                        <td><label><input class="form-control short" name="contactPosition" type="text" ng-model="client.contactPosition" ng-placeholder="请输入职位"></label></td>
+                        <td><label><input class="form-control short" name="contactPhone" type="text" ng-model="client.contactPhone" ng-placeholder="请输入手机"></label></td>
+                        <td><label><input class="form-control short" name="contactTelephone" type="text" ng-model="client.contactTelephone" ng-placeholder="请输入座机"></label></td>
+                        <td><label><input class="form-control short" name="contactEmail" type="text" ng-model="client.contactEmail" ng-placeholder="请输入邮箱"></label></td>
+                        <td><label><input class="form-control short" name="remark" type="text" ng-model="client.remark" ng-placeholder="请输入备注"></label></td>
+                        <td class="center">
+                            <a href="javascript:void(0)"><i ng-click="switchingPosition($index,-1)" class="yc-icon">&#xe61d;</i></a>
+                            <a href="javascript:void(0)"><i ng-click="switchingPosition($index,1)" class="yc-icon">&#xe61e;</i></a>
+                            <a ng-hide="$index == 0" href="javascript:void(0)" ng-click="removeContact($index)"><i class="yc-icon">&#xe611;</i></a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <div class="form-group-btn">
+            <label class="yc-col-2 control-label"></label>
+            <div class="yc-col-10">
+                <a href="javascript:void(0)" class="yc-btn" ng-click="postEdit()" ng-if="clientRule['ManageCustomer']">提 交</a>
+                <a href="javascript:void(0)" data-route="ViewCustomer" class="yc-btn-out">取 消</a>
+            </div>
+        </div>
+        
+    </form>
+
+    <!--客户列表-->
+    <div class="dialog-bg hide" yc-module="clientModule" width="900" height="505">
+        <div class="dialog-wraper">
+            <div class="dialog-title">
+                <span class="title">title</span>
+                <i class="dialog-close yc-icon">&#xe619;</i>
+            </div>
+            <div class="dialog-con">
+                <div class="button-group clear">
+                    <div class="query-g fl">
+                        <div yc-select="companyListSel" width="150" query="query" value="searchCompany" key="id" add="全部" placeholder="所属" name="companyName" group="client-add"></div>
+                        <div yc-select="departmentListSel" width="150" query="query" value="searchDepartment" key="id" add="全部" placeholder="部门" name="departmentName" recursion="nextDepts" group="client-add"></div>
+                        
+                        <div class="icon-input">
+                            <input class="form-control short" type="text" ng-placeholder="请输入姓名" ng-model="query.search">
+                            <span class="icon">
+                                <i class="yc-icon calendars" ng-click="redirect(1,search)">&#xe60b;</i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="table_list clear">
+                    <div class="table-cart">
+                        <table class="yc-table">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>姓名</th>
+                                <th>所属</th>
+                                <th>部门</th>
+                                <th>联系方式</th>
+                                <th class="center">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="item in items">
+                                <td>
+                                    <span class="th80 ellipsis" ng-bind="item.trueName"></span>
+                                </td>
+                                <td>
+                                    <span class="th110 ellipsis" ng-bind="item.companyName"></span>
+                                </td>
+                                <td>
+                                    <span class="th110 ellipsis" ng-bind="item.agencyNames"></span>
+                                </td>
+                                <td ng-bind="item.phone">
+
+                                </td>
+                                <td class="center body-list-td" ng-click="putRightInfo(item)">
+                                    <a title="添加" class="yc-icon pointer" ng-class="isInRight(item.id)" style="font-size: 30px">+</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="client-judge" ng-if="total_page<1">您好，暂时没有符合条件的任何数据</div>
+                        <div ng-show="total_page >= 1" yc-page page="page" redirect="redirect(page.page,search)" query="query" session="0"></div>
+                    </div>
+                    <div class="search_denuded">
+                        <h4><span class="yc-col-9" text-left>已选择</span><span class="yc-col-3" ng-click="clearInfo()">清空</span></h4>
+                        <ul>
+                            <li ng-repeat="info in labelClientList track by $index">
+                                <span class="yc-col-9 ellipsis">{{info.trueName}}</span><a class="remove yc-icon yc-col-3 ellipsis" href="javascript:;" ng-click="deleteInfo($index)" style="color:#3f88d2">&#xe611;</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+            <div class="dialog-submit">
+                <a href="javascript:void(0)" class="ok">确定</a>
+                <a href="javascript:void(0)" class="no">取消</a>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+</body>
+</html>

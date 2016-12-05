@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>资源管理-频道管理-新增频道</title>
+    <meta name="keywords" content="资源管理-频道管理-新增频道"/>
+    <meta name="description" content="资源管理-频道管理-新增频道"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../../static/css/global.css"/>
+    <link rel="stylesheet" href="../../static/css/ResourceManage.css"/>
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../../static/lib/validation/jquery.validate.js"></script>
+    <script type="text/javascript" src="../../static/lib/validation/jquery.validate.messages.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/js/resourceManage.js"></script>
+</head>
+<body>
+    <nav class="header">
+        <div class="scroll scroll-nav">
+            <a class="nav" href="javascript:void(0)" >资源管理 &gt;</a>
+            <a class="nav" href="javascript:void(0)" data-route="ViewMediaChannelADSpace2">频道 &gt;</a>
+            <a class="nav" href="javascript:void(0)" data-route="ViewMediaChannelADSpace2">频道列表 &gt;</a>
+            <a class="nav active" href="javascript:void(0)">新增频道</a>
+        </div>
+    </nav>
+    <div class="container" ng-controller="channelAddCtrl">
+        <form class="form">
+            <div class="form-group">
+                <label class="yc-col-2 control-label"> <span>*</span> 选择媒体：</label>
+                <div class="yc-col-10">
+                     <div yc-select="mediaListNameSel" width="200" value="mediaId" key="id" name="mediaName" placeholder="媒体"></div>
+                     <span class="error-message" ng-show="validate && !mediaId">请选择频道</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="yc-col-2 control-label"> <span>*</span> 频道名称：</label>
+                <div class="yc-col-10">
+                     <textarea class="form-control" name="myText" id="departName" type="text" ng-placeholder="请输入频道名称，一行一个" ng-model="channelNames"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="yc-col-2 control-label"> <span>*</span> 频道级别：</label>
+                <div class="yc-col-10">
+                     <div yc-select="levelListSel" width="200" value="level" key="id" name="levelName" placeholder="频道级别"></div>
+                     <span class="error-message" ng-show="validate && !level">请选择媒体名称</span>
+                </div>
+            </div>
+            <div class="form-group-btn">
+                <label class="yc-col-2 control-label"></label>
+                <div class="yc-col-10">
+                    <a href="javascript:void(0)" class="yc-btn" ng-click="postEdit()">提 交</a>
+                    <a href="javascript:void(0)" data-route="ViewMediaChannelADSpace2" class="yc-btn-out">取 消</a>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</body>
+</html>

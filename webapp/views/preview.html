@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="zh-CN">
+<head>
+    <meta charset="utf-8"/>
+    <title>新华网广告投放系统</title>
+    <meta name="keywords" content="新华网广告投放系统"/>
+    <meta name="description" content="新华网广告投放系统"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../static/img/favicon.ico"/>
+    <script type="text/javascript" src="../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../static/js/global.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+<a href="#" id="previewBox" style="position: absolute;display: block" target="_self"></a>
+</body>
+<script>
+    var scr_width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    var scr_height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+    var src = getSearch('src');
+    var size = getSearch('size');
+    var style = getSearch('style');
+    var width = getSearch('width');
+    var height = getSearch('height');
+    var landingPage = getSearch('landingPage');
+
+    var data = {
+        src:src,
+        size:size,
+        style:style,
+        width:width,
+        height:height,
+        landingPage:landingPage
+    }
+    if (data && data.src) {
+        if (data.src.lastIndexOf(".swf") != -1) {
+            var wh = data.size.split(",");
+            var a = "";
+            if (data.landingPage) {
+                a = "<a target='_self' style='width: " + wh[0] + "px; height: 100%; position: absolute; cursor: pointer; opacity: 0; background-color: rgb(255, 255, 255);' href='" + data.landingPage + "' target='_blank'></a>";
+            }
+            var object = "<object width='" + wh[0] + "' height='" + wh[1] + "' align='middle' classid='clsid:d27cdb6e-ae6d-11cf-96b8-444553540000' codebase='http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=10,0,0,0'><param name='allowScriptAccess' value='always'><param name='movie' value='" + data.src + "'><param name='quality' value='high'><param name='bgcolor' value='#000'><param name='height' value='" + wh[1] + "'><param name='width' value='" + wh[0] + "'><param name='FlashVars' value='true'><param name='allowFullScreen' value='true'><param name='wmode' value='transparent'><embed width='" + wh[0] + "' height='" + wh[1] + "' pluginspage='http://www.macromedia.com/go/getflashplayer' src='" + data.src + "' type='application/x-shockwave-flash' wmode='transparent' flashvars='false' allowfullscreen='true' loop='true' allowscriptaccess='always' bgcolor='#000' quality='high'></object>";
+            $("#previewBox").css("width", wh[0] + "px").css("height", wh[1] + "px").css("top", (scr_height - wh[1]) / 2 + "px").css("left", (scr_width - wh[0]) / 2 + "px").append(a).append(object);
+        } else {
+            var img = new Image();
+            img.onload = function () {
+                var width = img.width;
+                var height = img.height;
+                $("#previewBox").append("<img style='border: 0' src='" + data.src + "'>").attr("href", data.landingPage).css("width", width + "px").css("height", height + "px").css("top", (scr_height - height) / 2.5 + "px").css("left", (scr_width - width) / 2 + "px");
+            };
+            img.src = data.src;
+        }
+    }
+</script>
+</html>

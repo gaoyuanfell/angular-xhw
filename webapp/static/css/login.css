@@ -1,0 +1,250 @@
+*, *:before, *:after {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+body, h1, h2, h3, h4, dl, dt, dd, ul, ol, li, a, div, em, span, img, form, input, p, i {
+    padding: 0;
+    margin: 0;
+    border: none;
+}
+
+em, i, cite {
+    word-wrap: break-word;
+    font-style: normal;
+}
+
+ul, li {
+    list-style: none;
+}
+
+a, a:visited, a:active {
+    color: #3C3C3C;
+    text-decoration: none;
+    background: none;
+    outline: none;
+}
+
+a, button, span, i, div, h2, aside {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+input:focus::-webkit-input-placeholder {
+    color: rgb(109, 109, 109);
+}
+
+input::-webkit-input-placeholder {
+    color: #C2C2C2;
+}
+
+article, aside, details, figcaption, figure, footer, header, menu, nav, section {
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizelegibility;
+    margin: auto;
+}
+
+html {
+    font-size: 100px;
+}
+
+input:focus, textarea:focus {
+    outline: 0 none;
+}
+
+.clear:after {
+    content: "";
+    display: block;
+    height: 0;
+    overflow: hidden;
+    clear: both;
+    visibility: hidden;
+}
+
+.fl {
+    float: left;
+}
+
+.fr {
+    float: right;
+}
+
+body {
+    font: 12px Verdana, Arial, Helvetica, sans-serif;
+    background: #4589dd url(../img/login/bg.png) center 88px;
+    background-repeat: no-repeat;
+    margin: 0 auto;
+}
+
+.container {
+    width: 392px;
+    height: 426px;
+    background: url(../img/login/bg-1.png);
+    background-repeat: no-repeat;
+    margin: 208px auto auto auto;
+}
+
+.container .top {
+    text-align: center;
+    margin: auto auto 15px auto;
+    padding-top: 39px;
+}
+
+.container .errorMsg{
+    height: 20px;
+    text-align: center;
+}
+
+.container .errorMsg p{
+    color: red;
+}
+
+.container .from {
+    width: 310px;
+    margin: 0 auto;
+}
+
+.container .from .from1 {
+    background: #fff;
+    border-radius: 8px;
+    border: 1px #c7c8c9 solid;
+    height: 42px;
+    line-height: 42px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.container .from .from1 span {
+    font-size: 14px;
+    color: #666;
+    display: inline-block;
+    position: absolute;
+    width: 87px;
+    left: 0;
+    z-index: 3;
+    background: #f3f4f7 url(../img/login/yonghu.png) 10px center;
+    background-repeat: no-repeat;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    line-height: 40px;
+    padding-left: 33px;
+    border-right: 1px #c7c8c9 solid;
+}
+
+.container .from .from1 input {
+    display: inline-block;
+    position: absolute;
+    width: 100%;
+    border-radius: 8px;
+    background: #fff;
+    padding-left: 90px;
+    line-height: 40px;
+    height: 40px;
+}
+
+.container .from .from2 span {
+    font-size: 14px;
+    color: #666;
+    background: #f3f4f7 url(../img/login/mima.png) 10px center;
+    background-repeat: no-repeat;
+}
+
+.container .from .from3 {
+    height: 42px;
+    line-height: 42px;
+}
+
+.container .from .from3 .lef {
+    width: 198px;
+    position: relative;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px #c7c8c9 solid;
+    height: 42px;
+    line-height: 42px;
+}
+
+.container .from .from3 .lef span {
+    font-size: 14px;
+    color: #666;
+    display: inline-block;
+    position: absolute;
+    width: 87px;
+    left: 0;
+    z-index: 3;
+    background: #f3f4f7 url(../img/login/yz.png) 10px center;
+    background-repeat: no-repeat;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    line-height: 40px;
+    padding-left: 33px;
+    border-right: 1px #c7c8c9 solid;
+}
+
+.container .from .from3 .lef input {
+    height: 40px;
+    display: inline-block;
+    position: absolute;
+    width: 100%;
+    border-radius: 8px;
+    background: #fff;
+    padding-left: 90px;
+    line-height: 40px;
+}
+
+.container .from .from3 .rig img{
+    cursor: pointer;
+}
+
+.from4 {
+    margin: 18px auto;
+}
+
+.from4 .lef {
+    color: #999;
+}
+
+.from4 .lef label{
+    position: relative;
+    top: -3px;
+}
+
+.from4 .rig a {
+    color: #78bdf9;
+}
+
+.from5 input[type=button] {
+    width: 100%;
+    height: 42px;
+    line-height: 42px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 16px;
+    color: #fff;
+    background: #428bef;
+    border-radius: 6px;
+    outline: none;
+}
+
+.chromeManager{
+    padding-top: 19px;
+}
+.chromeManager p{
+    text-align: center;
+    font-size: 15px;
+    color: red;
+}
+.chromeManager a{
+    animation:change1 5s linear 0s infinite;font-size:16px;font-weight:700;
+}
+@keyframes change1{0%   {color:#333;}25%{color: #56ff2c;} 50%{color: #1feeff;} 75%{color: #2d1eff;} 100% {color: #a210ff;}}
+
+#autoLogin{
+    vertical-align: middle;
+}

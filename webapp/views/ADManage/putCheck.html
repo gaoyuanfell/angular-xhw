@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>编辑订单-投放订单-订单管理</title>
+    <meta name="keywords" content="编辑订单-投放订单-订单管理"/>
+    <meta name="description" content="编辑订单-投放订单-订单管理"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../../static/css/global.css"/>
+    <link rel="stylesheet" href="../../static/lib/dateRange/jQuery.pickerDateRange.css"/>
+    <link rel="stylesheet" href="../../static/css/ADManageAddEdit.css"/>
+
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/validation/jquery.validate.js"></script>
+    <script type="text/javascript" src="../../static/lib/validation/jquery.validate.messages.js"></script>
+    <script type="text/javascript" src="../../static/lib/dateRange/jQuery.pickerDateRange.js"></script>
+    <script type="text/javascript" src="../../static/lib/webuploader.min.js"></script>
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/js/order.js"></script>
+</head>
+<body class="checkManage">
+<nav class="header">
+    <div class="scroll scroll-nav">
+        <a class="nav" href="javascript:void(0)" >广告订单 &gt;</a>
+        <a class="nav" href="javascript:void(0)" data-route="ViewPutOrder">投放订单 &gt;</a>
+        <a class="nav" href="javascript:void(0)" data-route="ViewPutOrder">订单列表 &gt;</a>
+        <a class="nav active" href="javascript:void(0)">审核订单</a>
+    </div>
+</nav>
+<div class="container" ng-controller="PutCheckCtrl">
+    <form class="form">
+        <div class="header-title">
+            <div class="header-message">审核订单</div>
+        </div>
+        <div class="form-group">
+            <label class="yc-col-2 control-label">  审核进程：</label>
+            <div class="yc-col-10">
+                <table class="yc-table checkState-table">
+                    <thead>
+                        <tr>
+                            <th>操作时间</th>
+                            <th>操作内容</th>
+                            <th>备注</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="c in checkInfoList">
+                            <td ng-bind="c.checkTime | DateFormatFtr:'yyyy-MM-dd HH:mm:ss'"></td>
+                            <td>
+                                <span ng-bind="c.checkUser + '：' + c.checkName">
+                                </span><span ng-show="c.checkStep != 0" ng-bind="(c.checkState==1?'—审核通过':'—审核不通过')"></span>
+                            </td>
+                            <td ng-bind="c.checkRemark"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="yc-col-2 control-label"> <span>*</span> 审核意见：</label>
+            <div class="yc-col-10">
+                <label class="radio"> <input class="form-control" ng-model="order.checkState" type="radio" value="1"> 审核通过 </label>
+                <label class="radio"> <input class="form-control" ng-model="order.checkState" type="radio" value="-1"> 审核未通过 </label>
+            </div>
+        </div>
+
+        <div class="form-group" ng-show="order.checkState == -1">
+            <label class="yc-col-2 control-label"> <span>*</span> 备注：</label>
+            <div class="yc-col-10">
+                <textarea class="form-control checkState-remark" name="checkRemark" ng-model="order.checkRemark" ng-placeholder="请输入不通过审核的原因，最多200个字；" maxlength="200"></textarea>
+                <span class="msg">你还可以输入{{200-order.checkRemark.length}}个字节</span>
+            </div>
+        </div>
+
+        <div class="form-group-btn">
+            <label class="yc-col-2 control-label"></label>
+            <div class="yc-col-10">
+                <a href="javascript:void(0)" class="yc-btn" ng-click="commitInfo()">提 交</a>
+                <a href="javascript:void(0)" data-route="ViewPutOrder" class="yc-btn-out">取 消</a>
+            </div>
+        </div>
+
+        <div class="header-title">
+            <div class="header-message">基本信息</div>
+        </div>
+
+        <div class="form-group">
+            <label class="yc-col-2 control-label"> <span>*</span> 订单类型：</label>
+            <div class="yc-col-10">
+                <input class="form-control" disabled type="text" ng-value="order.orderType | orderTypeFtr">
+            </div>
+        </div>
+
+        <div class="form-group" ng-show="order.orderType == 1">
+            <label class="yc-col-2 control-label"> <span>*</span> 打包合同：</label>
+            <div class="yc-col-10">
+                <label class="radio"><input class="form-control" type="radio" disabled ng-model="order.isPackage" value="1" ng-change="isPackageChange(1)"> 否</label>
+                <label class="radio"><input class="form-control" type="radio" disabled ng-model="order.isPackage" value="2" ng-change="isPackageChange(2)"> 是</label>
+            </div>
+        </div>
+
+        <!--正式投放-->
+        <div ng-show="order.orderType == 2">
+            <div class="form-group">
+                <label class="yc-col-2 control-label"> <span>*</span> 合同签订情况：</label>
+                <div class="yc-col-10">
+                    <label class="radio"><input class="form-control" type="radio" disabled ng-model="order.contractType" value="1" ng-change="contractTypeChange(1)"> 已签合同</label>
+                    <label class="radio"><input class="form-control" type="radio" disabled ng-model="order.contractType" value="2" ng-change="contractTypeChange(2)"> 暂无合同</label>
+                </div>
+            </div>
+
+            <div class="form-group" ng-show="order.contractType == 1">
+                <label class="yc-col-2 control-label"> <span>*</span> 请选择合同：</label>
+                <div class="yc-col-10">
+                    <input type="text" ng-value="order.contractCode" class="form-control" disabled>
+                </div>
+            </div>
+
+            <div class="form-group" ng-show="order.contractType == 2">
+                <label class="yc-col-2 control-label"> <span>*</span> 预估合同金额：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" name="futureMoney" type="text" disabled ng-placeholder="请输入预估合同金额" ng-model="order.futureMoney">
+                    <span class="msg" ng-show="order.futureMoney" ng-bind="'(' +(order.futureMoney | currency:'￥') + ')'"></span>
+                </div>
+            </div>
+
+            <div class="form-group" ng-show="order.contractType == 2">
+                <label class="yc-col-2 control-label"> <span>*</span> 历史排期金额：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" name="historyScheduleMoney" disabled type="text" ng-placeholder="请输入历史排期金额" ng-model="order.historyScheduleMoney">
+                    <span class="msg" ng-show="order.historyScheduleMoney" ng-bind="'(' +(order.historyScheduleMoney | currency:'￥') + ')'"></span>
+                </div>
+            </div>
+
+            <div class="form-group" ng-show="selectContractShow && order.contractType == 1">
+                <label class="yc-col-2 control-label"> <span>*</span> 合同金额：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" name="totalMoney" type="text" disabled="disabled" ng-placeholder="请输入合同金额" ng-model="order.totalMoney">
+                    <span class="msg" ng-show="order.totalMoney" ng-bind="'(' +(order.totalMoney | currency:'￥') + ')'"></span>
+                </div>
+            </div>
+
+            <div class="form-group" ng-show="selectContractShow || order.contractType == 2">
+                <label class="yc-col-2 control-label"> <span>*</span> 合同折扣：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" name="discount" type="text" disabled ng-placeholder="请输入合同折扣" ng-model="order.discount">
+                    <span class="msg">%</span>
+                </div>
+            </div>
+
+            <div class="form-group" ng-show="selectContractShow || order.contractType == 2">
+                <label class="yc-col-2 control-label"> <span>*</span> 合同配送：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" name="present" type="text" disabled ng-placeholder="请输入合同配送" ng-model="order.present">
+                    <span class="msg">%</span>
+                </div>
+            </div>
+
+            <!--当正式订单暂无合同 转向已签合同-->
+
+
+
+
+            <div ng-show="order.contractType == 1 && _contractType">
+                <div class="form-group">
+                    <label class="yc-col-2 control-label"><span>*</span> 预估合同金额：</label>
+                    <div class="yc-col-10">
+                        <input class="form-control" name="futureMoney" type="text" disabled="disabled" ng-placeholder="请输入预估合同金额" ng-model="_cache.order.futureMoney">
+                        <span class="msg" ng-show="_cache.order.futureMoney" ng-bind="'(' +(_cache.order.futureMoney | currency:'￥') + ')'"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="yc-col-2 control-label"><span>*</span> 历史排期金额：</label>
+                    <div class="yc-col-10">
+                        <input class="form-control" name="historyScheduleMoney" type="text" disabled="disabled" ng-placeholder="请输入历史排期金额" ng-model="_cache.order.historyScheduleMoney">
+                        <span class="msg" ng-show="_cache.order.historyScheduleMoney" ng-bind="'(' +(_cache.order.historyScheduleMoney | currency:'￥') + ')'"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="yc-col-2 control-label"><span>*</span> 合同折扣：</label>
+                    <div class="yc-col-10">
+                        <input class="form-control" name="discount" type="text" disabled="disabled" ng-placeholder="请输入合同折扣" ng-model="_cache.order.discount">
+                        <span class="msg">%</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="yc-col-2 control-label"><span>*</span> 合同配送：</label>
+                    <div class="yc-col-10">
+                        <input class="form-control" name="present" type="text" disabled="disabled" ng-placeholder="请输入合同折扣" ng-model="_cache.order.present">
+                        <span class="msg">%</span>
+                    </div>
+                </div>
+            </div>
+            <!--当正式订单暂无合同 转向已签合同-->
+
+            <div class="form-group" ng-show="selectContractShow || order.contractType == 2">
+                <label class="yc-col-2 control-label"> <span>*</span> 打包合同：</label>
+                <div class="yc-col-10">
+                    <label class="radio"><input class="form-control" type="radio" ng-model="order.isPackage" disabled value="1" ng-change="selectContractShow(1)"> 否</label>
+                    <label class="radio"><input class="form-control" type="radio" ng-model="order.isPackage" disabled value="2" ng-change="selectContractShow(2)"> 是</label>
+                </div>
+            </div>
+
+            <div class="form-group" ng-show="order.historyData">
+                <label class="yc-col-2 control-label"> 暂无合同历史数据：</label>
+                <div class="yc-col-10">
+                    <p style="line-height: 40px">
+                            预估合同金额：{{order.historyData.futureMoney | currency:'￥'}}，
+                            历史排期金额：{{order.historyData.historyScheduleMoney | currency:'￥'}}，
+                            合同折扣：{{order.historyData.discount}}%，
+                            合同配送：{{order.historyData.present}}%，
+                            打包合同：{{order.historyData.isPackage == 1?'否':'是'}}
+                        </p>
+                </div>
+            </div>
+
+            <div class="form-group" ng-show="order.isPackage == 2">
+                <label class="yc-col-2 control-label"> <span>*</span> 订单打包金额：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" name="packageMoney" max="{{order.futureMoney || order.totalMoney}}" disabled type="text" ng-placeholder="请输入订单打包金额" ng-model="order.packageMoney">
+                    <span class="msg" ng-show="order.totalMoney" ng-bind="'(' +(order.totalMoney | currency:'￥') + ')'"></span>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!--自用推广 试用推广-->
+        <div class="form-group" ng-show="order.orderType == 4">
+            <label class="yc-col-2 control-label"> <span>*</span> 选择部门：</label>
+            <div class="yc-col-10">
+                <input type="text" class="form-control" ng-value="order.agencyDepName" disabled>
+            </div>
+        </div>
+
+        <!--补偿刊登-->
+        <div ng-show="order.orderType == 5">
+            <div class="form-group">
+                <label class="yc-col-2 control-label"> <span>*</span> 关联订单：</label>
+                <div class="yc-col-10">
+                    <a href="javascript:void(0)" class="yc-btn">{{_cache._relatedOrderName || '选择订单'}}
+
+                    </a>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="yc-col-2 control-label"> <span>*</span> 合同签订情况：</label>
+                <div class="yc-col-10">
+                    <label class="radio"><input class="form-control" type="radio" disabled="disabled" ng-model="order.contractType" value="1"> 已签合同</label>
+                    <label class="radio"><input class="form-control" type="radio" disabled="disabled" ng-model="order.contractType" value="2"> 暂无合同</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="yc-col-2 control-label"> <span>*</span> 合同号：</label>
+                <div class="yc-col-10">
+                    <p>{{order.contractCode}}</p>
+                </div>
+            </div>
+
+            <div class="form-group" ng-show="order.contractType == 2">
+                <label class="yc-col-2 control-label"> <span>*</span> 预估合同金额：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" name="futureMoney" type="text" ng-placeholder="请输入预估合同金额" ng-model="order.futureMoney">
+                    <span class="msg" ng-show="order.futureMoney" ng-bind="'(' +(order.futureMoney | currency:'￥') + ')'"></span>
+                </div>
+            </div>
+
+            <div class="form-group" ng-show="order.contractType == 2">
+                <label class="yc-col-2 control-label"> <span>*</span> 历史排期金额：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" name="historyScheduleMoney" type="text" ng-placeholder="请输入历史排期金额" ng-model="order.historyScheduleMoney">
+                    <span class="msg" ng-show="order.historyScheduleMoney" ng-bind="'(' +(order.historyScheduleMoney | currency:'￥') + ')'"></span>
+                </div>
+            </div>
+
+            <div class="form-group" ng-show="order.contractType == 1">
+                <label class="yc-col-2 control-label"> <span>*</span> 合同金额：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" name="totalMoney" type="text" disabled="disabled" ng-placeholder="请输入合同金额" ng-model="order.totalMoney">
+                    <span class="msg" ng-show="order.totalMoney" ng-bind="'(' +(order.totalMoney | currency:'￥') + ')'"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="yc-col-2 control-label"> <span>*</span> 合同折扣：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" name="discount" type="text" disabled="disabled" ng-placeholder="请输入合同折扣" ng-model="order.discount">
+                    <span class="msg">%</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="yc-col-2 control-label"> <span>*</span> 合同配送：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" name="present" type="text" disabled="disabled" ng-placeholder="请输入合同配送" ng-model="order.present">
+                    <span class="msg">%</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="yc-col-2 control-label"> <span>*</span> 打包合同：</label>
+                <div class="yc-col-10">
+                    <label class="radio"><input class="form-control" type="radio" ng-model="order.isPackage" disabled="disabled" value="1" name="contractType"> 否</label>
+                    <label class="radio"><input class="form-control" type="radio" ng-model="order.isPackage" disabled="disabled" value="2" name="contractType"> 是</label>
+                </div>
+            </div>
+
+            <div class="form-group" ng-show="order.isPackage == 2">
+                <label class="yc-col-2 control-label"> <span>*</span> 订单打包金额：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" name="packageMoney" disabled="disabled" type="text" ng-placeholder="请输入订单打包金额" ng-model="order.packageMoney">
+                    <span class="msg" ng-show="order.packageMoney" ng-bind="'(' +(order.packageMoney | currency:'￥') + ')'"></span>
+                </div>
+            </div>
+
+            <div class="form-group" ng-show="order.orderType != 5 && order.orderType != 4">
+                <label class="yc-col-2 control-label"> <span>*</span> 客户名称：</label>
+                <div class="yc-col-10">
+                    <p>{{order.customerName}}</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!--<div class="form-group" ng-show="order.orderType != 5 && order.orderType != 4">
+            <label class="yc-col-2 control-label"> <span>*</span> 客户：</label>
+            <div class="yc-col-10">
+                <div yc-select="customerListSel" width="150" query="order" value="customerId" name="customerName" key="id" placeholder="客户"></div>
+            </div>
+        </div>-->
+
+        <div class="form-group">
+            <label class="yc-col-2 control-label"> <span>*</span> 订单名称：</label>
+            <div class="yc-col-10">
+                <input class="form-control" name="orderName" disabled type="text" ng-placeholder="请输入订单名称" ng-model="order.orderName">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="yc-col-2 control-label"> <span>*</span> 投放档期：</label>
+            <div class="yc-col-10">
+                <div class="icon-input" ng-show="_checkEndState">
+                    <input class="form-control" type="text" disabled id="pickerDateRange">
+                    <span class="icon"> <i class="yc-icon calendars">&#xe60e;</i> </span>
+                </div>
+                <div ng-show="!_checkEndState">
+                    <div class="icon-input">
+                        <label>
+                            <input class="form-control picker" type="text" id="pickerRangeStart" disabled ng-value="order.orderShowDate.startTime"> 
+                            <i class="icon yc-icon calendars">&#xe60e;</i>
+                        </label>
+                    </div>
+                    -
+                    <div class="icon-input">
+                        <label>
+                            <input class="form-control picker" type="text" id="pickerRangeEnd" disabled ng-value="order.orderShowDate.endTime"> 
+                            <i class="icon yc-icon calendars">&#xe60e;</i>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="yc-col-2 control-label"> 业务员：</label>
+            <div class="yc-col-10">
+                <input class="form-control" name="trueName" type="text" disabled="disabled" ng-model="_cache.trueName">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="yc-col-2 control-label"> 内部备注：
+                <br>
+                <p style="padding-right: 6px"><a ng-click="showPhotoFun(!showPhoto)" style="color: #247BD3;" href="javascript:void(0)">
+                    图片</a>
+                    <i ng-show="!showPhoto" class="yc-icon" style="font-size: 12px">&#xe612;</i>
+                    <i ng-show="showPhoto" class="yc-icon" style="font-size: 12px">&#xe609;</i>
+                </p>
+            </label>
+            <div class="yc-col-10">
+                <textarea class="form-control" name="remark" ng-model="order.remark" disabled></textarea>
+            </div>
+        </div>
+
+        <div class="form-group" ng-show="showPhoto">
+            <label class="yc-col-2 control-label"> 图片：</label>
+            <div class="yc-col-10">
+                <!--<a id="showPhotoUpload" class="yc-btn-web" href="javascript:void(0)" ng-hide="imgList.length >= 2">点击上传</a>-->
+                <div class="showPhoto" ng-repeat="img in imgList">
+                    <img ng-src="{{img.fileHttpUrl}}" width="{{img.width}}" height="{{img.height}}">
+                    <span ng-click="imgList.splice($index,1)"><i class="yc-icon">&#xe61b;</i></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="yc-col-2 control-label"> 公开备注：</label>
+            <div class="yc-col-10">
+                <textarea class="form-control" ng-model="order.publicRemark" disabled></textarea>
+            </div>
+        </div>
+
+        <div class="header-title">
+            <div class="header-message">选择广告位</div>
+        </div>
+
+
+        <!--<div class="form-group">
+            <label class="yc-col-2 control-label"> <span>*</span> 添加广告位：</label>
+            <div class="yc-col-10">
+                <a href="javascript:void(0)" class="yc-btn" ng-click="showAdList('#leftTorightBig')">点击添加+</a>
+            </div>
+        </div>-->
+
+        <div class="form-group">
+            <label class="yc-col-2 control-label"> 广告位： </label>
+            <div class="yc-col-10">
+                <table class="yc-table orderList">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>广告位名称</th>
+                        <th>排期类型</th>
+                        <th>刊例价</th>
+                        <th>投放档期</th>
+                        <th ng-show="_cache.orderListManagerShow()">排期金额</th>
+                        <th class="center">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="ad in adListInfo">
+                        <td>{{ad.adSpaceId || ad.id}}</td>
+                        <td>{{ad.adSpaceName}}</td>
+                        <td>
+                            <!--排期类型：0正常购买 1免费配送 2自用 3 打包-->
+                            <label class="radio" ng-click="scheduleTypeChange(ad,type.id)" ng-repeat="type in scheduleTypeList">
+                                <input ng-disabled="!_checkEndState && ad.adSpaceId != undefined" class="form-control" ng-model="ad.scheduleType" type="radio" value="{{type.id}}">{{type.name}}
+                            </label>
+                        </td>
+                        <td><span>{{(ad.price | currency:'') + '/'}}{{ad.priceCycle | isDay}}</span></td>
+                        <td>
+                            <!--打包-->
+                            <div ng-show="ad.scheduleType == 3">
+                                <!--设置更多后将影藏此项-->
+                                <div class="yc-calendar-wraper"><input disabled="disabled" ng-value="(order.orderShowDate.startTime | DateFormatFtr:'yyyyMMdd') + ' ~ ' + (order.orderShowDate.endTime | DateFormatFtr:'yyyyMMdd')" type="text" ><i class="yc-icon">&#xe62e;</i></div>
+                            </div>
+                            <!--按天 按月-->
+                            <div ng-show="(ad.priceCycle == 1 || ad.priceCycle == 2) && ad.scheduleType != 3">
+                                <!--设置更多后将影藏此项-->
+                                <div class="icon-input" ng-show="!ad.scheduleAdMoneyShow">
+                                    <input class="form-control picker-l" type="text" id="{{ad.adShowDates[0].pickerDateRange}}">
+                                    <i class="icon yc-icon calendars">&#xe60e;</i>
+                                </div>
+                                <span class="pointer" title="{{ad.scheduleValue.join('，')}}" ng-show="ad.scheduleAdMoneyShow">
+                                    {{ad._scheduleValue.join('，')}}
+                                </span>
+                                <a ng-class="{'moreConfig':!ad.scheduleAdMoneyShow,'moreConfig2':ad.scheduleAdMoneyShow}" href="javascript:void(0)" ng-click="showScheduleDay('#moreConfig',$index)">更多设置</a>
+                            </div>
+                            <!--按小时-->
+                            <div ng-if="ad.priceCycle == 3 && ad.scheduleType != 3">
+                                <div ng-if="!ad.scheduleAdMoneyShow" yc-select="timeSel1" width="90" query="ad" value="startTime" resname="00:00" key="s" placeholder="开始时刻" name="z" callback="addTimeDetail(ad)"></div>&nbsp;
+                                <div ng-if="!ad.scheduleAdMoneyShow" yc-select="timeSel2" width="90" query="ad" value="endTime" resname="23:59" key="s" placeholder="结束时刻" name="n" callback="addTimeDetail(ad)"></div>
+                                <span class="pointer" title="{{ad.scheduleValue.join('，')}}" ng-show="ad.scheduleAdMoneyShow">
+                                    {{ad._scheduleValue.join('，')}}
+                                </span>
+                                <a ng-class="{'moreConfig':!ad.scheduleAdMoneyShow,'moreConfig2':ad.scheduleAdMoneyShow}" href="javascript:void(0)" ng-click="showScheduleTime('#moreConfig',$index)">更多设置</a>
+                            </div>
+                        </td>
+                        <td ng-show="_cache.orderListManagerShow()"><span ng-show="ad.scheduleAdMoney" ng-bind="(ad.scheduleAdMoney | currency:'')+'元'"></span></td>
+                        <td class="pointer center" style="color: #247BD3;" ng-click="deleteInfo($index,ad.adSpaceName,ad.adSpaceId,ad.scheduleType)">删除</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <div class="client-judge" ng-if="adListInfo.length<1">
+                    <p>暂未添加广告位，请点击下方按钮添加 <a ng-click="showAdList('#leftTorightBig')" class="yc-btn">添加广告位</a></p>
+                </div>
+
+                <div ng-show="_cache.orderListManagerShow()">
+                    <p>订单总金额：
+                        【购买】 <span class="error" ng-bind="(_cache.localScheduleMoney || 0) | currency:''"></span> 元
+                        【配送】 <span class="error" ng-bind="(_cache.localDeliveryMoney || 0) | currency:''"></span>元
+                    </p>
+                    <p ng-show="order.orderType == 2">预估合同可排期金额：
+                        【购买】<span class="error" ng-bind="(_cache.contract.contractBuyMoney || 0) | currency:''"></span>元
+                        （剩余： <span class="error" ng-bind="(((_cache.contract.contractBuyMoney || 0) - (_cache.contract.schedulingBuyMoney || 0))) | currency:''"></span> 元）
+                        【配送】<span class="error" ng-bind="(_cache.contract.presentMoney || 0) | currency:''">2,500,000.00</span>元
+                        （剩余： <span class="error" ng-bind="(((_cache.contract.presentMoney || 0) - (_cache.contract.schedulingPresentedMoney || 0))) | currency:''"></span>元）
+                    </p>
+                </div>
+                
+                <!--<div class="orderListManager" style="max-width: 1000px" ng-show="_cache.orderListManagerShow()">
+                    <div style="height: 20px;">
+                        <p class="fl">
+                            <span>
+                                已排期总金额：
+                                <span ng-show="order.contractCode" class="red">{{((_cache.contract.schedulingBuyMoney || 0) + (_cache.contract.schedulingPresentedMoney || 0)) | currency:''}}</span>
+                                <span ng-show="!order.contractCode" class="red">{{((_cache.localScheduleMoney || 0) + (_cache.localDeliveryMoney || 0)) | currency:''}}</span>元
+                            </span>
+                        </p>
+                        <p class="fr">
+                            当前订单排期金额：
+                            <span>【购买】<span class="red" ng-bind="(_cache.localScheduleMoney || 0) | currency:''"></span>元</span>
+                            <span>【配送】<span class="red" ng-bind="(_cache.localDeliveryMoney || 0) | currency:''"></span>元</span>
+                        </p>
+                    </div>
+                    <div>
+                        <p text-left ng-show="order.orderType == 2">
+                            <span>合同排期总金额： <span class="red" ng-bind="(_cache.contract.scheduleMoney || 0) | currency:''"></span>元&nbsp;</span>
+                        </p>
+                        <p ng-show="order.orderType == 2">
+                            合同排期金额：
+                            <span>【剩余购买】<span class="red" ng-bind="(((_cache.contract.contractBuyMoney || 0) - (_cache.contract.schedulingBuyMoney || 0))) | currency:''"></span>元&nbsp;（总<span class="red" ng-bind="(_cache.contract.contractBuyMoney || 0) | currency:''"></span>元）</span>
+                            <span>【剩余配送】<span class="red" ng-bind="(((_cache.contract.presentMoney || 0) - (_cache.contract.schedulingPresentedMoney || 0))) | currency:''"></span>元&nbsp;（总<span class="red" ng-bind="(_cache.contract.presentMoney || 0) | currency:''"></span>元）</span>
+                        </p>
+                    </div>
+                </div>-->
+
+            </div>
+        </div>
+
+
+
+        <div class="header-title">
+            <div class="header-message">定向设置</div>
+        </div>
+
+        <div class="form-group" ng-init="areasListShow = 0">
+            <label class="yc-col-2 control-label"> 地域定向：</label>
+            <div class="yc-col-10">
+                <label class="radio"><input class="form-control" type="radio" ng-model="areasListShow" value="0" disabled> 不限</label>
+                <label class="radio"><input class="form-control" type="radio" ng-model="areasListShow" value="1" disabled> 选择省份</label>
+            </div>
+        </div>
+
+        <div class="form-group" ng-show="areasListShow == 1">
+            <div class="control-label yc-col-2"></div>
+            <div class="yc-col-10" id="areasList">
+
+            </div>
+        </div>
+
+        <div class="form-group" ng-init="languageShow = 0">
+            <label class="yc-col-2 control-label"> 语言定向：</label>
+            <div class="yc-col-10">
+                <label class="radio"><input class="form-control" type="radio" ng-model="languageShow" value="0" ng-disabled="!_checkEndState  && !_checkEndStateTrue"> 不限</label>
+                <label class="radio"><input class="form-control" type="radio" ng-model="languageShow" value="1" ng-disabled="!_checkEndState  && !_checkEndStateTrue"> 选择语言</label>
+            </div>
+        </div>
+
+        <div class="form-group language" ng-show="languageShow == 1">
+            <label class="yc-col-2 control-label">  </label>
+            <div class="yc-col-10">
+                <span ng-repeat="la in languageList">
+                    <label class="item">
+                        <input class="form-control" type="checkbox" ng-true-value="{{la.id}}" ng-false-value="0" ng-model="la.value">
+                        {{la.name}}
+                    </label>
+                    <br ng-show="($index+1)%7 == 0">
+                </span>
+            </div>
+        </div>
+
+        
+
+
+
+    </form>
+
+</div>
+</body>
+</html>

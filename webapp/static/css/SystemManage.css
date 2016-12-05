@@ -1,0 +1,71 @@
+/*容错率*/
+.tolerant-title{
+    border-left: 2px solid #2698fd;
+    padding-left: 10px;
+    padding-bottom: 0;
+    line-height: 20px;
+    margin: 29px 0 20px 0;
+    font-size: 16px;
+    color: #666666;
+}
+.tolerant-table{
+    border-radius:5px;
+    width: 100%;
+    height: 56px;
+    border: 1px #e7eaed solid;
+    background-color: #fcfdfd;
+    font-size: 16px;
+    color: #666666;
+}
+.tolerant-table tr td:nth-child(1){
+    text-align: center;
+}
+.tolerant-table tr td:nth-child(3){
+    text-align: center;
+}
+.tolerant-table tr td:nth-child(5){
+    text-align: center;
+}
+.tolerant-table tr td:nth-child(7){
+    text-align: right;
+    padding-right: 40px;
+}
+.tolerant-table tr td.td-value{
+    font-size: 20px;
+    color: #2499ff;
+    font-weight: bold;
+    text-align: left;
+}
+
+/*公司*/
+.companyManage .selectArea dl dd{
+    margin-left: 60px;
+}
+.companyManage .selectArea dl dd .area-self{
+    width: 98px;
+}
+.companyManage .selectArea dl dd .area-parent{
+    width: 98px;
+}
+
+/*角色*/
+.roleManage .selectArea dl dd .area-self{
+    width: 33%;
+}
+.roleManage .selectArea dl dd .area-parent{
+    width: 33%;
+}
+.roleManage .selectArea{
+    width: 950px;
+}
+
+/*角标*/
+.markManage .showPhoto {
+    padding-top: 10px;
+}
+
+/*公告*/
+.affcheManage .affcheContent{
+    width: 380px;
+    height: 200px;
+}

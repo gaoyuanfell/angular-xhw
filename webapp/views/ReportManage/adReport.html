@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>广告投放报表-数据报表</title>
+    <meta name="keywords" content="广告投放报表-数据报表"/>
+    <meta name="description" content="广告投放报表-数据报表"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../../static/css/global.css"/>
+    <link rel="stylesheet" href="../../static/css/reportManage.css"/>
+    <link rel="stylesheet" href="../../static/lib/dateRange/jQuery.pickerDateRange.css"/>
+
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script src="../../static/lib/dateRange/jQuery.pickerDateRange.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/js/reportManage.js"></script>
+</head>
+<body>
+    <nav class="header">
+        <div class="scroll" ng-init="operationMa = 'dateCtrl.html'">
+            <a class="nav" ng-class="{'active':operationMa == 'dateCtrl.html'}" ng-click="operationMa = 'dateCtrl.html'">日期</a>
+            <a class="nav" ng-class="{'active':operationMa == 'hourCtrl.html'}" ng-click="operationMa = 'hourCtrl.html'">时段</a>
+            <a class="nav" ng-class="{'active':operationMa == 'indentCtrl.html'}" ng-click="operationMa = 'indentCtrl.html'">订单</a>
+            <a class="nav" ng-class="{'active':operationMa == 'adAdvertisementCtrl.html'}" ng-click="operationMa = 'adAdvertisementCtrl.html'">广告位</a>
+            <a class="nav" ng-class="{'active':operationMa == 'adOriginalityCtrl.html'}" ng-click="operationMa = 'adOriginalityCtrl.html'">创意</a>
+            <a class="nav" ng-class="{'active':operationMa == 'territoryCtrl.html'}" ng-click="operationMa = 'territoryCtrl.html'">地域</a>
+            <a class="nav" ng-class="{'active':operationMa == 'operationCtrl.html'}" ng-click="operationMa = 'operationCtrl.html'">操作系统</a>
+            <a class="nav" ng-class="{'active':operationMa == 'browserCtrl.html'}" ng-click="operationMa = 'browserCtrl.html'">浏览器</a>
+            <a class="nav" ng-class="{'active':operationMa == 'keyWordCtrl.html'}" ng-click="operationMa = 'keyWordCtrl.html'">关键字</a>
+        </div>
+    </nav>
+    <div ng-include="operationMa"></div>
+
+    <!--11111111111111111111111111111111111日期-->
+    <script type="text/ng-template" id="dateCtrl.html">
+        <div class="container" ng-controller="dateCtrl">
+            <div class="button-group clear">
+                <div class="button-g fl">
+                    <a href="javascript:;" class="yc-btn" ng-click="export()">导出报表</a>
+                    <a href="javascript:;" class="yc-btn" onclick="window.print(1,'日期报表')">预览打印</a>
+                </div>
+                <div class="query-g fr">
+                    <div yc-select="customerListSel" width="150" placeholder="客户" query="query" value="paramInt1" add="全部" key="id" name="customerName" session="adReport_data_customer" group="ad-report-data"></div>
+                    <div yc-select="orderListSel" width="150" placeholder="订单" query="query" value="paramInt2" add="全部" key="id" name="orderName" session="adReport_data_order" group="ad-report-data"></div>
+                    <div class="icon-input picker-date">
+                        <label>
+                            <input class="form-control time_default" readonly type="text" id="resourceAff">
+                            <i class="icon yc-icon calendars">&#xe60e;</i>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div yc-print="1">
+                <table class="yc-table">
+                    <thead>
+                    <tr>
+                        <th ng-show="clientCustom.days">日期</th>
+                        <th ng-show="clientCustom.contractTotal">合同量</th>
+                        <th ng-show="clientCustom.customerTotal">客户量</th>
+                        <th ng-show="clientCustom.orderIdTotal">订单量</th>
+                        <th ng-show="clientCustom.pv">曝光量</th>
+                        <th ng-show="clientCustom.click">点击量</th>
+                        <th ng-show="clientCustom.ctr">点击率</th>
+                        <!--<th ng-show="clientCustom.cpm">CPM</th>-->
+                        <!--<th ng-show="clientCustom.cpc">CPC</th>-->
+                        <!--<th ng-show="clientCustom.totalMoney">总花费</th>-->
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-hide="items.length<1" ng-repeat="item in summarizing" class="coloru">
+                        <td ng-show="clientCustom.days">汇总</td>
+                        <td ng-show="clientCustom.contractTotal" ng-bind="item.contractCount?(item.contractCount):'0'"></td>
+                        <td ng-show="clientCustom.customerTotal" ng-bind="item.customerCount?(item.customerCount):'0'"></td>
+                        <td ng-show="clientCustom.orderIdTotal" ng-bind="item.orderCount?(item.orderCount):'0'"></td>
+                        <td ng-show="clientCustom.pv" ng-bind="item.pvCount?(item.pvCount| number):'0'"></td>
+                        <td ng-show="clientCustom.click" ng-bind="item.clickCount?(item.clickCount| number):'0'"></td>
+                        <td ng-show="clientCustom.ctr" ng-bind="item.ctrCount?((item.ctrCount| number:2)+'%'):'0.00%'"></td>
+                        <!--<td ng-show="clientCustom.cpm" ng-bind="item.cpmCount?('¥'+(item.cpmCount| number:2)):'¥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.cpc" ng-bind="item.cpcCount?('¥'+(item.cpcCount| number:2)):'¥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.totalMoney" ng-bind="item.moneyCount?(item.moneyCount|currency:'¥'):'¥0.00'"></td>-->
+                    </tr>
+                    <tr ng-repeat="item in items">
+                        <td ng-show="clientCustom.days" ng-bind="::item.days?(item.days):'--'"></td>
+                        <td ng-show="clientCustom.contractTotal" ng-bind="item.contractTotal?(item.contractTotal):'0'"></td>
+                        <td ng-show="clientCustom.customerTotal" ng-bind="::item.customerTotal?(item.customerTotal):'--'"></td>
+                        <td ng-show="clientCustom.orderIdTotal" ng-bind="::item.orderIdTotal?(item.orderIdTotal):'0'"></td>
+                        <td ng-show="clientCustom.pv" ng-bind="::item.pv?(item.pv| number):'0'"></td>
+                        <td ng-show="clientCustom.click" ng-bind="::item.click?(item.click| number):'0'"></td>
+                        <td ng-show="clientCustom.ctr" ng-bind="::item.ctr?((item.ctr| number:2)+'%'):'0.00%'"></td>
+                        <!--<td ng-show="clientCustom.cpm" ng-bind="item.cpm?(item.cpm|currency:'¥'):'¥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.cpc" ng-bind="item.cpc?(item.cpc|currency:'¥'):'¥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.totalMoney" ng-bind="item.totalMoney?(item.totalMoney|currency:'¥'):'¥0.00'"></td>-->
+                    </tr>
+                    </tbody>
+                </table>
+
+                <div column-setting="clientCustom">
+                    <div class="column-setting" ng-click="clientCustom.columnSetting($event)"> <i class="yc-icon pointer success">&#xe601;</i> </div>
+                    <div class="column-line hide animated">
+                        <div class="triangle"></div>
+                        <div class="clear">
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.days"> 日期 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.contractTotal"> 合同量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.customerTotal"> 客户量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.orderIdTotal"> 订单量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.pv"> 曝光量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.click"> 点击量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.ctr"> 点击率 </label>
+                        </div>
+                        <div class="center">
+                            <a href="javascript:;" class="yc-btn-out" ng-click="clientCustom.columnSetting($event,true)">确定</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="client-judge" ng-if="total_page<1">您好，暂时没有符合条件的任何数据</div>
+            <div ng-show="total_page>0" yc-page page="page" redirect="redirect(page.page,search)" query="query"></div>
+
+        </div>
+    </script>
+
+    <!--22222222222222222222222222222222222222222222222222订单-->
+    <script type="text/ng-template" id="indentCtrl.html">
+        <div class="container" ng-controller="indentCtrl">
+            <div class="button-group clear">
+                <div class="button-g fl">
+                    <a href="javascript:;" class="yc-btn" ng-click="export()">导出报表</a>
+                    <a href="javascript:;" class="yc-btn" onclick="window.print(2,'订单报表')">预览打印</a>
+                </div>
+                <div class="query-g fr">
+                    <div yc-select="customerListSel" width="150" placeholder="客户" query="query" value="paramInt1" add="全部" key="id" name="customerName" session="adReport_order_customer" group="ad-report-order"></div>
+                    <div yc-select="orderTypeSel" width="150" query="query" value="paramInt2" key="id" placeholder="订单类型" session="adReport_order_orderType" group="ad-report-order"></div>
+                    <div class="icon-input">
+                        <input class="form-control" type="text" ng-placeholder="请输入订单名称或ID" ng-model="query.search">
+                        <span class="icon">
+                        <i class="yc-icon calendars" ng-click="redirect(1,search)">&#xe60b;</i>
+                        </span>
+                    </div>
+                    <div class="icon-input picker-date">
+                        <label>
+                            <input class="form-control time_default" readonly type="text" id="adReportTime2">
+                            <i class="icon yc-icon calendars">&#xe60e;</i>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div yc-print="2">
+                <table class="yc-table">
+                    <thead>
+                    <tr>
+                        <th ng-show="clientCustom.id">订单ID</th>
+                        <th ng-show="clientCustom.orderName">订单名称</th>
+                        <th ng-show="clientCustom.orderType">订单类型</th>
+                        <th ng-show="clientCustom.customerName">客户名称</th>
+                        <th ng-show="clientCustom.customerType">客户类型</th>
+                        <th ng-show="clientCustom.agentName">代理名称</th>
+                        <th ng-show="clientCustom.scheduleTime">投放档期</th>
+                        <th ng-show="clientCustom.pv">曝光量</th>
+                        <th ng-show="clientCustom.click">点击量</th>
+                        <th class="min-th80" ng-show="clientCustom.ctr">点击率</th>
+                        <!--<th ng-show="clientCustom.cpm">CPM</th>-->
+                        <!--<th ng-show="clientCustom.cpc">CPC</th>-->
+                        <!--<th ng-show="clientCustom.totalMoney">总花费</th>-->
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-hide="items.length<1" ng-repeat="item in summarizing" class="coloru">
+                        <td ng-show="clientCustom.id">汇总</td>
+                        <td ng-show="clientCustom.orderName">--</td>
+                        <td ng-show="clientCustom.orderType">--</td>
+                        <td ng-show="clientCustom.customerName">--</td>
+                        <td ng-show="clientCustom.customerType">--</td>
+                        <td ng-show="clientCustom.agentName">--</td>
+                        <td ng-show="clientCustom.scheduleTime">--</td>
+                        <td ng-show="clientCustom.pv" ng-bind="item.pvCount?(item.pvCount| number):'0'"></td>
+                        <td ng-show="clientCustom.click" ng-bind="item.clickCount?(item.clickCount| number):'0'"></td>
+                        <td ng-show="clientCustom.ctr" ng-bind="item.ctrCount?((item.ctrCount| number:2)+'%'):'0.00%'"></td>
+                        <!--<td ng-show="clientCustom.cpm" ng-bind="item.cpmCount?('¥'+(item.cpmCount| number:2)):'¥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.cpc" ng-bind="item.cpcCount?('¥'+(item.cpcCount| number:2)):'¥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.totalMoney" ng-bind="item.moneyCount?(item.moneyCount|currency:'¥'):'¥0.00'"></td>-->
+                    </tr>
+                    <tr ng-repeat="item in items">
+                        <td ng-show="clientCustom.id" ng-bind="::item.id?(item.id):'--'"></td>
+                        <td ng-show="clientCustom.orderName">
+                            <span class="th230 ellipsis" ng-bind="::item.orderName?(item.orderName):'--'"></span>
+                        </td>
+                        <td ng-show="clientCustom.orderType" ng-bind="::item.orderType?(item.orderType | orderTypeFtr):'--'"></td>
+                        <td ng-show="clientCustom.customerName" ng-bind="::item.customerName?(item.customerName):'--'"></td>
+                        <td ng-show="clientCustom.customerType" ng-bind='::item.customerType?(item.customerType<=2? (item.customerType != 2 ? "直客" : "代理商") : "代理子客户"):"--"'></td>
+                        <td ng-show="clientCustom.agentName" ng-bind="::item.agentName?(item.agentName):'--'"></td>
+                        <td ng-show="clientCustom.scheduleTime" ng-bind="::item.scheduleTime?(item.scheduleTime):'--'"></td>
+                        <td ng-show="clientCustom.pv" ng-bind="::item.pv?(item.pv| number):'0'"></td>
+                        <td ng-show="clientCustom.click" ng-bind="::item.click?(item.click| number):'0'"></td>
+                        <td ng-show="clientCustom.ctr" ng-bind="::item.ctr?((item.ctr| number:2)+'%'):'0.00%'"></td>
+                        <!--<td ng-show="clientCustom.cpm" ng-bind="item.cpc?(item.cpm|currency:'¥'):'¥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.cpc" ng-bind="item.cpc?(item.cpc|currency:'¥'):'¥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.totalMoney" ng-bind="item.totalMoney?(item.totalMoney|currency:'¥'):'¥0.00'"></td>-->
+                    </tr>
+                    </tbody>
+                </table>
+
+                <div column-setting="clientCustom">
+                    <div class="column-setting" ng-click="clientCustom.columnSetting($event)"> <i class="yc-icon pointer success">&#xe601;</i> </div>
+                    <div class="column-line hide animated">
+                        <div class="triangle"></div>
+                        <div class="clear">
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.id"> 订单ID </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.orderName"> 订单名称 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.orderType"> 订单类型 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.customerName"> 客户名称 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.customerType"> 客户类型 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.agentName"> 代理名称 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.scheduleTime"> 投放档期 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.pv"> 曝光量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.click"> 点击量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.ctr"> 点击率 </label>
+                        </div>
+                        <div class="center">
+                            <a href="javascript:;" class="yc-btn-out" ng-click="clientCustom.columnSetting($event,true)">确定</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="client-judge" ng-if="total_page<1">您好，暂时没有符合条件的任何数据</div>
+            <div ng-show="total_page>0" yc-page page="page" redirect="redirect(page.page,search)" query="query"></div>
+
+        </div>
+    </script>
+
+    <!--333333333333333333333333333333333333333333333333创意-->
+    <script type="text/ng-template" id="adOriginalityCtrl.html">
+        <div class="container" ng-controller="adOriginalityCtrl">
+            <div class="button-group clear">
+                <div class="button-g fl">
+                    <a href="javascript:;" class="yc-btn" ng-click="export()">导出报表</a>
+                    <a href="javascript:;" class="yc-btn" onclick="window.print(3,'创意报表')">预览打印</a>
+                </div>
+                <div class="query-g fr">
+                    <div yc-select="customerListSel" width="150" placeholder="客户" query="query" value="paramInt1" add="全部" key="id" name="customerName" session="adReport_adCreate_customer" group="ad-report-create"></div>
+                    <div yc-select="orderListSel" width="150" query="query" value="paramInt2" add="全部" key="id" name="orderName" placeholder="订单" session="adReport_adCreate_order" group="ad-report-create"></div>
+
+                    <div class="icon-input">
+                        <input class="form-control" type="text" ng-placeholder="请输入创意名称或ID" ng-model="query.search">
+                        <span class="icon">
+                        <i class="yc-icon calendars" ng-click="redirect(1,search)">&#xe60b;</i>
+                        </span>
+                    </div>
+                    <div class="icon-input picker-date">
+                        <label>
+                            <input class="form-control time_default" readonly type="text" id="adReportTime3">
+                            <i class="icon yc-icon calendars">&#xe60e;</i>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div yc-print="3">
+                <table class="yc-table">
+                    <thead>
+                    <tr>
+                        <th ng-show="clientCustom.id">创意ID</th>
+                        <th ng-show="clientCustom.adCreativeName">创意名称</th>
+                        <th ng-show="clientCustom.customerName">客户名称</th>
+                        <th ng-show="clientCustom.pv">曝光量</th>
+                        <th ng-show="clientCustom.click">点击量</th>
+                        <th ng-show="clientCustom.ctr">点击率</th>
+                        <!--<th ng-show="clientCustom.cpm">CPM</th>-->
+                        <!--<th ng-show="clientCustom.cpc">CPC</th>-->
+                        <!--<th ng-show="clientCustom.totalMoney">总花费</th>-->
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-hide="items.length<1" ng-repeat="item in summarizing" class="coloru">
+                        <td ng-show="clientCustom.id">汇总</td>
+                        <td ng-show="clientCustom.adCreativeName">--</td>
+                        <th ng-show="clientCustom.customerName">--</th>
+                        <td ng-show="clientCustom.pv" ng-bind="item.pvCount?(item.pvCount| number):'0'"></td>
+                        <td ng-show="clientCustom.click" ng-bind="item.clickCount?(item.clickCount| number):'0'"></td>
+                        <td ng-show="clientCustom.ctr" ng-bind="item.ctrCount?((item.ctrCount| number:2)+'%'):'0.00%'"></td>
+                        <!--<td ng-show="clientCustom.cpm" ng-bind="item.cpmCount?('¥'+(item.cpmCount| number:2)):'¥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.cpc" ng-bind="item.cpcCount?('¥'+(item.cpcCount| number:2)):'¥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.totalMoney" ng-bind="item.moneyCount?(item.moneyCount|currency:'¥'):'¥0.00'"></td>-->
+                    </tr>
+                    <tr ng-repeat="item in items">
+                        <td ng-show="clientCustom.id" ng-bind="::item.id?(item.id):'--'"></td>
+                        <td ng-show="clientCustom.adCreativeName" ng-bind="::item.adCreativeName?(item.adCreativeName):'--'"></td>
+                        <td ng-show="clientCustom.customerName" ng-bind="::item.customerName?(item.customerName):'--'"></td>
+                        <td ng-show="clientCustom.pv" ng-bind="::item.pv?(item.pv| number):'0'"></td>
+                        <td ng-show="clientCustom.click" ng-bind="::item.click?(item.click| number):'0'"></td>
+                        <td ng-show="clientCustom.ctr" ng-bind="::item.ctr?((item.ctr| number:2)+'%'):'0.00%'"></td>
+                        <!--<td ng-show="clientCustom.cpm" ng-bind="item.cpm?(item.cpm|currency:'¥'):'¥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.cpc" ng-bind="item.cpc?(item.cpc|currency:'¥'):'¥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.totalMoney" ng-bind="item.totalMoney?(item.totalMoney|currency:'¥'):'¥0.00'"></td>-->
+                    </tr>
+                    </tbody>
+                </table>
+                <div column-setting="clientCustom">
+                    <div class="column-setting" ng-click="clientCustom.columnSetting($event)"> <i class="yc-icon pointer success">&#xe601;</i> </div>
+                    <div class="column-line hide animated">
+                        <div class="triangle"></div>
+                        <div class="clear">
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.id"> 创意ID </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.adCreativeName"> 创意名称 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.customerName"> 客户名称 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.pv"> 曝光量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.click"> 点击量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.ctr"> 点击率 </label>
+                        </div>
+                        <div class="center">
+                            <a href="javascript:;" class="yc-btn-out" ng-click="clientCustom.columnSetting($event,true)">确定</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="client-judge" ng-if="total_page<1">您好，暂时没有符合条件的任何数据</div>
+            <div ng-show="total_page>0" yc-page page="page" redirect="redirect(page.page,search)" query="query"></div>
+
+        </div>
+    </script>
+
+
+    <!--444444444444444444444444444444444444444444444444444444地域-->
+    <script type="text/ng-template" id="territoryCtrl.html">
+        <div class="container" ng-controller="territoryCtrl">
+            <div class="button-group clear">
+                <div class="button-g fl">
+                    <a href="javascript:;" class="yc-btn" ng-click="export()">导出报表</a>
+                    <a href="javascript:;" class="yc-btn" onclick="window.print(4,'地域报表')">预览打印</a>
+                </div>
+                <div class="query-g fr">
+                    <label class="checkbox"> <input class="form-control" type="checkbox" ng-false-value="false" ng-true-value="true" ng-model="forCityBo"> 分“市” </label>
+                    <div yc-select="provinceListSel" width="150" query="query" value="param2" key="provinceName" add="全部" name="provinceName" placeholder="择省" session="adReport_territory_province" group="ad-report-territory"></div>
+                    <div yc-select="orderListSel" width="150" query="query" value="paramInt2" key="id" add="全部" name="orderName" placeholder="订单" session="adReport_territory_order" group="ad-report-territory"></div>
+
+                    <div class="icon-input">
+                        <input class="form-control" type="text" ng-placeholder="{{forCitySearch || '请输入省'}}" ng-model="query.search">
+                        <span class="icon">
+                        <i class="yc-icon calendars" ng-click="redirect(1,search)">&#xe60b;</i>
+                        </span>
+                    </div>
+                    <div class="icon-input picker-date">
+                        <label>
+                            <input class="form-control time_default" readonly type="text" id="adReportTime4">
+                            <i class="icon yc-icon calendars">&#xe60e;</i>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div yc-print="4">
+                <table class="yc-table">
+                    <thead>
+                    <tr>
+                        <th ng-show="clientCustom.provinceName">省</th>
+                        <th ng-show="forCity && clientCustom.cityName">市</th>
+                        <th ng-show="clientCustom.orderIdTotal">订单量</th>
+                        <th ng-show="clientCustom.pv">曝光量</th>
+                        <th ng-show="clientCustom.click">点击量</th>
+                        <th ng-show="clientCustom.ctr">点击率</th>
+                        <!--<th ng-show="clientCustom.cpm">CPM</th>-->
+                        <!--<th ng-show="clientCustom.cpc">CPC</th>-->
+                        <!--<th ng-show="clientCustom.totalMoney">总花费</th>-->
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-hide="items.length<1" ng-repeat="item in summarizing" class="coloru">
+                        <td ng-show="clientCustom.provinceName">汇总</td>
+                        <th ng-show="forCity && clientCustom.cityName"></th>
+                        <td ng-show="clientCustom.orderIdTotal" ng-bind="item.orderCount?(item.orderCount| number):'0'"></td>
+                        <td ng-show="clientCustom.pv" ng-bind="item.pvCount?(item.pvCount| number):'0'"></td>
+                        <td ng-show="clientCustom.click" ng-bind="item.clickCount?(item.clickCount| number):'0'"></td>
+                        <td ng-show="clientCustom.ctr" ng-bind="item.ctrCount?((item.ctrCount| number:2)+'%'):'0.00%'"></td>
+                        <!--<td ng-show="clientCustom.cpm" ng-bind="item.cpmCount?('¥'+(item.cpmCount| number:2)):'¥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.cpc" ng-bind="item.cpcCount?('¥'+(item.cpcCount| number:2)):'¥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.totalMoney" ng-bind="item.moneyCount?(item.moneyCount|currency:'¥'):'¥0.00'"></td>-->
+                    </tr>
+                    <tr ng-repeat="item in items">
+                        <td ng-show="clientCustom.provinceName" ng-bind="item.provinceName?(item.provinceName):'--'"></td>
+                        <td ng-show="forCity && clientCustom.cityName" ng-bind="item.cityName?(item.cityName):'--'"></td>
+                        <td ng-show="clientCustom.orderIdTotal" ng-bind="item.orderIdTotal?(item.orderIdTotal| number):'0'"></td>
+                        <td ng-show="clientCustom.pv" ng-bind="item.pv?(item.pv| number):'0'"></td>
+                        <td ng-show="clientCustom.click" ng-bind="item.click?(item.click| number):'0'"></td>
+                        <td ng-show="clientCustom.ctr" ng-bind="item.ctr?((item.ctr| number:2)+'%'):'0.00%'"></td>
+                        <!--<td ng-show="clientCustom.cpm" ng-bind="item.cpm?(item.cpm|currency:'¥'):'¥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.cpc" ng-bind="item.cpc?(item.cpc|currency:'¥'):'¥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.totalMoney" ng-bind="item.totalMoney?(item.totalMoney|currency:'¥'):'¥0.00'"></td>-->
+                    </tr>
+                    </tbody>
+                </table>
+                <div column-setting="clientCustom">
+                    <div class="column-setting" ng-click="clientCustom.columnSetting($event)"> <i class="yc-icon pointer success">&#xe601;</i> </div>
+                    <div class="column-line hide animated">
+                        <div class="triangle"></div>
+                        <div class="clear">
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.provinceName"> 省 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" disabled ng-model="clientCustom.cityName"> 市 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.orderIdTotal"> 订单量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.pv"> 曝光量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.click"> 点击量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.ctr"> 点击率 </label>
+                        </div>
+                        <div class="center">
+                            <a href="javascript:;" class="yc-btn-out" ng-click="clientCustom.columnSetting($event,true)">确定</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="client-judge" ng-if="total_page<1">您好，暂时没有符合条件的任何数据</div>
+            <div ng-show="total_page>0" yc-page page="page" redirect="redirect(page.page,search)" query="query"></div>
+
+        </div>
+    </script>
+
+    <!--555555555555555555555555555555555555555555555555555555555操作系统-->
+    <script type="text/ng-template" id="operationCtrl.html">
+        <div class="container" ng-controller="operationCtrl">
+            <div class="button-group clear">
+                <div class="button-g fl">
+                    <a href="javascript:;" class="yc-btn" ng-click="export()">导出报表</a>
+                    <a href="javascript:;" class="yc-btn" onclick="window.print(5,'操作系统报表')">预览打印</a>
+                </div>
+                <div class="query-g fr">
+                    <div yc-select="orderListSel" width="150" query="query" value="paramInt1" key="id" add="全部" name="orderName" placeholder="订单" session="adReport_operation_order" group="ad-report-operation"></div>
+
+                    <div class="icon-input">
+                        <input class="form-control" type="text" ng-placeholder="请输入操作系统名称" ng-model="query.search">
+                        <span class="icon">
+                        <i class="yc-icon calendars" ng-click="redirect(1,search)">&#xe60b;</i>
+                        </span>
+                    </div>
+                    <div class="icon-input picker-date">
+                        <label>
+                            <input class="form-control time_default" type="text" id="adReportTime5">
+                            <i class="icon yc-icon calendars">&#xe60e;</i>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div yc-print="5">
+                <table class="yc-table">
+                    <thead>
+                    <tr>
+                        <th ng-show="clientCustom.osName">操作系统名称</th>
+                        <th ng-show="clientCustom.pv">曝光量</th>
+                        <th ng-show="clientCustom.click">点击量</th>
+                        <th ng-show="clientCustom.ctr">点击率</th>
+                        <!--<th ng-show="clientCustom.cpm">CPM</th>-->
+                        <!--<th ng-show="clientCustom.cpc">CPC</th>-->
+                        <!--<th ng-show="clientCustom.totalMoney">总花费</th>-->
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-hide="items<1" ng-repeat="item in summarizing" class="coloru">
+                        <td ng-show="clientCustom.osName">汇总</td>
+                        <td ng-show="clientCustom.pv" ng-bind="item.pvCount?(item.pvCount| number):'0'"></td>
+                        <td ng-show="clientCustom.click" ng-bind="item.clickCount?(item.clickCount| number):'0'"></td>
+                        <td ng-show="clientCustom.ctr" ng-bind="item.ctrCount?((item.ctrCount| number:2)+'%'):'0.00%'"></td>
+                        <!--<td ng-show="clientCustom.cpm" ng-bind="item.cpmCount?('¥'+(item.cpmCount| number:2)):'¥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.cpc" ng-bind="item.cpcCount?('¥'+(item.cpcCount| number:2)):'¥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.totalMoney" ng-bind="item.moneyCount?(item.moneyCount|currency:'¥'):'¥0.00'"></td>-->
+                    </tr>
+                    <tr ng-repeat="item in items">
+                        <td ng-show="clientCustom.osName" ng-bind="item.osName?(item.osName):'--'"></td>
+                        <td ng-show="clientCustom.pv" ng-bind="item.pv?(item.pv| number):'0'"></td>
+                        <td ng-show="clientCustom.click" ng-bind="item.click?(item.click| number):'0'"></td>
+                        <td ng-show="clientCustom.ctr" ng-bind="item.ctr?((item.ctr| number:2)+'%'):'0.00%'"></td>
+                        <!--<td ng-show="clientCustom.cpm" ng-bind="item.cpm?(item.cpm|currency:'¥'):'¥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.cpc" ng-bind="item.cpc?(item.cpc|currency:'¥'):'¥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.totalMoney" ng-bind="item.totalMoney?(item.totalMoney|currency:'¥'):'¥0.00'"></td>-->
+                    </tr>
+                    </tbody>
+                </table>
+                <div column-setting="clientCustom">
+                    <div class="column-setting" ng-click="clientCustom.columnSetting($event)"> <i class="yc-icon pointer success">&#xe601;</i> </div>
+                    <div class="column-line hide animated">
+                        <div class="triangle"></div>
+                        <div class="clear">
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.osName"> 操作系统 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.pv"> 曝光量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.click"> 点击量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.ctr"> 点击率 </label>
+                        </div>
+                        <div class="center">
+                            <a href="javascript:;" class="yc-btn-out" ng-click="clientCustom.columnSetting($event,true)">确定</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="client-judge" ng-if="total_page<1">您好，暂时没有符合条件的任何数据</div>
+            <div ng-show="total_page>0" yc-page page="page" redirect="redirect(page.page,search)" query="query"></div>
+
+        </div>
+    </script>
+
+    <!--66666666666666666666666666666666666666666666666666666666666666浏览器-->
+    <script type="text/ng-template" id="browserCtrl.html">
+        <div class="container" ng-controller="browserCtrl">
+            <div class="button-group clear">
+                <div class="button-g fl">
+                    <a href="javascript:;" class="yc-btn" ng-click="export()">导出报表</a>
+                    <a href="javascript:;" class="yc-btn" onclick="window.print(6,'浏览器报表')">预览打印</a>
+                </div>
+                <div class="query-g fr">
+                    <div yc-select="orderListSel" width="150" query="query" value="paramInt1" key="id" add="全部" name="orderName" placeholder="订单" session="adReport_browser_order" group="ad-report-browser"></div>
+
+                    <div class="icon-input">
+                        <input class="form-control" type="text" ng-placeholder="请输入浏览器名称" ng-model="query.search">
+                        <span class="icon">
+                        <i class="yc-icon calendars" ng-click="redirect(1,search)">&#xe60b;</i>
+                        </span>
+                    </div>
+                    <div class="icon-input picker-date">
+                        <label>
+                            <input class="form-control time_default" type="text" id="adReportTime6">
+                            <i class="icon yc-icon calendars">&#xe60e;</i>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div yc-print="6">
+                <table class="yc-table">
+                <thead>
+                    <tr>
+                    <th ng-show="clientCustom.browserName">浏览器名称</th>
+                    <th ng-show="clientCustom.pv">曝光量</th>
+                    <th ng-show="clientCustom.click">点击量</th>
+                    <th ng-show="clientCustom.ctr">点击率</th>
+                    <!--<th ng-show="clientCustom.cpm">CPM</th>-->
+                    <!--<th ng-show="clientCustom.cpc">CPC</th>-->
+                    <!--<th ng-show="clientCustom.totalMoney">总花费</th>-->
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-hide="items<1" ng-repeat="item in summarizing" class="coloru">
+                    <td ng-show="clientCustom.browserName">汇总</td>
+                    <td ng-show="clientCustom.pv" ng-bind="item.pvCount?(item.pvCount| number):'0'"></td>
+                    <td ng-show="clientCustom.click" ng-bind="item.clickCount?(item.clickCount| number):'0'"></td>
+                    <td ng-show="clientCustom.ctr" ng-bind="item.ctrCount?((item.ctrCount| number:2)+'%'):'0.00%'"></td>
+                    <!--<td ng-show="clientCustom.cpm" ng-bind="item.cpmCount?('¥'+(item.cpmCount| number:2)):'¥0.00'"></td>-->
+                    <!--<td ng-show="clientCustom.cpc" ng-bind="item.cpcCount?('¥'+(item.cpcCount| number:2)):'¥0.00'"></td>-->
+                    <!--<td ng-show="clientCustom.totalMoney" ng-bind="item.moneyCount?(item.moneyCount|currency:'¥'):'¥0.00'"></td>-->
+                </tr>
+                <tr ng-repeat="item in items">
+                    <td ng-show="clientCustom.browserName" ng-bind="item.browserName?(item.browserName):'--'"></td>
+                    <td ng-show="clientCustom.pv" ng-bind="item.pv?(item.pv| number):'0'"></td>
+                    <td ng-show="clientCustom.click" ng-bind="item.click?(item.click| number):'0'"></td>
+                    <td ng-show="clientCustom.ctr" ng-bind="item.ctr?((item.ctr| number:2)+'%'):'0.00%'"></td>
+                    <!--<td ng-show="clientCustom.cpm" ng-bind="item.cpm?(item.cpm|currency:'¥'):'¥0.00'"></td>-->
+                    <!--<td ng-show="clientCustom.cpc" ng-bind="item.cpc?(item.cpc|currency:'¥'):'¥0.00'"></td>-->
+                    <!--<td ng-show="clientCustom.totalMoney" ng-bind="item.totalMoney?(item.totalMoney|currency:'¥'):'¥0.00'"></td>-->
+                </tr>
+                </tbody>
+                </table>
+                <div column-setting="clientCustom">
+                    <div class="column-setting" ng-click="clientCustom.columnSetting($event)"> <i class="yc-icon pointer success">&#xe601;</i> </div>
+                    <div class="column-line hide animated">
+                        <div class="triangle"></div>
+                        <div class="clear">
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.browserName"> 浏览器名称 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.pv"> 曝光量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.click"> 点击量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.ctr"> 点击率 </label>
+                        </div>
+                        <div class="center">
+                            <a href="javascript:;" class="yc-btn-out" ng-click="clientCustom.columnSetting($event,true)">确定</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="client-judge" ng-if="total_page<1">您好，暂时没有符合条件的任何数据</div>
+            <div ng-show="total_page>0" yc-page page="page" redirect="redirect(page.page,search)" query="query"></div>
+
+        </div>
+    </script>
+
+    <!--7777777777777777777777777777777777777777777777777777777777777777777广告位-->
+    <script type="text/ng-template" id="adAdvertisementCtrl.html">
+        <div class="container" ng-controller="adAdvertisementCtrl">
+            <div class="button-group clear">
+                <div class="button-g fl">
+                    <a href="javascript:;" class="yc-btn" ng-click="export()">导出报表</a>
+                    <a href="javascript:;" class="yc-btn" onclick="window.print(7,'广告位报表')">预览打印</a>
+                </div>
+                <div class="query-g fr">
+                    <div yc-select="customerListSel" width="150" query="query" value="paramInt1" key="id" add="全部" name="customerName" placeholder="客户" session="adReport_create_customer" group="ad-report-create"></div>
+                    <div yc-select="mediaListSel" width="100" query="query" value="paramInt3" key="id" add="全部" name="mediaName" placeholder="媒体" session="adReport_create_media" group="ad-report-create"></div>
+                    <div yc-select="channelListSel" width="100" query="query" value="paramInt4" key="id" add="全部" name="channelName" placeholder="频道" session="adReport_create_channel" group="ad-report-create"></div>
+                    <div yc-select="typeListSel" width="134" query="query" value="paramInt5" key="id" add="全部" placeholder="广告类型" session="adReport_create_type" group="ad-report-create"></div>
+                    <div yc-select="orderListSel" width="150" query="query" value="paramInt2" key="id" add="全部" name="orderName" placeholder="订单" session="adReport_create_order" group="ad-report-create"></div>
+
+                    <div class="icon-input picker-date">
+                        <input class="form-control" type="text" ng-placeholder="请输入广告位名称或ID" ng-model="query.search">
+                        <span class="icon">
+                        <i class="yc-icon calendars" ng-click="redirect(1,search)">&#xe60b;</i>
+                        </span>
+                    </div>
+                    <div class="icon-input picker-date">
+                        <label>
+                            <input class="form-control time_default" type="text" id="adReportTime7">
+                            <i class="icon yc-icon calendars">&#xe60e;</i>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div yc-print="7">
+                <table class="yc-table">
+                    <thead>
+                    <tr>
+                        <th ng-show="clientCustom.id">广告位ID</th>
+                        <th ng-show="clientCustom.adSpaceName">广告位名称</th>
+                        <th ng-show="clientCustom.adSpaceTypeName">广告类型</th>
+                        <th ng-show="clientCustom.channelName">频道</th>
+                        <!--<th ng-show="clientCustom.pageType">页面类型</th>-->
+                        <th ng-show="clientCustom.mediaName">所属媒体</th>
+                        <th ng-show="clientCustom.customerTotal">客户量</th>
+                        <th ng-show="clientCustom.orderIdTotal">订单量</th>
+                        <th ng-show="clientCustom.pv">曝光量</th>
+                        <th ng-show="clientCustom.click">点击量</th>
+                        <th ng-show="clientCustom.ctr">点击率</th>
+                        <!--<th ng-show="clientCustom.cpm">CPM</th>-->
+                        <!--<th ng-show="clientCustom.cpc">CPC</th>-->
+                        <!--<th ng-show="clientCustom.totalMoney">总花费</th>-->
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-hide="items.length<1" ng-repeat="item in summarizing">
+                        <td ng-show="clientCustom.id">汇总</td>
+                        <td ng-show="clientCustom.adSpaceName">--</td>
+                        <td ng-show="clientCustom.adSpaceTypeName">--</td>
+                        <td ng-show="clientCustom.channelName">--</td>
+                        <!--<td ng-show="clientCustom.pageType" >&#45;&#45;</td>-->
+                        <td ng-show="clientCustom.mediaName">--</td>
+                        <td ng-show="clientCustom.customerTotal" ng-bind="item.customerCount">--</td>
+                        <td ng-show="clientCustom.orderIdTotal" ng-bind="item.orderCount">--</td>
+                        <td ng-show="clientCustom.pv" ng-bind="item.pvCount?(item.pvCount| number):'0'"></td>
+                        <td ng-show="clientCustom.click" ng-bind="item.clickCount?(item.clickCount| number):'0'"></td>
+                        <td ng-show="clientCustom.ctr" ng-bind="item.ctrCount?((item.ctrCount| number:2)+'%'):'0.00%'"></td>
+                        <!--<td ng-show="clientCustom.cpm" ng-bind="item.cpmCount?('¥'+(item.cpmCount| number:2)):'¥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.cpc" ng-bind="item.cpcCount?('¥'+(item.cpcCount| number:2)):'¥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.totalMoney" ng-bind="item.moneyCount?(item.moneyCount|currency:'¥'):'¥0.00'"></td>-->
+                    </tr>
+                    <tr ng-repeat="item in items">
+                        <td ng-show="clientCustom.id" ng-bind="item.id?(item.id):'--'"></td>
+                        <td ng-show="clientCustom.adSpaceName" ng-bind="item.adSpaceName?(item.adSpaceName):'--'"></td>
+                        <td ng-show="clientCustom.adSpaceTypeName" ng-bind="item.adSpaceTypeName?(item.adSpaceTypeName):'--'"></td>
+                        <td ng-show="clientCustom.channelName" ng-bind="item.channelName?(item.channelName):'--'"></td>
+                        <!--<td ng-show="clientCustom.pageType" ng-bind='item.pageType?(item.pageType<=2? (item.pageType != 2 ? "首页" : "频道首页") : "内容页"):"&#45;&#45;"'></td>-->
+                        <td ng-show="clientCustom.mediaName" ng-bind="item.mediaName?(item.mediaName):'--'"></td>
+                        <td ng-show="clientCustom.customerTotal" ng-bind="item.customerTotal?(item.customerTotal | number):'0'"></td>
+                        <td ng-show="clientCustom.orderIdTotal" ng-bind="item.orderIdTotal?(item.orderIdTotal | number):'0'"></td>
+                        <td ng-show="clientCustom.pv" ng-bind="item.pv?(item.pv| number):'0'"></td>
+                        <td ng-show="clientCustom.click" ng-bind="item.click?(item.click| number):'0'"></td>
+                        <td ng-show="clientCustom.ctr" ng-bind="item.ctr?((item.ctr| number:2)+'%'):'0.00%'"></td>
+                        <!--<td ng-show="clientCustom.cpm" ng-bind="item.cpm?(item.cpm|currency:'¥'):'¥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.cpc" ng-bind="item.cpc?(item.cpc|currency:'¥'):'¥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.totalMoney" ng-bind="item.totalMoney?(item.totalMoney|currency:'¥'):'¥0.00'"></td>-->
+                    </tr>
+                    </tbody>
+                </table>
+                <div column-setting="clientCustom">
+                    <div class="column-setting" ng-click="clientCustom.columnSetting($event)"> <i class="yc-icon pointer success">&#xe601;</i> </div>
+                    <div class="column-line hide animated">
+                        <div class="triangle"></div>
+                        <div class="clear">
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.id"> 广告位ID </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.adSpaceName"> 广告位名称 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.adSpaceTypeName"> 广告类型 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.channelName"> 频道 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.mediaName"> 所属媒体 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.customerTotal"> 客户量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.orderIdTotal"> 订单量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.pv"> 曝光量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.click"> 点击量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.ctr"> 点击率 </label>
+                        </div>
+                        <div class="center">
+                            <a href="javascript:;" class="yc-btn-out" ng-click="clientCustom.columnSetting($event,true)">确定</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="client-judge" ng-if="total_page<1">您好，暂时没有符合条件的任何数据</div>
+            <div ng-show="total_page>0" yc-page page="page" redirect="redirect(page.page,search)" query="query"></div>
+
+        </div>
+    </script>
+
+    <!--8888888888888888888888888888888888888888888888888888888888888888888888888888时段报表-->
+    <script type="text/ng-template" id="hourCtrl.html">
+        <div class="container" ng-controller="hourCtrl">
+            <div class="button-group clear">
+                <div class="button-g fl">
+                    <a href="javascript:;" class="yc-btn" ng-click="export()">导出报表</a>
+                    <a href="javascript:;" class="yc-btn" onclick="window.print(8,'时段报表')">预览打印</a>
+                </div>
+                <div class="query-g fr">
+                    <div yc-select="customerListSel" width="150" query="query" value="paramInt1" key="id" add="全部" name="customerName" placeholder="客户" session="adReport_hour_customer" group="ad-report-hour"></div>
+                    <div yc-select="orderListSel" width="150" query="query" value="paramInt2" key="id" add="全部" name="orderName" placeholder="订单" session="adReport_hour_order" group="ad-report-hour"></div>
+
+                    <div class="icon-input picker-date">
+                        <label>
+                            <input class="form-control time_default" type="text" id="adReportTime8">
+                            <i class="icon yc-icon calendars">&#xe60e;</i>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div yc-print="8">
+                <table class="yc-table">
+                    <thead>
+                    <tr>
+                        <th ng-show="clientCustom.currentHour">时段</th>
+                        <th ng-show="clientCustom.customerTotal">客户量</th>
+                        <th ng-show="clientCustom.orderIdTotal">订单量</th>
+                        <th ng-show="clientCustom.pv">曝光量</th>
+                        <th ng-show="clientCustom.click">点击量</th>
+                        <th ng-show="clientCustom.ctr">点击率</th>
+                        <!--<th ng-show="clientCustom.cpm">CPM</th>-->
+                        <!--<th ng-show="clientCustom.cpc">CPC</th>-->
+                        <!--<th ng-show="clientCustom.totalMoney">总花费</th>-->
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-hide="items.length<1" ng-repeat="item in summarizing" class="coloru">
+                        <td ng-show="clientCustom.currentHour">汇总</td>
+                        <td ng-show="clientCustom.customerTotal" ng-bind="item.customerCount?(item.customerCount):'--'"></td>
+                        <td ng-show="clientCustom.orderIdTotal" ng-bind="item.orderCount?(item.orderCount):'0'"></td>
+                        <td ng-show="clientCustom.pv" ng-bind="item.pvCount?(item.pvCount| number):'0'"></td>
+                        <td ng-show="clientCustom.click" ng-bind="item.clickCount?(item.clickCount| number):'0'"></td>
+                        <td ng-show="clientCustom.ctr" ng-bind="item.ctrCount?((item.ctrCount| number:2)+'%'):'0.00%'"></td>
+                        <!--<td ng-show="clientCustom.cpm" ng-bind="item.cpmCount?('￥'+(item.cpmCount| number:2)):'￥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.cpc" ng-bind="item.cpcCount?('￥'+(item.cpcCount| number:2)):'￥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.totalMoney" ng-bind="item.moneyCount?(item.moneyCount|currency:'￥'):'￥0.00'"></td>-->
+                    </tr>
+                    <tr ng-repeat="item in items">
+                        <td ng-show="clientCustom.currentHour" ng-bind="item.currentHour?( item.currentHour + ':00-' + item.currentHour + ':59'  ):'--'"></td>
+                        <td ng-show="clientCustom.customerTotal" ng-bind="::item.customerTotal?(item.customerTotal):'0'"></td>
+                        <td ng-show="clientCustom.orderIdTotal" ng-bind="::item.orderIdTotal?(item.orderIdTotal):'0'"></td>
+                        <td ng-show="clientCustom.pv" ng-bind="item.pv?(item.pv| number):'0'"></td>
+                        <td ng-show="clientCustom.click" ng-bind="item.click?(item.click| number):'0'"></td>
+                        <td ng-show="clientCustom.ctr" ng-bind="item.ctr?((item.ctr| number:2)+'%'):'0.00%'"></td>
+                        <!--<td ng-show="clientCustom.cpm" ng-bind="item.cpm?(item.cpm|currency:'￥'):'￥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.cpc" ng-bind="item.cpc?(item.cpc|currency:'￥'):'￥0.00'"></td>-->
+                        <!--<td ng-show="clientCustom.totalMoney" ng-bind="item.totalMoney?(item.totalMoney|currency:'￥'):'￥0.00'"></td>-->
+                    </tr>
+                    </tbody>
+                </table>
+                <div column-setting="clientCustom">
+                    <div class="column-setting" ng-click="clientCustom.columnSetting($event)"> <i class="yc-icon pointer success">&#xe601;</i> </div>
+                    <div class="column-line hide animated">
+                        <div class="triangle"></div>
+                        <div class="clear">
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.currentHour"> 时段 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.customerTotal"> 客户量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.orderIdTotal"> 订单量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.pv"> 曝光量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.click"> 点击量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.ctr"> 点击率 </label>
+                        </div>
+                        <div class="center">
+                            <a href="javascript:;" class="yc-btn-out" ng-click="clientCustom.columnSetting($event,true)">确定</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="client-judge" ng-if="total_page<1">您好，暂时没有符合条件的任何数据</div>
+            <div ng-show="total_page>0" yc-page page="page" redirect="redirect(page.page,search)" query="query"></div>
+
+        </div>
+    </script>
+
+
+    <!--999999999999999999999999999999999999999999999999999999999999999999999999999关键字-->
+    <script type="text/ng-template" id="keyWordCtrl.html">
+        <div class="container" ng-controller="keyWordCtrl">
+            <div class="button-group clear">
+                <div class="button-g fl">
+                    <a href="javascript:;" class="yc-btn" ng-click="export()">导出报表</a>
+                    <a href="javascript:;" class="yc-btn" onclick="window.print(9,'时段报表')">预览打印</a>
+                </div>
+                <div class="query-g fr">
+                    <div yc-select="orderListSel" width="150" placeholder="选择订单" query="query" value="paramInt2" add="全部" key="id" name="orderName" group="ad-report-word" session="adReport_word_order"></div>
+                    <div yc-select="customerListSel" width="150" placeholder="选择客户" query="query" value="paramInt1" add="全部" key="id" name="customerName" group="ad-report-word" session="adReport_word_customer"></div>
+
+                    <div class="icon-input picker-date">
+                        <label>
+                            <input class="form-control time_default" type="text" id="adReportWord">
+                            <i class="icon yc-icon calendars">&#xe60e;</i>
+                        </label>
+                    </div>
+                    <div class="icon-input">
+                        <input class="form-control" ng-width="250" type="text" ng-placeholder="请输入文字链标题或广告位名称" ng-model="query.search">
+                        <span class="icon">
+                        <i class="yc-icon calendars" ng-click="redirect(1,query.search)">&#xe60b;</i>
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+
+            <div yc-print="9">
+                <table class="yc-table">
+                    <thead>
+                    <tr>
+                        <th ng-show="clientCustom.textLinkName">文字链标题</th>
+                        <th ng-show="clientCustom.adSpaceName">广告位名称</th>
+                        <th ng-show="clientCustom.pv">曝光量</th>
+                        <th ng-show="clientCustom.click">点击量</th>
+                        <th ng-show="clientCustom.ctr">点击率</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-hide="items.length<1" ng-repeat="item in summarizing" class="coloru">
+                        <td ng-show="clientCustom.textLinkName">汇总</td>
+                        <td ng-show="clientCustom.adSpaceName" ng-bind="item.adSpaceName?(item.adSpaceName):'--'"></td>
+                        <td ng-show="clientCustom.pv" ng-bind="item.pvCount?(item.pvCount| number):'0'"></td>
+                        <td ng-show="clientCustom.click" ng-bind="item.clickCount?(item.clickCount| number):'0'"></td>
+                        <td ng-show="clientCustom.ctr" ng-bind="item.ctrCount?((item.ctrCount| number:2)+'%'):'0.00%'"></td>
+                    </tr>
+                    <tr ng-repeat="item in items">
+                        <td ng-show="clientCustom.textLinkName" ng-bind="item.textLinkName?(item.textLinkName):'--'"></td>
+                        <td ng-show="clientCustom.adSpaceName" ng-bind="::item.adSpaceName?(item.adSpaceName):'0'"></td>
+                        <td ng-show="clientCustom.pv" ng-bind="item.pv?(item.pv| number):'0'"></td>
+                        <td ng-show="clientCustom.click" ng-bind="item.click?(item.click| number):'0'"></td>
+                        <td ng-show="clientCustom.ctr" ng-bind="item.ctr?((item.ctr*100 | number:2)+'%'):'0.00%'"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div column-setting="clientCustom">
+                    <div class="column-setting" ng-click="clientCustom.columnSetting($event)"> <i class="yc-icon pointer success">&#xe601;</i> </div>
+                    <div class="column-line hide animated">
+                        <div class="triangle"></div>
+                        <div class="clear">
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.textLinkName"> 文字链标题 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.adSpaceName"> 广告位名称 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.pv"> 曝光量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.click"> 点击量 </label>
+                            <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.ctr"> 点击率 </label>
+                        </div>
+                        <div class="center">
+                            <a href="javascript:;" class="yc-btn-out" ng-click="clientCustom.columnSetting($event,true)">确定</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="client-judge" ng-if="total_page<1">您好，暂时没有符合条件的任何数据</div>
+            <div ng-show="total_page>0" yc-page page="page" redirect="redirect(page.page,search)" query="query"></div>
+
+        </div>
+    </script>
+
+</body>
+</html>

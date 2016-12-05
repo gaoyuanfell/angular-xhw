@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="zh-CN" ng-app="WangCheng">
+
+<head>
+    <meta charset="utf-8" />
+    <title>订单管理-排期查询</title>
+    <meta name="keywords" content="订单管理-排期查询" />
+    <meta name="description" content="订单管理-排期查询" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico" />
+    <link rel="stylesheet" href="../../static/css/ycui.css" />
+    <link rel="stylesheet" href="../../static/css/global.css" />
+    <link rel="stylesheet" href="../../static/css/listManage.css" />
+    <!--<link rel="stylesheet" href="../../static/lib/dateRange/jQuery.pickerDateRange.css" />-->
+
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <!--<script src="../../static/lib/dateRange/jQuery.pickerDateRange.js"></script>-->
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/js/order.js"></script>
+</head>
+
+<body class="listManage" ng-controller="orderRuleCtrl">
+    <nav class="header">
+        <div class="scroll">
+            <a class="nav active" href="#">排期查询</a>
+        </div>
+    </nav>
+    <div class="container" ng-controller="listManageCtrl">
+        <div class="button-group clear">
+            <div class="button-g fl">
+                <div yc-select="mediaNameSel" width="150" query="query" value="mediaId" key="id" placeholder="媒体" session="media_scheduling" group="schedulingGroup" name="mediaName"></div>
+                <div yc-select="channelsSel" width="150" query="query" value="channelId" key="id" placeholder="频道" session="channel_scheduling" group="schedulingGroup" name="channelName"></div>
+                <div yc-select="sizeListSel" width="150" query="query" value="size" key="size" placeholder="尺寸" session="size_scheduling" group="schedulingGroup" name="size"></div>
+                <div yc-select="languageSel" width="150" query="query" value="languageId" key="id" placeholder="语言" session="language_scheduling" group="schedulingGroup" name="language"></div>
+                <a class="yc-btn" ng-click="areaShow($event)">{{provincesName || '全国'}}</a>
+            </div>
+            <div class="query-g fr">
+                <div class="icon-input">
+                    <input class="form-control" type="text" ng-placeholder="请输入广告位名称或ID" ng-model="query.search">
+                    <span class="icon">
+                        <i class="yc-icon calendars" ng-click="redirect(1,search)">&#xe60b;</i>
+                    </span>
+                </div>
+                 <!--<div class="yc-search-wraper">-->
+
+                    <!--<input type="text" ng-placeholder="请输入广告位名称或ID" ng-model="query.search"> <i class="yc-icon" ng-click="redirect(1)">&#xe623;</i>-->
+                 <!--</div>-->
+            </div>
+        </div>
+        <div class="button-group clear">
+            <div class="button-g fl">
+                <a class="yc-btn" href="javascript:;" ng-click="schedulePush()">导出排期</a>
+                <a class="yc-btn" href="javascript:;" ng-click="prevMonth(nowDate)">上一月</a>
+                <div class="btn-ionic">
+                    <label>
+                        <a class="yc-btn btn-default" href="javascript:;" ng-click="dateControlShow($event)" ng-bind="nowDate"></a>
+                        <i class="ionic yc-icon calendars">&#xe60e;</i>
+                    </label>
+                </div>
+                <a class="yc-btn" href="javascript:;" ng-click="nextMonth(nowDate)">下一月</a>
+            </div>
+            <div class="query-g fr">
+                <div class="mark-color">
+                    <span class="free-colo"></span><em>空闲</em>
+                    <span class="holiday-color"></span><em> <a href="javscript:void(0)" class="font" data-route="Holiday">节假日</a> </em>
+                    <span class="order-color"></span><em>有订单</em>
+                    <span class="orient-color"></span><em>有定向</em>
+                    <span class="full-color"></span><em>到达上限</em>
+                </div>
+            </div>
+        </div>
+        <div class="table-container">
+            <table class="yc-table table-scheduling">
+                <thead>
+                    <tr>
+                        <th rowspan="2">ID</th>
+                        <th rowspan="2">广告位名称</th>
+                        <th rowspan="2">尺寸</th>
+                        <th rowspan="2">频道</th>
+                        <th rowspan="2">所属媒体</th>
+                        <th rowspan="2" class="center th40" ng-show="putManageRule['ManagePutOrders']">操作</th>
+                        <th class="isNumber center" ng-repeat="week in weekList track by $index">{{week}}</th>
+                    </tr>
+                    <tr>
+                        <th class="isNumber center" ng-repeat="d in dateList track by $index" ng-class="{'holiday-color':d.holiday.isHoliday}">
+                            <span class="white-space holiday" ng-class="{'holiday-have':d.holiday.holidayName}" title="{{d.holiday.holidayName}}">
+                                {{(d.holiday.holidayName == '双休'?'':d.holiday.holidayName) || d.holiday.day || $index+1}}
+                            </span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="item in items">
+                        <td>
+                            <span ng-bind="::item.id" class="ellipsis th30"></span>
+                        </td>
+                        <td>
+                            <span title="{{item.adSpaceName}}" ng-bind="::item.adSpaceName" class="ellipsis th100"></span>
+                        </td>
+                        <td>
+                            <span ng-bind="::item.size" class="ellipsis th70"></span>
+                        </td>
+                        <td>
+                            <span title="{{item.mediaChannelName}}" ng-bind="::item.mediaChannelName" class="ellipsis th60"></span>
+                        </td>
+                        <td>
+                            <span title="{{item.mediaName}}" ng-bind="::item.mediaName" class="ellipsis th70"></span>
+                        </td>
+                        <td class="center" ng-click="addList(item)" ng-show="putManageRule['ManagePutOrders']">
+                            <a ng-style="!putManageRule['ManagePutOrders'] && {'color':'#CCCCCC','cursor':'default'}" title="添至订单" ng-class="getclass(item.id)" href="javascript:;" class="yc-icon">&#xe625;</a>
+                        </td>
+                        <td class="isNumber t-center"
+                            ng-click="scheduleInfo($event,da.id,da.date,da.num,da.name,item.viewOrdersDetail)"
+                            ng-repeat="da in dateArray[$index]"
+                            ng-class="{'full-color':(da.num >= item.multiLimit && da.area == 0),'free-color':da.num == 0 && da.area == 0,'order-color':(da.num != 0 && da.num < item.multiLimit &&  da.area == 0),'orient-color':da.area>0}" ng-bind="da.num">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="client-judge" ng-if="total_page<1">您好，暂时没有符合条件的任何数据</div>
+        </div>
+        <div ng-show="total_page>0" yc-page page="page" redirect="redirect(page.page,search)" query="query"></div>
+
+        <div class="adCreate-cart" ng-show="putManageRule['ManagePutOrders']">
+            <div class="adCreate-add">
+                <p class="item">
+                    当前已选择 <span ng-bind="getAllCarNum()"></span> 个广告位
+                </p>
+                <p class="item" ng-click="getListInfo()">
+                    立即创建订单
+                </p>
+            </div>
+            <div class="adCreate-table">
+                <table class="yc-table">
+                    <caption>已添加广告位</caption>
+                    <thead>
+                    <tr>
+                        <td>
+                            <label ng-click="selectAllCar($event)"><input class="form-control" type="checkbox">ID</label>
+                        </td>
+                        <td>广告位名称</td>
+                        <td>尺寸</td>
+                        <td><a href="javascript:void(0)" class="denuded" ng-click="moveAll()">清空</a></td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="ad in adList track by $index">
+                            <td >
+                                <label><input class="form-control" type="checkbox" ng-model="ad.$check"><span ng-bind="ad.id"></span></label>
+                            </td>
+                            <td ng-bind="ad.adSpaceName"></td>
+                            <td ng-bind="ad.size"></td>
+                            <td><a href="javascript:void(0)" ng-click="deleteList($index)">删除</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!--<div class="button-group clear">
+            <div class="button-g fl">
+                <span>已选择&nbsp;<span>{{getAllCarNum()}}</span>&nbsp;个广告位</span>
+                <a class="yc-btn" href="javascript:;" ng-click="getListInfo()">立即创建订单</a>
+            </div>
+        </div>-->
+
+        <!--扁平化城市控件-->
+        <div id="tiling_area" class="hide shadow">
+            <div class="triangle"></div>
+            <div class="header">
+                <div class="search">
+                    <div class="yc-section-input">
+                        <input id="cityFitter" ng-placeholder="请输入省或城市" type="text">
+                        <div class="searchList hide" ng-click="checkCity($event)">
+                            <span data='{"cityName":"{{province.cityName || province.provinceName}}","id":{{province.id}}}' ng-repeat="province in provinceListFitter">{{province.cityName || province.provinceName}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="close" ng-click="areaClose(1)">
+                    <i class="yc-icon">&#xe619;</i>
+                </div>
+                <div class="return" ng-click="provincesName = '全国';childId = '';areaId = '';areaClose();">
+                    返回全国
+                </div>
+            </div>
+            <div class="direct">
+                <div class="clear">
+                    <div class="head">省份直达：</div>
+                    <div class="tail" ng-click="anchorLocation($event)">
+                        <a href="javascript:void (0)" data-href="#A">A</a>
+                        <a href="javascript:void (0)" data-href="#F">F</a>
+                        <a href="javascript:void (0)" data-href="#G">G</a>
+                        <a href="javascript:void (0)" data-href="#H">H</a>
+                        <a href="javascript:void (0)" data-href="#J">J</a>
+                        <a href="javascript:void (0)" data-href="#L">L</a>
+                        <a href="javascript:void (0)" data-href="#N">N</a>
+                        <a href="javascript:void (0)" data-href="#Q">Q</a>
+                        <a href="javascript:void (0)" data-href="#S">S</a>
+                        <a href="javascript:void (0)" data-href="#T">T</a>
+                        <a href="javascript:void (0)" data-href="#X">X</a>
+                        <a href="javascript:void (0)" data-href="#Y">Y</a>
+                        <a href="javascript:void (0)" data-href="#Z">Z</a>
+                    </div>
+                </div>
+            </div>
+            <div class="centralBox">
+                <div class="centralCity" ng-click="checkCity($event)">
+                    <div class="clear">
+                        <div class="head"><b>直辖市：</b></div>
+                        <div class="tail">
+                            <span data='{"cityName":"北京市","id":1}'>北京市</span>
+                            <span data='{"cityName":"上海市","id":9}'>上海市</span>
+                            <span data='{"cityName":"天津市","id":2}'>天津市</span>
+                            <span data='{"cityName":"重庆市","id":22}'>重庆市</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="central" ng-repeat="provinces in provinceList" ng-click="checkCity($event)">
+                    <div id="{{province.letter}}" class="clear" ng-repeat="province in provinces">
+                        <div class="head">
+                            <b>{{province.letter}}</b>
+                            <span data='{"provinceName":"{{province.provinceName}}","id":{{province.id}}}'>{{province.provinceName}}</span>：
+                        </div>
+                        <div class="tail">
+                            <span ng-repeat="c in province.city" data="{{c}}">{{c.cityName}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--日期控件-->
+
+        <div id="date_control" class="hide shadow">
+            <div class="triangle"></div>
+            <div class="header">
+                <span class="date_left"> </span>
+                <span class="date_center pointer" ng-bind="_nowDate" ng-click="dateShowYear()"> </span>
+                <span class="date_right"> </span>
+            </div>
+            <div class="body">
+                <div class="item" ng-repeat="da in dateControl track by $index" ng-click="dateSwitch(da)" ng-class="{'date_nowMonth':nowDate.split('-')[1] == da._date || nowDate.split('-')[0] == da.date}">{{da.date}}</div>
+            </div>
+        </div>
+
+        <!-- 排期导出 -->
+        <div class="dialog-bg hide" yc-module="schedulePushModule">
+            <div class="dialog-wraper">
+                <div class="dialog-title">
+                    <span class="title">title</span>
+                    <i class="dialog-close yc-icon">&#xe619;</i>
+                </div>
+                <div class="dialog-con">
+                    <div class="form-group">
+                        <label class="yc-col-3 control-label"> 月份范围：</label>
+                        <div class="yc-col-9">
+                            <input class="form-control short" style="width:82px;" name="totalMoney" type="text" ng-placeholder="开始 1" ng-model="queryModule.startDate">
+                            <span> 至 </span>
+                            <input class="form-control short" style="width:82px;" name="totalMoney" type="text" ng-placeholder="结束 3" ng-model="queryModule.endDate">
+                            <span class="msg">最多3个月</span>
+                        </div>
+                    </div>
+                    <p class="error" ng-show="queryModule.dateMsg"> {{queryModule.dateMsg}} </p>
+                </div>
+                <div class="dialog-submit">
+                    <a href="javascript:void(0)" class="ok">确定</a>
+                    <a href="javascript:void(0)" class="no">取消</a>
+                </div>
+            </div>
+        </div>
+        <!--排期详情-->
+        <div class="dialog-bg hide" yc-module="scheduleInfoModule">
+            <div class="dialog-wraper">
+                <div class="dialog-title">
+                    <span class="title">title</span>
+                    <i class="dialog-close yc-icon">&#xe619;</i>
+                </div>
+                <div class="dialog-con">
+                    <table class="yc-table">
+                        <thead>
+                        <tr>
+                            <th>订单名称</th>
+                            <th style="min-width: 62px;">订单类型</th>
+                            <th>业务员</th>
+                            <th style="min-width: 62px;">投放状态</th>
+                            <th>投放档期</th>
+                            <th>地域</th>
+                            <th>公开备注</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="li in _scheduleInfoModule.list">
+                                <td title="{{li.orderName}}">
+                                    <span ng-bind="li.orderName" class="ellipsis th150"></span>
+                                </td>
+                                <td ng-bind="li.orderType | orderTypeFtr"></td>
+                                <td ng-bind="li.trueName"></td>
+                                <td ng-bind="li.showState | showStateFtr"></td>
+                                <td>
+                                    <span title="{{li.scheduleValue.join('\n')}}" class="th140">
+                                        {{li.showTime}}<br>{{li._scheduleValue.join(',')}}
+                                    </span>
+                                </td>
+                                <td title="{{li.directionValue || '全国'}}">
+                                    <span ng-bind="li.directionValue || '全国'" class="ellipsis th100"></span>
+                                </td>
+                                <td title="{{li.publicRemark || ''}}">
+                                    <span class="ellipsis th230" ng-bind="li.publicRemark || ''"></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="dialog-submit">
+                    <a href="javascript:void(0)" class="ok">确定</a>
+                    <a href="javascript:void(0)" class="no">取消</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>

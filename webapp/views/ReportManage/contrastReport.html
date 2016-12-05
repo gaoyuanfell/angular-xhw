@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="zh-CN" ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>客户报表-数据报表</title>
+    <meta name="keywords" content="对比报表-数据报表"/>
+    <meta name="description" content="对比报表-数据报表"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../../static/css/global.css"/>
+    <link rel="stylesheet" href="../../static/css/reportManage.css"/>
+    <link rel="stylesheet" href="../../static/lib/dateRange/jQuery.pickerDateRange.css"/>
+
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../../static/lib/echarts/echarts.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/dateRange/jQuery.pickerDateRange.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+</head>
+<body>
+<div class="yc-main-top clear" ng-controller="orderRuleCtrl">
+    <a href="../{{rule.url}}" ng-repeat="rule in ruleListTab" ng-class="{'cur':isLocation(rule.urlAll)}"><span ng-bind="rule.name"></span></a>
+</div>
+<div class="yc-main-wraper operationMa contrastReport">
+    <div class="operationMa-switchover">
+        <div class="operationMa-tab" ng-controller="contrastCtrl">
+            <div class="clear">
+                <div ng-show="timeType == 0" class="fr">
+                    <div class="yc-select yc-select-adReport operationMa-operationType">
+                        <div class="yc-select-current ">{{firstTimeStr}}</div>
+                        <i class="yc-icon">&#xe605;</i>
+                        <ul class="yc-select-options">
+                            <li ng-repeat="item in years" ng-click="redirectStart(item,0)">
+                                {{item}}
+                            </li>
+                        </ul>
+                        <input type="hidden" ng-model="time.firstTime"/>
+                    </div>
+                    <div class="yc-select yc-select-adReport operationMa-operationType">
+                        <div class="yc-select-current ">{{secondTimeStr}}</div>
+                        <i class="yc-icon">&#xe605;</i>
+                        <ul class="yc-select-options">
+                            <li ng-repeat="item in years" ng-click="redirectEnd(item,0)">
+                                {{item}}
+                            </li>
+                        </ul>
+                        <input type="hidden"/>
+                    </div>
+                </div>
+
+                <div ng-show="timeType == 1" class="fr">
+                    <div class="yc-select yc-select-adReport operationMa-operationType">
+                        <div class="yc-select-current ">{{firstTimeStr}}</div>
+                        <i class="yc-icon">&#xe605;</i>
+                        <ul class="yc-select-options">
+                            <li ng-repeat="item in months" ng-click="redirectStart(item,1)">
+                                {{item}}
+                            </li>
+                        </ul>
+                        <input type="hidden"/>
+                    </div>
+                    <div class="yc-select yc-select-adReport operationMa-operationType">
+                        <div class="yc-select-current ">{{secondTimeStr}}</div>
+                        <i class="yc-icon">&#xe605;</i>
+                        <ul class="yc-select-options">
+                            <li ng-repeat="item in months" ng-click="redirectEnd(item,1)">
+                                {{item}}
+                            </li>
+                        </ul>
+                        <input type="hidden"/>
+                    </div>
+                </div>
+
+                <div class="yc-calendar-wraper fr" ng-show="timeType == 2">
+                    <input type="text" ng-placeholder="{{secondTimeStr||'请选择查询时间段'}}" id="contrastTimeEnd"> <i class="yc-icon">&#xe62e;</i>
+                </div>
+                <div class="yc-calendar-wraper fr" ng-show="timeType == 2">
+                    <input type="text" ng-placeholder="{{firstTimeStr||'请选择查询时间段'}}" id="contrastTimeStart"> <i class="yc-icon">&#xe62e;</i>
+                </div>
+
+                <div class="fr">
+                    <div class="yc-select yc-select-adReport operationMa-operationType">
+                        <div class="yc-select-current ">按日</div>
+                        <i class="yc-icon">&#xe605;</i>
+                        <ul class="yc-select-options" ng-init="timeTypes = [{timeType:'按年',id:0},{timeType:'按月',id:1},{timeType:'按日',id:2}]">
+                            <li ng-click="getTimeType(item)"
+                                ng-repeat="item in timeTypes">
+                                {{item.timeType}}
+                            </li>
+                        </ul>
+                        <input type="hidden"/>
+                    </div>
+                </div>
+
+                <!--资源-->
+                <div class="fr hide" ng-class="{ 'show': mainMark == 2}">
+                    <div class="yc-select yc-select-adReport operationMa-operationType">
+                        <div class="yc-select-current ">全部广告位</div>
+                        <i class="yc-icon">&#xe605;</i>
+                        <ul class="yc-select-options">
+                            <li ng-click="getSpace(item)"
+                                ng-repeat="item in ADSpaceList">
+                                {{item.adSpaceName}}
+                            </li>
+                        </ul>
+                        <input type="hidden"/>
+                    </div>
+                </div>
+
+                <div class="fr hide" ng-class="{ 'show': mainMark == 2}">
+                    <div class="yc-select yc-select-adReport operationMa-operationType">
+                        <div class="yc-select-current ">全部创意类型</div>
+                        <i class="yc-icon">&#xe605;</i>
+                        <ul class="yc-select-options">
+                            <li ng-click="getSpaceType(item)"
+                                ng-repeat="item in adSpaceTypeList">
+                                {{item.name}}
+                            </li>
+                        </ul>
+                        <input type="hidden"/>
+                    </div>
+                </div>
+                <div class="fr hide" ng-class="{ 'show': mainMark == 2}">
+                    <div class="yc-select yc-select-adReport operationMa-operationType">
+                        <div class="yc-select-current ">全部频道</div>
+                        <i class="yc-icon">&#xe605;</i>
+                        <ul class="yc-select-options">
+                            <li ng-click="getChannel(item)"
+                                ng-repeat="item in channelList">
+                                {{item.channelName}}
+                            </li>
+                        </ul>
+                        <input type="hidden"/>
+                    </div>
+                </div>
+                <div class="fr hide" ng-class="{ 'show': mainMark == 2}">
+                    <div class="yc-select yc-select-adReport operationMa-operationType">
+                        <div class="yc-select-current ">全部媒体</div>
+                        <i class="yc-icon">&#xe605;</i>
+                        <ul class="yc-select-options">
+                            <li ng-click="getMediaName(item)"
+                                ng-repeat="item in mediaList">
+                                {{item.mediaName}}
+                            </li>
+                        </ul>
+                        <input type="hidden"/>
+                    </div>
+                </div>
+
+                <!--订单-->
+                <div class="fr hide" ng-class="{ 'show': mainMark == 1}">
+                    <div class="yc-select yc-select-adReport operationMa-operationType">
+                        <div class="yc-select-current ">全部订单</div>
+                        <i class="yc-icon">&#xe605;</i>
+                        <ul class="yc-select-options">
+                            <li ng-click="getOrder(item)"
+                                ng-repeat="item in orderNames">
+                                {{item.orderName}}
+                            </li>
+                        </ul>
+                        <input type="hidden"/>
+                    </div>
+                </div>
+                <div class="fr hide" ng-class="{ 'show': mainMark == 1}">
+                    <div class="yc-select yc-select-adReport operationMa-operationType">
+                        <div class="yc-select-current ">全部</div>
+                        <i class="yc-icon">&#xe605;</i>
+                        <ul class="yc-select-options" ng-init="orderTypes = [{orderType:'全部',id:-1},{orderType:'投放订单',id:1},{orderType:'默认订单',id:2}]">
+                            <li ng-click="getOrderType(item)"
+                                ng-repeat="item in orderTypes">
+                                {{item.orderType}}
+                            </li>
+                        </ul>
+                        <input type="hidden"/>
+                    </div>
+                </div>
+
+                <!--客户-->
+                <div class="fr hide" ng-class="{ 'show': mainMark == 0}">
+                    <div class="yc-select yc-select-adReport operationMa-operationType">
+                        <div class="yc-select-current ">所有客户</div>
+                        <i class="yc-icon">&#xe605;</i>
+                        <ul class="yc-select-options">
+                            <li ng-click="getCustomer(item)"
+                                ng-repeat="item in allCustomerList">
+                                {{item.customerName}}
+                            </li>
+                        </ul>
+                        <input type="hidden"/>
+                    </div>
+                </div>
+                <div class="fr hide" ng-class="{ 'show': mainMark == 0}">
+                    <div class="yc-select yc-select-adReport operationMa-operationType">
+                        <div class="yc-select-current ">直客</div>
+                        <i class="yc-icon">&#xe605;</i>
+                        <ul class="yc-select-options" ng-init="customerTypes = [{customerType:'直客',id:1},{customerType:'代理商',id:2},{customerType:'代理子客户',id:3}]">
+                            <li ng-click="getCustomerType(item)"
+                                ng-repeat="item in customerTypes">
+                                {{item.customerType}}
+                            </li>
+                        </ul>
+                        <input type="hidden"/>
+                    </div>
+                </div>
+
+                <div class="fr">
+                    <div class="yc-select yc-select-adReport operationMa-operationType">
+                        <div class="yc-select-current ">请选择对比维度</div>
+                        <i class="yc-icon">&#xe605;</i>
+                        <ul class="yc-select-options" ng-init="mainMarks =  [{mainMark:'请选择对比维度',id:-1},{mainMark:'客户',id:0},{mainMark:'订单',id:1},{mainMark:'资源',id:2}]">
+                            <li ng-click="getMainMark(item)" ng-repeat="item in mainMarks">
+                                {{item.mainMark}}
+                            </li>
+                        </ul>
+                        <input type="hidden"/>
+                    </div>
+                </div>
+            </div>
+            <div class="reportConfig">
+                <label>统计数据：</label><input type="checkbox" id="exposure" ng-model="exposureNum"><label for="exposure">曝光量</label>
+                <input type="checkbox" id="clickNum" ng-model="clickNum"><label for="clickNum">点击量</label>
+            </div>
+            <div id="main"></div>
+        </div>
+    </div>
+</div>
+<script src="../../static/js/reportManage.js"></script>
+</body>
+</html>

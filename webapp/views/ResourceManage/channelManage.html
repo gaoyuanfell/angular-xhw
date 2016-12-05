@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>资源管理-频道管理</title>
+    <meta name="keywords" content="资源管理-频道管理"/>
+    <meta name="description" content="资源管理-频道管理"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../../static/css/global.css"/>
+    <link rel="stylesheet" href="../../static/css/ResourceManage.css"/>
+    
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/js/resourceManage.js"></script>
+</head>
+<body ng-controller="resLimitCtrl">
+    <nav class="header">
+        <div class="scroll">
+            <a class="nav" data-route="ViewMediaChannelADSpace2">频道列表</a>
+        </div>
+    </nav>
+    <div class="container" ng-controller="channelManageCtrl">
+        <div class="button-group clear">
+            <div class="button-g fl">
+                <a href="javascript:;" data-route="ViewMediaChannelADSpace2Add" class="yc-btn" ng-if="resourceRule['ManageMediaChannelADSpace']">新增频道</a>
+                <a href="javascript:;" class="yc-btn" ng-click="setMoreLevel()" ng-if="resourceRule['ManageMediaChannelADSpace']"> 批量设置</a>
+            </div>
+            <div class="query-g fr">
+                <div yc-select="hasImageSel" width="100" query="query" value="hasImage" key="id" placeholder="示意图" session="res_channe_hasImage" group="res-channe-list"></div>
+
+                <div yc-select="mediaListSel" width="150" query="query" value="mediaId" key="id" add="全部" name="mediaName" placeholder="媒体" session="res_channe_media" group="res-channe-list"></div>
+
+                <div yc-select="levelNameSel" width="150" query="query" value="level" key="id" placeholder="频道等级" add="全部" name="levelName" session="res_channe_level" group="res-channe-list"></div>
+                <div class="icon-input">
+                    <input class="form-control" type="text" ng-placeholder="请输入频道名称或ID" ng-model="query.search">
+                    <span class="icon">
+                        <i class="yc-icon calendars" ng-click="redirect(1,search)">&#xe60b;</i>
+                    </span>
+                </div>
+
+            </div>
+        </div>
+        <div class="table-container">
+            <table class="yc-table">
+                <thead>
+                <tr>
+                    <th>
+                        <label><input ng-if="resourceRule['ManageMediaChannelADSpace']" ng-click="channeCheckAll($event)" class="form-control" type="checkbox"> <span>ID</span> </label>
+                    </th>
+                    <th>频道名称</th>
+                    <th>所属媒体</th>
+                    <th>频道级别</th>
+                    <th class="center">操作</th>
+                </tr>
+                </thead>
+                <tbody id="tBody">
+                <tr ng-repeat="item in items">
+                    <td>
+                        <label> <input ng-if="resourceRule['ManageMediaChannelADSpace']" type="checkbox" ng-model="item.$check" class="form-contrlo"><span ng-bind="item.id"></span></label>
+                    </td>
+                    <td>
+                        <a ng-show="item.imageUrl" ng-href="{{item.imageUrl}}" target="_blank" class="yc-icon" style="color: #a3a3a4;">&#xe61a;</a>
+                        <span ng-bind="::item.channelName"></span>
+                    </td>
+                    <td ng-bind="::item.mediaName"></td>
+                    <td ng-bind="::item.levelName"></td>
+                    <td class="center">
+                        <a title="编辑频道信息" data-route="ViewMediaChannelADSpace2Edit?id={{item.id}}" href="javascript:void(0)" ng-if="resourceRule['ManageMediaChannelADSpace']">编辑</a>
+                        <a title="查看频道信息" data-route="ViewMediaChannelADSpace2Edit?id={{item.id}}" href="javascript:void(0)" ng-if="!resourceRule['ManageMediaChannelADSpace']">查看</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="client-judge" ng-if="total_page<1">您好，暂时没有符合条件的任何数据</div>
+        <div ng-show="total_page>0" yc-page page="page" redirect="redirect(page.page,search)" query="query"></div>
+
+        <!--批量设置 级别-->
+        <div class="dialog-bg hide" yc-module="setMoreLevelModule">
+            <div class="dialog-wraper">
+                <div class="dialog-title">
+                    <span class="title">title</span>
+                    <i class="dialog-close yc-icon">&#xe619;</i>
+                </div>
+                <div class="dialog-con">
+                    <div class="form-group">
+                        <label class="yc-col-3 control-label"> 频道级别：</label>
+                        <div class="yc-col-9">
+                            <div yc-select="levelNameSel2" width="150" query="_setMoreLevelModule" value="level" key="id" placeholder="频道等级" name="levelName" group="res-channe-list"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dialog-submit">
+                    <a href="javascript:void(0)" class="ok">确定</a>
+                    <a href="javascript:void(0)" class="no">取消</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+</body>
+</html>

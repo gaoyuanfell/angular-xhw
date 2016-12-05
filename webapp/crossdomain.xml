@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cross-domain-policy>
+    <allow-access-from domain="xhw.adpush.cn" />
+    <allow-access-from domain="m1.xinhuanet.com" />
+    <allow-access-from domain="m1.xinhuanet.com:8082" />
+</cross-domain-policy>

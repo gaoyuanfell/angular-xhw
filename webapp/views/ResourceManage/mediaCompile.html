@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>资源管理-媒体管理-修改媒体</title>
+    <meta name="keywords" content="资源管理-媒体管理-修改媒体"/>
+    <meta name="description" content="资源管理-媒体管理-修改媒体"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../../static/css/global.css"/>
+    <link rel="stylesheet" href="../../static/css/ResourceManage.css"/>
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/js/resourceManage.js"></script>
+</head>
+<body ng-controller="resLimitCtrl">
+    <nav class="header">
+        <div class="scroll scroll-nav">
+            <a class="nav" href="javascript:void(0)" >资源管理 &gt;</a>
+            <a class="nav" href="javascript:void(0)" data-route="ViewMediaChannelADSpace1">媒体 &gt;</a>
+            <a class="nav" href="javascript:void(0)" data-route="ViewMediaChannelADSpace1">媒体列表 &gt;</a>
+            <a class="nav active" href="javascript:void(0)">编辑媒体</a>
+        </div>
+    </nav>
+    <div class="container" ng-controller="mediaEditCtrl">
+        <form class="form">
+            <table class="yc-table" style="width:1000px">
+                <thead>
+                <tr>
+                    <th>媒体名称</th>
+                    <th>所属</th>
+                    <th>媒体类型</th>
+                    <th>域名</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="media in medias">
+                        <td>
+                            <input class="form-control" name="name" type="text" ng-placeholder="请输入媒体名称" ng-model="media.mediaName"/>
+                        </td>
+                        <td>
+                            <input class="form-control" ng-width="260" name="name" disabled type="text" ng-placeholder="请输入媒体名称" ng-value="media.companyName"/>
+                        </td>
+                        <td>
+                            <label class="radio"> <input type="radio" ng-model="media.mediaType" value="1"> Web</label>
+                        </td>
+                        <td>
+                            <input class="form-control" name="myUrl" type="text" ng-placeholder="请输入域名" ng-model="media.url"/>
+                        </td>
+                        <td>
+                            <i ng-if="$index !=0"  ng-click="removeMedia($index)" class="yc-icon pointer">&#xe611;</i>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="form-group-btn">
+                <label class="yc-col-2 control-label"></label>
+                <div class="yc-col-10">
+                    <a href="javascript:void(0)" class="yc-btn" ng-click="postEdit()" ng-if="resourceRule['ManageMediaChannelADSpace']">提 交</a>
+                    <a href="javascript:void(0)" data-route="ViewMediaChannelADSpace1" class="yc-btn-out">取 消</a>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,495 @@
+[
+{
+  "parentList": [
+    {
+      "parentId": 6,
+      "childList": [
+        
+      ],
+      "parentName": "查询排期"
+    },
+    {
+      "parentId": 7,
+      "childList": [
+        {
+          "childId": 56,
+          "childName": "查看本人的订单、创意"
+        },
+        {
+          "childId": 57,
+          "childName": "查看本人以及下属的订单、创意"
+        },
+        {
+          "childId": 58,
+          "childName": "查看所属公司的订单、创意"
+        },
+        {
+          "childId": 59,
+          "childName": "查看所有订单、创意"
+        }
+      ],
+      "parentName": "查看投放订单"
+    },
+    {
+      "parentId": 8,
+      "childList": [
+        {
+          "childId": 60,
+          "childName": "管理本人的订单、创意"
+        },
+        {
+          "childId": 61,
+          "childName": "管理本人以及其下属订单、创意"
+        },
+        {
+          "childId": 62,
+          "childName": "管理所属公司订单、创意"
+        },
+        {
+          "childId": 63,
+          "childName": "管理所有订单、创意"
+        }
+      ],
+      "parentName": "管理投放订单"
+    },
+    {
+      "parentId": 9,
+      "childList": [
+        {
+          "childId": 64,
+          "childName": "一审审核下属订单"
+        },
+        {
+          "childId": 65,
+          "childName": "一审审核所属公司订单"
+        },
+        {
+          "childId": 66,
+          "childName": "一审审核所有订单"
+        }
+      ],
+      "parentName": "业务一审(订单)"
+    },
+    {
+      "parentId": 10,
+      "childList": [
+        {
+          "childId": 67,
+          "childName": "二审审核所属公司订单"
+        },
+        {
+          "childId": 68,
+          "childName": "二审审核所有订单"
+        }
+      ],
+      "parentName": "业务二审(订单)"
+    },
+    {
+      "parentId": 11,
+      "childList": [
+        
+      ],
+      "parentName": "财务审核(订单)"
+    },
+    {
+      "parentId": 12,
+      "childList": [
+        
+      ],
+      "parentName": "经管审核(订单)"
+    },
+    {
+      "parentId": 13,
+      "childList": [
+        
+      ],
+      "parentName": "法务审核(创意)"
+    },
+    {
+      "parentId": 14,
+      "childList": [
+        
+      ],
+      "parentName": "美编审核(创意)"
+    },
+    {
+      "parentId": 17,
+      "childList": [
+        
+      ],
+      "parentName": "查看默认订单"
+    },
+    {
+      "parentId": 18,
+      "childList": [
+        
+      ],
+      "parentName": "默认订单管理"
+    },
+    {
+      "parentId": 19,
+      "childList": [
+        
+      ],
+      "parentName": "紧急订单管理"
+    },
+    {
+      "parentId": 20,
+      "childList": [
+        
+      ],
+      "parentName": "紧急创意审核"
+    },
+    {
+      "parentId": 21,
+      "childList": [
+        
+      ],
+      "parentName": "紧急订单审核"
+    },
+    {
+      "parentId": 110,
+      "childList": [
+
+      ],
+      "parentName": "编辑合同号(进入审核流程后)"
+    },
+    {
+      "parentId": 111,
+      "childList": [
+
+      ],
+      "parentName": "默认订单审核"
+    }
+  ],
+  "areaName": "广告订单",
+  "areaId": 1
+},
+{
+  "parentList": [
+    {
+      "parentId": 22,
+      "childList": [
+        
+      ],
+      "parentName": "查看媒体"
+    },
+    {
+      "parentId": 23,
+      "childList": [
+        
+      ],
+      "parentName": "管理媒体"
+    },
+    {
+      "parentId": 24,
+      "childList": [
+        
+      ],
+      "parentName": "查看频道"
+    },
+    {
+      "parentId": 25,
+      "childList": [
+        
+      ],
+      "parentName": "管理频道"
+    },
+    {
+      "parentId": 26,
+      "childList": [
+        
+      ],
+      "parentName": "查看创意类型"
+    },
+    {
+      "parentId": 27,
+      "childList": [
+        
+      ],
+      "parentName": "管理创意类型"
+    },
+    {
+      "parentId": 28,
+      "childList": [
+        
+      ],
+      "parentName": "查看尺寸"
+    },
+    {
+      "parentId": 29,
+      "childList": [
+        
+      ],
+      "parentName": "管理尺寸"
+    },
+    {
+      "parentId": 30,
+      "childList": [
+        
+      ],
+      "parentName": "查看广告位"
+    },
+    {
+      "parentId": 31,
+      "childList": [
+        
+      ],
+      "parentName": "管理广告位"
+    },
+    {
+      "parentId": 32,
+      "childList": [
+        
+      ],
+      "parentName": "审核广告位"
+    }
+  ],
+  "areaName": "资源管理",
+  "areaId": 2
+},
+{
+  "parentList": [
+    {
+      "parentId": 35,
+      "childList": [
+        {
+          "childId": 77,
+          "childName": "查看本人的客户、相应资质"
+        },
+        {
+          "childId": 78,
+          "childName": "查看本人以及下属的客户、相应资质"
+        },
+        {
+          "childId": 79,
+          "childName": "查看所属公司的客户、相应资质"
+        },
+        {
+          "childId": 80,
+          "childName": "查看所有客户、相应资质"
+        }
+      ],
+      "parentName": "查看客户"
+    },
+    {
+      "parentId": 36,
+      "childList": [
+        {
+          "childId": 81,
+          "childName": "审核下属的客户信息"
+        },
+        {
+          "childId": 82,
+          "childName": "审核所属公司的客户信息"
+        },
+        {
+          "childId": 83,
+          "childName": "审核所有客户的信息"
+        }
+      ],
+      "parentName": "审核客户"
+    },
+    {
+      "parentId": 37,
+      "childList": [
+        {
+          "childId": 84,
+          "childName": "管理本人的客户以及相应资质"
+        },
+        {
+          "childId": 85,
+          "childName": "管理本人以及下属的客户以及相应资质"
+        },
+        {
+          "childId": 86,
+          "childName": "管理所属公司的客户以及相应资质"
+        },
+        {
+          "childId": 87,
+          "childName": "管理所有客户以及相应资质"
+        }
+      ],
+      "parentName": "管理客户"
+    }
+  ],
+  "areaName": "客户管理",
+  "areaId": 3
+},
+{
+  "parentList": [
+    {
+      "parentId": 38,
+      "childList": [
+        {
+          "childId": 88,
+          "childName": "查看本人的客户数据"
+        },
+        {
+          "childId": 89,
+          "childName": "查看本人以及下属的客户数据"
+        },
+        {
+          "childId": 90,
+          "childName": "查看所属公司的客户数据"
+        },
+        {
+          "childId": 91,
+          "childName": "查看所有客户数据"
+        }
+      ],
+      "parentName": "查看客户报表"
+    },
+    {
+      "parentId": 39,
+      "childList": [
+        
+      ],
+      "parentName": "查看资源消耗报表"
+    },
+    {
+      "parentId": 40,
+      "childList": [
+        {
+          "childId": 92,
+          "childName": "查看本人的订单数据"
+        },
+        {
+          "childId": 93,
+          "childName": "查看本人以及下属的订单数据"
+        },
+        {
+          "childId": 94,
+          "childName": "查看所属公司的订单数据"
+        },
+        {
+          "childId": 95,
+          "childName": "查看所有订单数据"
+        }
+      ],
+      "parentName": "查看广告投放报表"
+    }
+  ],
+  "areaName": "数据报表",
+  "areaId": 4
+},
+{
+  "parentList": [
+    {
+      "parentId": 42,
+      "childList": [
+        {
+          "childId": 96,
+          "childName": "查看所属公司"
+        },
+        {
+          "childId": 97,
+          "childName": "查看所有公司"
+        }
+      ],
+      "parentName": "查看公司"
+    },
+    {
+      "parentId": 43,
+      "childList": [
+        {
+          "childId": 98,
+          "childName": "管理所属公司"
+        },
+        {
+          "childId": 99,
+          "childName": "管理所有公司"
+        }
+      ],
+      "parentName": "管理公司"
+    },
+    {
+      "parentId": 44,
+      "childList": [
+        {
+          "childId": 100,
+          "childName": "查看所属公司部门"
+        },
+        {
+          "childId": 101,
+          "childName": "查看所有公司部门"
+        }
+      ],
+      "parentName": "查看部门"
+    },
+    {
+      "parentId": 45,
+      "childList": [
+        {
+          "childId": 102,
+          "childName": "管理所属公司的部门"
+        },
+        {
+          "childId": 103,
+          "childName": "管理所有公司的部门"
+        }
+      ],
+      "parentName": "管理部门"
+    },
+    {
+      "parentId": 46,
+      "childList": [
+        
+      ],
+      "parentName": "查看角色"
+    },
+    {
+      "parentId": 47,
+      "childList": [
+        
+      ],
+      "parentName": "管理角色"
+    },
+    {
+      "parentId": 48,
+      "childList": [
+        {
+          "childId": 104,
+          "childName": "查看本人以及下属用户"
+        },
+        {
+          "childId": 105,
+          "childName": "查看所属公司的用户"
+        },
+        {
+          "childId": 106,
+          "childName": "查看所有用户"
+        }
+      ],
+      "parentName": "查看用户"
+    },
+    {
+      "parentId": 49,
+      "childList": [
+        {
+          "childId": 107,
+          "childName": "管理本人以及下属用户"
+        },
+        {
+          "childId": 108,
+          "childName": "管理所属公司的用户"
+        },
+        {
+          "childId": 109,
+          "childName": "管理所有用户"
+        }
+      ],
+      "parentName": "管理用户"
+    },
+    {
+      "parentId": 54,
+      "childList": [
+        
+      ],
+      "parentName": "管理公告"
+    }
+  ],
+  "areaName": "系统设置",
+  "areaId": 5
+}
+]

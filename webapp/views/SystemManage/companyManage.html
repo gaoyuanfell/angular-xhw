@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>所属管理-系统管理</title>
+    <meta name="keywords" content="所属管理-系统管理"/>
+    <meta name="description" content="所属管理-系统管理"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../../static/css/global.css"/>
+    <link rel="stylesheet" href="../../static/css/SystemManage.css"/>
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/js/systemManage.js"></script>
+</head>
+<body ng-controller="limitCtrl">
+<nav class="header">
+    <div class="scroll">
+        <a class="nav" data-route="ViewCompany">所属列表</a>
+    </div>
+</nav>
+<div class="container" ng-controller="companyManageCtrl">
+    <div class="button-group clear">
+        <div class="button-g fl">
+            <a href="javascript:void(0)" data-route="ViewCompanyAdd" class="yc-btn" ng-if="systemManageRule['ManageCompany']">新增所属</a>
+        </div>
+        <div class="query-g fr">
+            <div class="icon-input">
+                <input class="form-control" type="text" ng-placeholder="请输入所属名称" ng-model="query.search">
+                <span class="icon">
+                    <i class="yc-icon calendars" ng-click="redirect(1,search)">&#xe60b;</i>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="table-container">
+        <table class="yc-table">
+            <thead>
+            <tr>
+                <th>添加时间</th>
+                <th>机构编号</th>
+                <th>所属名称</th>
+                <th>所属类型</th>
+                <th>管理员</th>
+                <th>手机</th>
+                <th>座机</th>
+                <th>联系邮箱</th>
+                <th class="center">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="item in items">
+                <td ng-bind="::item.createTime | dateYMD"></td>
+                <td ng-bind="::item.agencyNumber"></td>
+                <td ng-bind="::item.companyName"></td>
+                <td ng-bind="::item.companyType | companyTypeFtr"></td>
+                <td ng-bind="::item.manager"></td>
+                <td ng-bind="::item.phone"></td>
+                <td ng-bind="::item.telephone"></td>
+                <td ng-bind="::item.email"></td>
+                <td class="center">
+                    <a title="编辑所属信息" ng-if="systemManageRule['ManageCompany']" data-route="ViewCompanyEdit?id={{item.id}}" href="javascript:void(0)">编辑</a>
+                    <a title="查看所属信息" ng-if="!systemManageRule['ManageCompany']" data-route="ViewCompanyEdit?id={{item.id}}" href="javascript:void(0)">查看</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="client-judge" ng-if="total_page<1">您好，暂时没有符合条件的任何数据</div>
+    <div ng-show="total_page>0" yc-page page="page" redirect="redirect(page.page,search)" query="query"></div>
+</div>
+</body>
+</html>

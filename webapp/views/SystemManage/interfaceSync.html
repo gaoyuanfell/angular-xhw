@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="zh-CN" ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>资源同步-系统管理</title>
+    <meta name="keywords" content="日志管理-系统管理"/>
+    <meta name="description" content="日志管理-系统管理"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../../static/css/global.css"/>
+    <link rel="stylesheet" href="../../static/css/reportManage.css"/>
+    <link rel="stylesheet" href="../../static/lib/dateRange/jQuery.pickerDateRange.css"/>
+    <link rel="stylesheet" href="../../static/css/SystemManage.css">
+
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script src="../../static/lib/dateRange/jQuery.pickerDateRange.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/js/systemManage.js"></script>
+</head>
+<body ng-controller="limitCtrl">
+<div class="yc-main-top clear">
+    <a href="../{{rule.url}}" ng-repeat="rule in ruleListTab" ng-class="{'cur':isLocation(rule.urlAll)}">
+        <span ng-bind="rule.name"></span>
+    </a>
+</div>
+
+<div class="yc-main-wraper">
+    <div class="strategys-items clear" ng-init="operationMa = 'contractSync.html'">
+        <a href="javascript:void (0)" class="current" ng-class="{'strategys-itemsFa':operationMa == 'contractSync.html'}" ng-click="operationMa = 'contractSync.html';">合同同步</a>
+        <a href="javascript:void (0)" ng-class="{'strategys-itemsFa':operationMa == 'incomePush.html'}" ng-click="operationMa = 'incomePush.html';">收入推送</a>
+    </div>
+
+    <div class="operationMa-switchover">
+        <div ng-include="operationMa">
+
+        </div>
+    </div>
+</div>
+
+<script type="text/ng-template" id="contractSync.html">
+    <div class="operationMa-tab" ng-controller="contractSyncCtrl">
+        <div class="clear custom-list-position">
+            <div class="client-left">
+                <a href="javascript:;" class="yc-btn" ng-click="contractSync()">合同同步</a>
+            </div>
+
+            <div class="fr">
+                <div class="yc-calendar-wraper">
+                    <input type="text" id="calendar-contract"> <i class="yc-icon">&#xe62e;</i>
+                </div>
+            </div>
+        </div>
+        <div class="operationMa-bott">
+            <table class="yc-table">
+                <thead>
+                <tr>
+                    <th>同步时间</th>
+                    <th>同步域名</th>
+                    <th>同步内容</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in items">
+                    <td ng-bind="item.reqTime"></td>
+                    <td ng-bind="item.requestUrl"></td>
+                    <td ng-bind="item.respContent"></td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="client-judge" ng-if="total_count<1">您好，暂时没有符合条件的任何数据</div>
+
+        </div>
+        <div class="yc-pages" ng-show='total_page>1'>
+            <span class="yc-pages-num" ng-click='redirect(1)'>首页</span>
+            <span class="yc-pages-num" title="跳转到 上一页" ng-show='page>1' ng-click='redirect(prev_page)'>&lt;</span>
+            <span class="yc-pages-num yc-pages-current" title="当前页" ng-bind="page"></span>
+            <span class="yc-pages-num" title="跳转到 下一页" ng-show='page<total_page' ng-click='redirect(page+1)'>&gt;</span>
+            <span class="yc-pages-num" ng-click='redirect(total_page)'>尾页</span>
+            <span>共<span ng-bind="total_page"></span>页, 跳转到第</span><input type="text" class="yc-pages-input" ng-model='go'><span class="group-text">页</span>
+            <button class="yc-pages-go" ng-click='redirect(go)'>确定</button>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="incomePush.html">
+    <div class="operationMa-tab" ng-controller="incomePushCtrl">
+        <div class="clear custom-list-position">
+            <div class="client-left">
+                <a href="javascript:;" class="yc-btn" ng-click="incomePush()">收入推送</a>
+            </div>
+
+            <div class="fr">
+                <div class="yc-calendar-wraper">
+                    <input type="text" id="calendar-income"> <i class="yc-icon">&#xe62e;</i>
+                </div>
+            </div>
+        </div>
+        <div class="operationMa-bott">
+
+            <table class="yc-table">
+                <thead>
+                <tr>
+                    <th>同步时间</th>
+                    <th>同步域名</th>
+                    <th>同步内容</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in items">
+                    <td ng-bind="item.reqTime"></td>
+                    <td ng-bind="item.requestUrl"></td>
+                    <td ng-bind="item.reqContent"></td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="client-judge" ng-if="total_count<1">您好，暂时没有符合条件的任何数据</div>
+
+        </div>
+        <div class="yc-pages" ng-show='total_page>1'>
+            <span class="yc-pages-num" ng-click='redirect(1)'>首页</span>
+            <span class="yc-pages-num" title="跳转到 上一页" ng-show='page>1' ng-click='redirect(prev_page)'>&lt;</span>
+            <span class="yc-pages-num yc-pages-current" title="当前页" ng-bind="page"></span>
+            <span class="yc-pages-num" title="跳转到 下一页" ng-show='page<total_page' ng-click='redirect(page+1)'>&gt;</span>
+            <span class="yc-pages-num" ng-click='redirect(total_page)'>尾页</span>
+            <span>共<span ng-bind="total_page"></span>页, 跳转到第</span><input type="text" class="yc-pages-input" ng-model='go'><span class="group-text">页</span>
+            <button class="yc-pages-go" ng-click='redirect(go)'>确定</button>
+        </div>
+    </div>
+</script>
+
+</body>
+</html>

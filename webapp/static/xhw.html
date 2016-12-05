@@ -1,0 +1,530 @@
+<html ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>新华网广告投放系统</title>
+    <meta name="keywords" content="新华网广告投放系统"/>
+    <meta name="description" content="新华网广告投放系统"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="stylesheet" href="../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../static/css/global.css"/>
+    <link rel="shortcut icon" href="../static/img/favicon.ico"/>
+
+    <script type="text/javascript" src="../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../static/lib/webuploader.min.js"></script>
+    <script type="text/javascript" src="../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../static/js/global.js"></script>
+    <script type="text/javascript" src="../static/js/application.js"></script>
+    <script type="text/javascript" src="../static/lib/md5.js"></script>
+
+    <style>
+        body{
+            background-color: #f4f8fd;
+        }
+        .container{
+            margin: 0 10px 20px 20px;
+        }
+
+        .header-title{
+            font-style: normal;
+            font-size: 16px;
+            border-bottom: 1px solid #E6E6E6;
+            height: 30px;
+            padding-top: 10px;
+            padding-bottom: 27px;
+        }
+        .header-message{
+            border-left: 2px solid #027CFF;
+            padding-left: 8px;
+            float: left;
+        }
+
+        .yc-table{
+            width: 110%;
+            background-color: #f4f8fd;
+            /*-webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;*/
+        }
+        .yc-table th{
+            border:none;
+        }
+        .yc-table td{
+            border:none;
+        }
+        .yc-table thead{
+            min-height: 45px;
+        }
+        .yc-table tbody tr {
+            min-height: 38px;
+        }
+        .yc-table thead tr:nth-child(odd){
+            background-color: #f4f8fd;
+        }
+        .yc-table tbody tr:nth-child(odd){
+            background-color: #fdfdfd;
+        }
+        .table-container{
+            overflow-y: hidden;
+            overflow-x: auto;
+        }
+        .table-container::-webkit-scrollbar-thumb{
+            background-color: rgba(0, 0, 0, 0);
+            -webkit-box-shadow: inset 1px 1px 0 rgba(0, 0, 0, 0)
+        }
+        .table-container:hover::-webkit-scrollbar-thumb{
+            background-color: rgba(0, 0, 0, .2);
+            -webkit-box-shadow: inset 1px 1px 0 rgba(0, 0, 0, .1)
+        }
+
+        /*按钮组*/
+        .button-group{
+            padding: 10px 0px;
+        }
+        .button-group .button-g{
+            padding: 5px 0px;
+        }
+        .button-group .button-g >a{
+            margin: 2px 0px;
+        }
+        .button-group .query-g{
+            padding: 2px 0px;
+        }
+        .button-group .query-g >div{
+            margin: 5px 2px;
+        }
+  
+    </style>
+    <script>
+        window.onload = function(){
+            var mousewheelevt = (/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel";//火狐SB
+            var table = document.querySelectorAll('.table-container');
+            for(var i = 0;i<table.length;i++){
+                table[i] && table[i].addEventListener(mousewheelevt,function(e){
+                    console.info(e.detail);
+                    var d = e.wheelDelta || -e.detail;
+                    if (d > 0) {
+                        this.scrollLeft = this.scrollLeft - 80
+                    } else {
+                        this.scrollLeft = this.scrollLeft + 80
+                    }
+                })
+            }
+        }
+
+        app.controller('testCtrl',['$scope','UploadKeyFty',function($scope,UploadKeyFty){
+            $scope.userList = {
+				list: [{
+					name: '新建广告(待投放)',
+					id: '1'
+				}, {
+					name: '广点通单选(待投放)',
+					id: '2'
+				}, {
+					name: 'adview(待投放)',
+					id: '3'
+				}],
+				callback: function(event, data) {
+					console.dir(data)
+				}
+			}
+
+            var upload = function (id) {
+                var key = '';
+                var config = {
+                    server: fileUrl + "/orderAdCreative/video.htm",
+                    pick: {
+                        id: '#'+id,
+                        multiple: false
+                    },
+                    accept:null,
+                    error:function (uploader,err) {
+                        ycui.alert({
+                            content: "错误的文件类型",
+                            timeout: 10,
+                            error:true
+                        });
+                        ycui.loading.hide();
+                        uploader.reset();
+                    },
+                    uploadComplete:function () {
+                        ycui.loading.hide();
+                    },
+                    beforeFileQueued:function (uploader,file) {
+                        ycui.loading.show();
+                        uploader.stop(file);
+                        UploadKeyFty.uploadKey().success(function (da) {
+                            key = da.items;
+                            uploader.upload(file);
+                        });
+                    },
+                    uploadBeforeSend:function (uploader, file, data) {
+                        data.uploadKey = key;
+                        data.fileSize = $scope.fileSize;
+                    },
+                    uploadSuccess:function (uploader, file, res) {
+                        if(res && res.code == 200){
+                            $scope.imgList = [];
+                            var wh = proportionPhoto(res.width,res.height,20,20);
+                            var da = {
+                                width:wh[0],
+                                height:wh[1],
+                                uploadFile:res.uploadFile
+                            };
+                            $scope.$apply(function () {
+                                $scope.mark.adMarkUrl = res.uploadFile;
+                                $scope.imgList.push(da);
+                            });
+
+                        }else if(res && res.code == 500){
+                            ycui.alert({
+                                error:true,
+                                content:res.msg,
+                                timeout:10
+                            })
+                        }
+                    }
+                }
+                return uploadInit(config);
+            };
+
+            upload('video');
+            
+        }])
+    </script>
+    <script>
+        app.directive('adCreate',[function () {
+            return{
+                scope: {
+                    advertising:'=advertising'
+                },
+                restrict: 'AE',
+                templateUrl:'adCreate.html',
+                link: function(scope, element, attrs) {
+
+                }
+            }
+        }]);
+        app.controller('testCtrl2',['$scope','AdCreativeFty',function($scope,AdCreativeFty){
+            AdCreativeFty.adSpaceNamesByOrderId({orderId: 20}).success(function (res) {
+                $scope.advertising = res.adSpaceNames;
+                console.info(res)
+            })
+        }])
+    </script>
+    <style>
+        .creative_container{
+            width: 1000px;
+            border: 1px solid #ccc;
+        }
+        .creative_container >.header{
+            height: 42px;
+            background: #ebedef;
+            position: relative;
+            user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -webkit-user-select: none;
+        }
+        .creative_container .header >span {
+            display: inline-block;
+            color: #676767;
+            font-size: 14px;
+            font-weight: 700;
+            padding-top: 10px;
+        }
+        .creative_container .header >span:nth-child(1){
+            width: 38%;
+            padding-left: 24px;
+        }
+        .creative_container .header >span:nth-child(2){
+            width: 23%;
+        }
+        .creative_container .header >span:nth-child(3){
+            width: 26%;
+        }
+        .creative_container .header >span:nth-child(4){
+            float: right;
+            color: #2698fd;
+            padding-right: 30px;
+            cursor: pointer;
+            font-weight: 400;
+        }
+        .creative_container .content{
+            padding: 30px;
+            background: #ffffff;
+        }
+        .creative_container .content .item-left{
+            display: inline-block;
+            width: 50%;
+        }
+        .creative_container .content .item-right{
+            display: inline-block;
+            width: 50%;
+        }
+        .creative_container .content .item-header{
+            font-weight: normal;
+            font-size: 12px;
+            color: #999999;
+            border-bottom: 1px #dfe3e6 solid;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        .creative_container .content .upload{
+            display: inline-block;
+            width: 260px;
+            height: 182px;
+            border: 1px #dfe3e6 solid;
+            background-color: #eeeeee;
+        }
+        .creative_container .content .upload-left{
+            display: inline-block;
+            width: 130px;
+            height: 182px;
+            border: 1px #dfe3e6 solid;
+            background-color: #eeeeee;
+        }
+        .creative_container .content .upload-right{
+            display: inline-block;
+            width: 130px;
+            height: 182px;
+            border: 1px #dfe3e6 solid;
+            border-left: none;
+            background-color: #eeeeee;
+        }
+        .creative_container .content .item-header >span:nth-child(1){
+            font-size: 14px;
+            color: #666666;
+            margin-right: 15px;
+            margin-left:0;
+        }
+        .creative_container .content .item-header >span{
+            display: inline-block;
+            margin-left: 20px;
+        }
+
+    </style>
+</head>
+<body >
+<div class="container" ng-controller="testCtrl2">
+    <div class="yc-btn-web" id="video">上传</div>
+</div>
+    
+
+
+
+
+
+    <div class="container" ng-controller="testCtrl">
+        <div class="header-title">
+            <div class="header-message">基本信息</div>
+        </div>
+
+        <div class="button-group clear">
+            <div class="button-g fl">
+                <a class="yc-btn" href="putAdd.html">新增订单</a>
+                <a class="yc-btn" href="putAdd.html">新增订单</a>
+                <a class="yc-btn" href="putAdd.html">新增订单</a>
+                <a class="yc-btn" href="putAdd.html">新增订单</a>
+                <a class="yc-btn" href="putAdd.html">新增订单</a>
+                <a class="yc-btn" href="putAdd.html">新增订单</a>
+            </div>
+            <div class="query-g fr">
+                <!--<div yc-select="userList" width="150" value="_select" key="id" session="session" group="session-test"></div>-->
+                <!--<div yc-select="userList" width="150" value="_select" key="id" session="session" group="session-test"></div>-->
+                <!--<div yc-select="userList" width="150" value="_select" key="id" session="session" group="session-test"></div>-->
+                <!--<div yc-select="userList" width="150" value="_select" key="id" session="session" group="session-test"></div>-->
+                <!--<div yc-select="userList" width="150" value="_select" key="id" session="session" group="session-test"></div>-->
+            </div>
+            
+        </div>
+
+        <div class="table-container">
+            <table class="yc-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>广告位名称</th>
+                        <th>排期类型</th>
+                        <th>刊例价</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>总网首页图文</td>
+                        <td>焦点图</td>
+                        <td>1000元/天</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>总网首页图文</td>
+                        <td>焦点图</td>
+                        <td>1000元/天</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>总网首页图文</td>
+                        <td>焦点图</td>
+                        <td>1000元/天</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>总网首页图文</td>
+                        <td>焦点图</td>
+                        <td>1000元/天</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="table-container">
+            <table class="yc-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>广告位名称</th>
+                        <th>排期类型</th>
+                        <th>刊例价</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>总网首页图文</td>
+                        <td>焦点图</td>
+                        <td>1000元/天</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>总网首页图文</td>
+                        <td>焦点图</td>
+                        <td>1000元/天</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>总网首页图文</td>
+                        <td>焦点图</td>
+                        <td>1000元/天</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>总网首页图文</td>
+                        <td>焦点图</td>
+                        <td>1000元/天</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="form">
+            <div class="header-title">
+                <div class="header-message">基本信息</div>
+            </div>
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 订单类型：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 订单类型：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 订单类型：</label>
+                <div class="yc-col-10">
+                    <div class="icon-input">
+                        <input class="form-control" type="text">
+                        <span class="icon">+</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 订单类型：</label>
+                <div class="yc-col-10">
+                    <div class="input-group">
+                        <input type="text" class="form-control">
+                        <span class="input-group-addon">.00</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 订单类型：</label>
+                <div class="yc-col-10">
+                    <label class="checkbox"><input class="form-control" type="checkbox"> 订单类型</label>
+                    <label class="checkbox"><input class="form-control" type="checkbox"> 订单类型</label>
+                    <label class="checkbox"><input class="form-control" type="checkbox"> 订单类型</label>
+                    <label class="checkbox"><input class="form-control" type="checkbox"> 订单类型</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 订单类型：</label>
+                <div class="yc-col-10">
+                    <label class="radio"><input class="form-control" type="radio"> 订单类型</label>
+                    <label class="radio"><input class="form-control" type="radio"> 订单类型</label>
+                    <label class="radio"><input class="form-control" type="radio"> 订单类型</label>
+                    <label class="radio"><input class="form-control" type="radio"> 订单类型</label>
+                    <span class="msg">123123123</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 订单类型：</label>
+                <div class="yc-col-10">
+                    <!--<div yc-select="orderTypeSel" width="150" query="query" value="orderType" key="id" placeholder="订单类型" session="orderType_orderAdd" group="orderAddGroup"></div>-->
+                </div>
+            </div>
+
+            <div class="header-title">
+                <div class="header-message">基本信息</div>
+            </div>
+
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 订单类型：</label>
+                <div class="yc-col-10">
+                    <textarea class="form-control" type="text"></textarea>
+                    <span class="msg">123123123</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 订单类型：</label>
+                <div class="yc-col-10">
+                    <textarea class="form-control" type="text"></textarea>
+                    <span class="error">123123123</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 订单类型：</label>
+                <div class="yc-col-10">
+                    <table class="yc-table">
+                        <thead>
+                        <tr>
+                            <th>1</th>
+                            <th>2</th>
+                            <th>3</th>
+                            <th>4</th>
+                            <th>5</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>2</td>
+                                <td>3</td>
+                                <td>4</td>
+                                <td>5</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+</body>
+</html>

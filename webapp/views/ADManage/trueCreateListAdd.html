@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>新增创意-默认广告-订单管理</title>
+    <meta name="keywords" content="新增创意-默认广告-订单管理"/>
+    <meta name="description" content="新增创意-默认广告-订单管理"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../../static/css/global.css"/>
+    <link rel="stylesheet" href="../../static/css/ADManageAddEdit.css"/>
+
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../../static/lib/validation/jquery.validate.js"></script>
+    <script type="text/javascript" src="../../static/lib/validation/jquery.validate.messages.js"></script>
+    <script type="text/javascript" src="../../static/lib/webuploader.min.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/js/defaultOrder.js"></script>
+</head>
+<body ng-controller="orderRuleCtrl" class="defaultOrder">
+<nav class="header">
+    <div class="scroll scroll-nav">
+        <a class="nav" href="javascript:void(0)" >广告订单 &gt;</a>
+        <a class="nav" href="javascript:void(0)" data-route="ViewDefaultOrder">默认广告 &gt;</a>
+        <a class="nav" href="javascript:void(0)" data-route="ViewDefaultOrderCreate">创意列表 &gt;</a>
+        <a class="nav active" href="javascript:void(0)">新增创意</a>
+    </div>
+</nav>
+<div class="container" ng-controller="trueCreatelistAddCtrl">
+    <form class="form">
+        <div class="form-group">
+            <label for="" class="yc-col-2 control-label"> <span>*</span> 订单名称：</label>
+            <div class="yc-col-10">
+                <div yc-select="orderNameListSel" width="260" query="creative" value="orderId" key="id" placeholder="订单名称" resname="{{orderName}}" name="orderName" group="createDefault"></div>
+                <span class="error" ng-show="!creative.orderId && validateShow">请选择订单</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="yc-col-2 control-label"> <span>*</span> 创意名称：</label>
+            <div class="yc-col-10">
+                <input class="form-control" name="adCreativeName" type="text" ng-placeholder="请输入创意名称" ng-model="creative.adCreativeName">
+            </div>
+        </div>
+        <!--<div class="form-group">
+            <label class="yc-col-2 control-label"> <span>*</span> 创意状态：</label>
+            <div class="yc-col-10">
+                <label class="radio">
+                    <input class="form-control" type="radio" value="0" ng-model="creative.state">启用
+                </label>
+                <label class="radio">
+                    <input class="form-control" type="radio" value="-1" ng-model="creative.state">禁用
+                </label>
+            </div>
+        </div>-->
+        <div class="form-group">
+            <label class="yc-col-2 control-label"> <span>*</span> 选择上传方式：</label>
+            <div class="yc-col-10">
+                <label class="radio">
+                    <input class="form-control" type="radio" value="0" ng-model="uploadType" ng-change="uploadTypeChange()">按照尺寸上传
+                </label>
+                <label class="radio">
+                    <input class="form-control" type="radio" value="1" ng-model="uploadType" ng-change="uploadTypeChange()">按照广告位上传
+                </label>
+            </div>
+        </div>
+        <div class="form-group" ng-show="uploadType == 1">
+            <label class="yc-col-2 control-label"> <span>*</span> 添加广告位：</label>
+            <div class="yc-col-10">
+                <div>
+                    <input type="button" class="btn-default form-control clientAdd-btn" value="添加广告位" ng-click="showCreativeList('#creativeList')">
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="yc-col-2"> </label>
+            <div class="yc-col-10">
+                <div class="default-create-box" ng-show="adListInfo.length>0">
+                    <div class="yc-tue-indent" ng-repeat="ad in adListInfo" repeat-finish="adListInfoList">
+                        <span ng-show="uploadType == 1" class="ad-close" ng-click="deleteInfo($index)"> <i class="yc-icon">&#xe61b;</i></span>
+                        <div class="local-upload">
+                            <div class="yc-imgsize">{{ad.adSpaceName?(ad.adSpaceName + '(' +ad.size + ')'):(ad.size)}}</div>
+                            <div class="yc-indent-article">
+
+                            </div>
+                        </div>
+                        <div class="uploading" id="{{ad.uploadId}}">本地上传</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group-btn">
+            <label class="yc-col-2 control-label"></label>
+            <div class="yc-col-10">
+                <a href="javascript:void(0)" class="yc-btn" ng-click="postEdit()">提 交</a>
+                <a href="javascript:void(0)" data-route="ViewDefaultOrderCreate" class="yc-btn-out">取 消</a>
+            </div>
+        </div>
+    </form>
+
+    <!--广告位-->
+    <div class="dialog-bg hide" yc-module="adSpaceModule" width="950">
+        <div class="dialog-wraper">
+            <div class="dialog-title">
+                <span class="title">弹窗</span>
+                <i class="dialog-close yc-icon">&#xe619;</i>
+            </div>
+            <div class="dialog-con">
+                <div class="button-group clear">
+                    <div class="query-g fl">
+                        <div yc-select="mediaListSel" width="120" query="query" value="paramInt2" key="id" add="全部" placeholder="选择媒体" name="mediaName" group="default-create-ad"></div>
+                        <div yc-select="periodicationSel" width="120" query="query" value="paramInt4" key="id" add="全部" placeholder="频道" name="channelName" group="default-create-ad"></div>
+                        <div yc-select="sizeListSel" width="120" query="query" value="param2" key="size" add="全部" placeholder="选择尺寸" name="size" group="default-create-ad"></div>
+                        <div yc-select="typeListSel" width="120" query="query" value="paramInt3" key="id" add="全部" placeholder="广告类型" group="default-create-ad"></div>
+                        <div class="icon-input">
+                            <input type="text" ng-placeholder="请输入广告位名称或ID" ng-model="query.search" class="form-control">
+                            <span class="icon">
+                                <i class="yc-icon pointer" ng-click="redirect(1,search)">&#xe60b;</i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="table_list clear">
+                    <div class="table-cart">
+                        <table class="yc-table">
+                            <thead>
+                            <tr>
+                                <td>ID</td>
+                                <td>广告位名称</td>
+                                <td>尺寸</td>
+                                <td>创意类型</td>
+                                <td>频道</td>
+                                <td>所属媒体</td>
+                                <td>刊例价</td>
+                                <td>操作</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="item in items">
+                                <td ng-bind="item.id"></td>
+                                <td ng-bind="item.adSpaceName"></td>
+                                <td ng-bind="item.size"></td>
+
+                                <td ng-bind="item.adSpaceTypeName"></td>
+                                <td ng-bind="item.mediaChannelName? item.mediaChannelName : item.mediaChannelNames"></td>
+                                <td ng-bind="item.mediaName"></td>
+                                <td>{{item.price + '/'}}{{item.priceCycle | isDay}}</td>
+                                <td class="center body-list-td" ng-click="putRightInfo(item)">
+                                    <a title="添加" class="yc-icon pointer" ng-class="isInRight(item.id)" style="font-size: 30px">+</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="client-judge" ng-if="!total_page || total_page<1">您好，暂时没有符合条件的任何数据或请选择订单</div>
+                        <div ng-show="total_page >= 1" yc-page page="page" redirect="redirect(page.page,search)" query="query" session="0"></div>
+                    </div>
+                    <div class="search_denuded">
+                        <h4>
+                            <span class="yc-col-9 t-left">已选择</span>
+                            <span class="yc-col-3" ng-click="clearInfo()">清空</span>
+                        </h4>
+                        <ul>
+                            <li ng-repeat="info in adListInfoCache track by $index">
+                                <span class="yc-col-9 ellipsis text-l">{{info.adSpaceName}}</span>
+                                <a class="remove yc-icon yc-col-3 ellipsis" href="javascript:;" ng-click="deleteInfoByIndex($index)" style="color:#3f88d2">&#xe611;</a>
+                            </li>
+                        </ul>
+                        <!--<h4>-->
+                            <!--<span class="yc-col-9" text-left>已选择</span>-->
+                            <!--<span class="yc-col-3" ng-click="clearInfo()">清空</span>-->
+                        <!--</h4>-->
+                        <!--<ul>-->
+                            <!--<li ng-repeat="info in adListInfoCache track by $index">-->
+                                <!--<span>{{info.adSpaceName}}</span>-->
+                                <!--<a class="remove yc-icon" href="javascript:;" ng-click="deleteInfoByIndex($index)" style="color:#3f88d2">&#xe611;</a>-->
+                            <!--</li>-->
+                        <!--</ul>-->
+                    </div>
+                </div>
+            </div>
+            <div class="dialog-submit">
+                <a href="javascript:void(0)" class="ok" style="display: inline-block;">确定</a>
+                <a href="javascript:void(0)" class="no" style="display: inline-block;">取消</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
+
+
+         

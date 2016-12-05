@@ -1,0 +1,17 @@
+/*广告类型*/
+.createManage .yc-col-3{
+    max-width: 230px;
+}
+/*广告位*/
+.advertiseManage .showPhoto{
+    display: inline-block;
+    width: 150px;
+}
+.advertiseManage .moduleDefault .showPhoto{
+    display: inline-block;
+    padding-right: 20px;
+    width: auto;
+}
+.advertiseManage .upload .item{
+    padding-right: 60px;
+}

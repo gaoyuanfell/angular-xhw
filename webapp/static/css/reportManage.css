@@ -1,0 +1,104 @@
+/*通用*/
+.container .yc-table thead th:last-child{
+    padding-right: 28px;
+}
+
+/*数据概览*/
+#main {
+    width: auto;
+    height: 98%;
+}
+.data-echarts{
+    background: #fcfdfd;
+    border: 1px #e7eaed solid;
+    border-radius: 3px;
+    position: relative;
+    height: 420px;
+    padding: 15px 20px 0 20px;
+}
+.data-echarts .picker-date{
+    position: absolute;
+    top: 12px;
+    margin: 0 10px;
+    left: 32px;
+    z-index: 2000;
+}
+ .data-list{
+    width: 100%;
+    height:90px;
+    background: #fcfdfd;
+    margin: 25px 0 15px 0;
+    border: 1px #e7eaed solid;
+    border-radius: 3px;
+}
+.data-list .data-listing{
+    display: inline-block;
+    width:11.5%;
+    text-align: center;
+    font-size: 16px;
+    color: #666666;
+    position: relative;
+    top: 50%;
+    margin-top: -33px;
+}
+
+.data-list .data-listing:nth-child(4){
+    width:15%;
+}
+.data-list .data-listing:nth-child(5){
+    width:15%;
+}
+
+.data-list .data-listing .data-amounts{
+    margin-bottom: 15px;
+}
+.container .data-list .data-number span:nth-child(1){
+    font-size: 20px;
+    color: #2499ff;
+    font-weight: bold;
+    vertical-align: middle;
+    margin-right:3px;
+}
+.container .data-list .data-number span:nth-child(2){
+    font-size:14px;
+    color: #999999;
+    vertical-align: middle;
+}
+/*客户报表*/
+
+/*资源管理*/
+
+/*广告投放*/
+
+/*订单消耗*/
+
+/*合同消耗*/
+
+/*自定义列表样式*/
+.column-setting{
+    position: absolute;
+    top: 6px;
+    right: 8px;
+}
+.column-line{
+    position: absolute;
+    width: 370px;
+    background-color: #fff;
+    top: 38px;
+    right: 0;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+}
+.column-line .center{
+    padding-top: 10px;
+}
+
+.column-line label{
+    float: left;
+    width: 33.3%;
+    padding-right: 10px;
+}
+
+.column-line .triangle{
+    left: 327px;
+}

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>资源管理-媒体管理</title>
+    <meta name="keywords" content="资源管理-媒体管理"/>
+    <meta name="description" content="资源管理-媒体管理"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../../static/css/global.css"/>
+    <link rel="stylesheet" href="../../static/css/ResourceManage.css"/>
+
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/js/resourceManage.js"></script>
+</head>
+<body ng-controller="resLimitCtrl">
+    <nav class="header">
+        <div class="scroll">
+            <a class="nav" data-route="ViewMediaChannelADSpace1">媒体列表</a>
+        </div>
+    </nav>
+    <div class="container" ng-controller="mediaManageCtrl">
+        <div class="button-group clear">
+            <div class="button-g fl">
+                <a href="javascript:;" data-route="ViewMediaChannelADSpace1Add" class="yc-btn" ng-if="resourceRule['ManageMediaChannelADSpace']">新增媒体</a>
+            </div>
+            <div class="query-g fr">
+                <!--<div yc-select="mediaTypeSel" width="150" query="query" value="mediaType" key="id" placeholder="媒体类型" session="res_media_mediaType" group="res-media-media"></div>-->
+                <div yc-select="companyListSel" width="150" query="query" value="searchCompany" key="id" add="全部" name="companyName" placeholder="所属" session="res_media_company" group="res-media-media"></div>
+                <div class="icon-input">
+                    <input class="form-control" type="text" ng-placeholder="请输入媒体名称或ID" ng-model="query.search">
+                    <span class="icon">
+                        <i class="yc-icon calendars" ng-click="redirect(1,search)">&#xe60b;</i>
+                    </span>
+                </div>
+
+            </div>
+        </div>
+        <div class="table-container">
+            <table class="yc-table">
+                <thead>
+                <tr>
+                    <th>媒体ID</th>
+                    <th>媒体名称</th>
+                    <th>所属名称</th>
+                    <th>媒体类型</th>
+                    <th>域名</th>
+                    <th class="center">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in items">
+                    <td ng-bind="::item.id"></td>
+                    <td ng-bind="::item.mediaName"></td>
+                    <td ng-bind="::item.companyName"></td>
+                    <td ng-bind="::item.mediaType | typeApp"></td>
+                    <td ng-bind="::item.url">{{item.url}}</td>
+                    <td class="center">
+                        <a title="编辑媒体信息" data-route="ViewMediaChannelADSpace1Edit?id={{item.id}}" ng-if="resourceRule['ManageMediaChannelADSpace']" href="javascript:void(0)">编辑</a>
+                        <a title="查看媒体信息" data-route="ViewMediaChannelADSpace1Edit?id={{item.id}}" ng-if="!resourceRule['ManageMediaChannelADSpace']" href="javascript:void(0)">查看</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="client-judge" ng-if="total_page<1">您好，暂时没有符合条件的任何数据</div>
+        <div ng-show="total_page>0" yc-page page="page" redirect="redirect(page.page,search)" query="query"></div>
+
+    </div>
+
+</body>
+</html>

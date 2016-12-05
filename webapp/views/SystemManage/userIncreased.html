@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>新增用户-用户管理-系统管理</title>
+    <meta name="keywords" content="新增用户-用户管理-系统管理"/>
+    <meta name="description" content="新增用户-用户管理-系统管理"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../../static/css/global.css"/>
+    <link rel="stylesheet" href="../../static/css/SystemManage.css"/>
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../../static/lib/validation/jquery.validate.js"></script>
+    <script type="text/javascript" src="../../static/lib/validation/jquery.validate.messages.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/lib/md5.js"></script>
+    <script type="text/javascript" src="../../static/js/systemManage.js"></script>
+</head>
+<body>
+    <nav class="header">
+        <div class="scroll scroll-nav">
+            <a class="nav" href="javascript:void(0)" >系统设置 &gt;</a>
+            <a class="nav" href="javascript:void(0)" >用户 &gt;</a>
+            <a class="nav" href="javascript:void(0)" data-route="ViewUser">用户列表 &gt;</a>
+            <a class="nav active" href="javascript:void(0)">新增用户</a>
+        </div>
+    </nav>
+    <div class="container" ng-controller="userAddCtrl">
+        <form class="form">
+            <div class="header-title">
+                <div class="header-message">账户信息</div>
+            </div>
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 用户名：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" name="loginName" type="text" ng-placeholder="请输入用户名" ng-model="userMode.logName">
+                    <span class="msg">可使用字母、数字、下划线，需以字母开头</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 密码：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" name="passWord" type="password" ng-placeholder="请输入密码" ng-model="userMode.logPwd">
+                    <span class="msg">至少6字符，区分大小写</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 确认密码：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" ng-blur="logPwdV = true" name="passWord" type="password" ng-placeholder="请输入密码" ng-model="userMode.logPwd2">
+                    <span class="error" ng-show="userMode.logPwd != userMode.logPwd2 && logPwdV">两次密码输入不一致，请重新输入</span>
+                </div>
+            </div>
+            <div class="header-title">
+                <div class="header-message">用户信息</div>
+            </div>
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 姓名：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" type="text" name="userName" ng-placeholder="请输入用户姓名" ng-model="userMode.trueName">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 所属：</label>
+                <div class="yc-col-10">
+                    <div yc-select="companyListSel" width="260" query="userMode" value="companyId" key="id" name="companyName" placeholder="所属" ></div>
+                    
+                    <span class="msg">公司名称一旦提交，不得修改</span>
+                    <span class="error" ng-show="!userMode.companyId && validShow">请选择所属公司</span>
+                </div>
+            </div>
+            <div class="form-group" ng-show="departmentList && departmentList.length>0">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 部门：</label>
+                <div class="yc-col-10">
+                    <div yc-select="departmentListSel" width="260" query="userMode" value="agencyNumber" key="agencyNumber" name="departmentName" recursion="nextDepts" placeholder="所属部门" ></div>
+
+                    <span class="error" ng-show="!userMode.agencyNumber && validShow">请选择所属部门</span>
+                </div>
+            </div>
+            <div class="form-group" ng-show="userListSel && (userListSel.list.length > 1 || userListSel.$list.length > 1)">
+                <label for="" class="yc-col-2 control-label"> 上级领导：</label>
+                <div class="yc-col-10">
+                    <div yc-select="userListSel" width="260" query="userMode" add="无" value="leaderId,leaderName" key="id,trueName" name="trueName" placeholder="上级领导" ></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> 手机：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" name="myPhone" type="text" ng-placeholder="请输入手机" ng-model="userMode.phone">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> 座机：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" name="telephone" type="text" ng-placeholder="请输入座机" ng-model="userMode.telephone">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> 邮箱：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" name="myEmail" type="email" ng-placeholder="请输入邮箱" ng-model="userMode.email">
+                </div>
+            </div>
+            <div class="header-title" ng-if="roleList">
+                <div class="header-message">角色信息</div>
+            </div>
+            <div class="form-group" ng-if="roleList">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 用户角色：</label>
+                <div class="yc-col-10 selectArea userRuleArea">
+                    <ul style="max-width: 800px">
+                        <li class="user-rule" style="display: inline-block;margin-right: 10px;" ng-repeat="roles in roleList">
+                            <label class="pointer">
+                                <input type="checkbox" ng-model="roles.check" ng-true-value="true" ng-false-vlue="false" value="{{roles.id}}">
+                                <span ng-bind="roles.roleName"></span>
+                            </label>
+                        </li>
+                    </ul>
+                    <span ng-if="roleIdBo" class="error-message">请选择用户角色</span>
+                </div>
+            </div>
+            <div class="form-group-btn">
+                <label class="yc-col-2 control-label"></label>
+                <div class="yc-col-10">
+                    <a href="javascript:void(0)" class="yc-btn" ng-click="postEdit()">提 交</a>
+                    <a href="javascript:void(0)" data-route="ViewUser" class="yc-btn-out">取 消</a>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</body>
+</html>

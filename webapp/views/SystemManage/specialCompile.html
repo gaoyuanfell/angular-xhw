@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>编辑特效-特效管理-系统管理</title>
+    <meta name="keywords" content="新增特效-特效管理-系统管理"/>
+    <meta name="description" content="新增特效-特效管理-系统管理"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../../static/css/global.css"/>
+    <link rel="stylesheet" href="../../static/css/SystemManage.css"/>
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/webuploader.min.js"></script>
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../../static/lib/validation/jquery.validate.js"></script>
+    <script type="text/javascript" src="../../static/lib/validation/jquery.validate.messages.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/js/systemManage.js"></script>
+</head>
+<body ng-controller="limitCtrl">
+    <nav class="header">
+        <div class="scroll scroll-nav">
+            <a class="nav" href="javascript:void(0)" >系统设置 &gt;</a>
+            <a class="nav" href="javascript:void(0)" >特效 &gt;</a>
+            <a class="nav" href="javascript:void(0)" data-route="ViewSpecialEffects">特效列表 &gt;</a>
+            <a class="nav active" href="javascript:void(0)">编辑特效</a>
+        </div>
+    </nav>
+    <div class="container" ng-controller="SpecialCompileCtrl">
+        <form class="form">
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 特效名称：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" type="text" ng-model="special.specialEffectsName" name="specialEffectsName">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 特效示例地址：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" type="text" ng-model="special.specialEffectsUrl" name="specialEffectsUrl">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 备注：</label>
+                <div class="yc-col-10">
+                    <textarea class="form-control" name="remark" ng-model="special.remark"></textarea>
+                </div>
+            </div>
+            <div class="form-group-btn">
+                <label class="yc-col-2 control-label"></label>
+                <div class="yc-col-10">
+                    <a href="javascript:void(0)" class="yc-btn" ng-click="postEdit()" ng-if="systemManageRule['ManageSpecialEffects']">提 交</a>
+                    <a href="javascript:void(0)" data-route="ViewSpecialEffects" class="yc-btn-out">取 消</a>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</body>
+</html>

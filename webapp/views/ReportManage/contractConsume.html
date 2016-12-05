@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>广告投放报表-数据报表</title>
+    <meta name="keywords" content="广告投放报表-数据报表"/>
+    <meta name="description" content="广告投放报表-数据报表"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../../static/css/global.css"/>
+    <link rel="stylesheet" href="../../static/css/reportManage.css"/>
+    <link rel="stylesheet" href="../../static/lib/dateRange/jQuery.pickerDateRange.css"/>
+
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script src="../../static/lib/dateRange/jQuery.pickerDateRange.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/js/reportManage.js"></script>
+</head>
+<body>
+    <nav class="header">
+        <div class="scroll">
+            <a class="nav" data-route="ViewContractCostReport">合同消耗报表</a>
+        </div>
+    </nav>
+    <div class="container" ng-controller="contractConsumeCtrl">
+        <div class="button-group clear">
+            <div class="button-g fl">
+                <a href="javascript:;" class="yc-btn" ng-click="export()">导出报表</a>
+            <a href="javascript:;" class="yc-btn" onclick="window.print(1,'合同消耗报表')">预览打印</a>
+            </div>
+            <div class="query-g fr">
+                <div class="icon-input">
+                    <input class="form-control" type="text" ng-placeholder="请输入合同号" ng-model="query.search">
+                    <span class="icon">
+                        <i class="yc-icon calendars" ng-click="redirect(1,search)">&#xe60b;</i>
+                        </span>
+                </div>
+                <div class="icon-input picker-date">
+                    <label>
+                        <input class="form-control time_default" readonly type="text" id="dateRangeOperate">
+                        <i class="icon yc-icon calendars">&#xe60e;</i>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div yc-print="1">
+            <table class="yc-table">
+                <thead>
+                <tr>
+                    <th ng-show="clientCustom.currentDate">日期</th>
+                    <th ng-show="clientCustom.contractCode">合同号</th>
+                    <th ng-show="clientCustom.contractMoney">合同金额</th>
+                    <th ng-show="clientCustom.discount">折扣比例</th>
+                    <th ng-show="clientCustom.present">配送比例</th>
+                    <th ng-show="clientCustom.cost">已执行金额</th>
+                    <th ng-show="clientCustom.costFree">已配送金额</th>
+                    <th ng-show="clientCustom.pushCost">推送收入金额</th>
+                    <th ng-show="clientCustom.pushCostFree">推送配送金额</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr ng-hide="items.length<1" class="coloru" ng-repeat="item in summarizing">
+                    <td ng-show="clientCustom.currentDate">--</td>
+                    <td ng-show="clientCustom.contractCode">--</td>
+                    <td ng-show="clientCustom.contractMoney"><span ng-bind="item.contractMoney | currency:'￥'"></span></td>
+                    <td ng-show="clientCustom.discount">--</span></td>
+                    <td ng-show="clientCustom.present">--</td>
+                    <td ng-show="clientCustom.cost"><span ng-bind="item.costTotal | currency:'￥'"></span></td>
+                    <td ng-show="clientCustom.costFree"><span ng-bind="item.costFreeToatal | currency:'￥'"></span></td>
+                    <td ng-show="clientCustom.pushCost"><span ng-bind="item.pushCostTotal | currency:'￥'"></span></td>
+                    <td ng-show="clientCustom.pushCostFree"><span ng-bind="item.pushCostFreeTotal | currency:'￥'"></span></td>
+                </tr>
+
+                <tr ng-repeat="item in items">
+                    <td ng-show="clientCustom.currentDate" ng-bind="::item.currentDate | date:'yyyy-MM-dd'"></td>
+                    <td ng-show="clientCustom.contractCode" ng-bind="::item.contractCode"></td>
+                    <td ng-show="clientCustom.contractMoney"><span ng-bind="item.contractMoney | currency:'￥'"></span></td>
+                    <td ng-show="clientCustom.discount"><span ng-bind="(item.discount | currency:'') + '%'"></span></td>
+                    <td ng-show="clientCustom.present"><span ng-bind="(item.present | currency:'') + '%'"></span></td>
+                    <td ng-show="clientCustom.cost" ng-bind="::item.cost | currency:'￥'"></td>
+                    <td ng-show="clientCustom.costFree" ng-bind="::item.costFree | currency:'￥'"></td>
+                    <td ng-show="clientCustom.pushCost" ng-bind="::(item.pushCost | currency:'￥')"></td>
+                    <td ng-show="clientCustom.pushCostFree" ng-bind="::(item.pushCostFree | currency:'￥')"></td>
+                </tr>
+                </tbody>
+            </table>
+            <div column-setting="clientCustom">
+                <div class="column-setting" ng-click="clientCustom.columnSetting($event)"> <i class="yc-icon pointer success">&#xe601;</i> </div>
+                <div class="column-line hide animated">
+                    <div class="triangle"></div>
+                    <div class="clear">
+                        <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.currentDate"> 日期 </label>
+                        <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.contractCode"> 合同号 </label>
+                        <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.contractMoney"> 合同金额 </label>
+                        <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.discount"> 折扣比例 </label>
+                        <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.present"> 配送比例 </label>
+                        <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.cost"> 已执行金额 </label>
+                        <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.costFree"> 已配送金额 </label>
+                        <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.pushCost"> 推送收入金额 </label>
+                        <label class="checkbox"> <input class="form-control" type="checkbox" type="checkbox" ng-model="clientCustom.pushCostFree"> 推送配送金额 </label>
+                    </div>
+                    <div class="center">
+                        <a href="javascript:;" class="yc-btn-out" ng-click="clientCustom.columnSetting($event,true)">确定</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="client-judge" ng-if="total_page<1">您好，暂时没有符合条件的任何数据</div>
+        <div ng-show="total_page>0" yc-page page="page" redirect="redirect(page.page,search)" query="query"></div>
+
+    </div>
+
+</body>
+</html>

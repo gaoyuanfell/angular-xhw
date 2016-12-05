@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html ng-app="WangCheng">
+
+<head>
+    <meta charset="utf-8" />
+    <title>新华网广告投放系统</title>
+    <meta name="keywords" content="新华网广告投放系统" />
+    <meta name="description" content="新华网广告投放系统" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <link rel="stylesheet" href="../static/css/ycui.css" />
+    <link rel="stylesheet" href="../static/css/global.css" />
+    <link rel="stylesheet" href="../static/css/index.css" />
+    <link rel="shortcut icon" href="../static/img/favicon.ico" />
+
+    <script type="text/javascript" src="../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../static/js/global.js"></script>
+    <script type="text/javascript" src="../static/js/application.js"></script>
+    <script type="text/javascript" src="../static/js/index.js"></script>
+</head>
+
+<body>
+    <nav class="header">
+        <div class="scroll">
+            <a class="nav active" href="#">帮助</a>
+        </div>
+    </nav>
+    <div class="container" ng-controller="helpCtrl">
+        <div class="notice">
+            <div class="item" ng-repeat="no in items track by $index">
+                <div class="title pointer">
+                    <i class="yc-icon">&#xe632;</i> 
+                    <span style="color: #2698fd;" ng-bind="no.documentName" ng-click="download(no.documentUrl,no.documentName)"></span>
+                </div>
+            </div>
+        </div>
+        <div ng-show="total_page>0" yc-page page="page" redirect="redirect(page.page,search)" query="query"></div>
+    </div>
+</body>
+
+</html>

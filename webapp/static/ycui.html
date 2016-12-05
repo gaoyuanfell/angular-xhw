@@ -1,0 +1,493 @@
+﻿<!DOCTYPE html>
+<html dir="ltr" lang="zh-CN" ng-app="WangCheng">
+
+<head>
+	<meta charset="utf-8" />
+	<title>YCUI项目介绍页面</title>
+	<meta name="keywords" content="YCUI,YCUI项目页面" />
+	<meta name="description" content="介绍YCUI项目页面" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<link rel="shortcut icon" href="img/favicon.ico" />
+	<link rel="stylesheet" href="css/ycui.css" />
+
+	<script type="text/javascript" src="lib/jquery-1.11.2.min.js"></script>
+	<script type="text/javascript" src="js/ycui.js"></script>
+
+	<style type="text/css">
+		body {
+			padding: 50px 0px;
+		}
+		
+		h1 {
+			font-size: 18px;
+			font-weight: bold;
+			color: #003366;
+			padding: 10px 20px;
+			border-bottom: 1px dashed #CCCCCC;
+			margin-top: 25px;
+		}
+		
+		.iconList i {
+			vertical-align: middle;
+			margin-left: 20px;
+		}
+	</style>
+</head>
+
+<body>
+
+
+	<script src="lib/angular.js"></script>
+	<script src="js/application.js"></script>
+	<link rel="stylesheet" href="css/global.css">
+
+	<div ng-controller="testCtrl">
+		<br>
+		<h1>基于angular的弹窗 主要解决弹窗内复杂的dom操作</h1>
+		<div class="dialog-bg hide" yc-module="module">
+			<div class="dialog-wraper">
+				<div class="dialog-title">
+					<span class="title">title</span>
+					<i class="dialog-close yc-icon">&#xe614;</i>
+				</div>
+				<div class="dialog-con">
+
+				</div>
+				<div class="dialog-submit">
+					<a href="javascript:void(0)" class="ok">确定</a>
+					<a href="javascript:void(0)" class="no">取消</a>
+				</div>
+			</div>
+		</div>
+		<br>
+
+		<button type="" ng-click="show()">show</button>
+		<br>
+
+		<h1>基于angular的下拉框 </h1>
+		<br>
+		<p>{{query._select}}</p>
+		<input type="" name="" value="">
+
+		<div yc-select="userList" width="150" value="query._select" key="id" session="session" group="session-test"></div>
+		<p>{{query.select}}</p>
+		<div yc-select="userLists" width="150" value="query.select" key="id" session="_session" group="session-test">
+
+		</div>
+		<br>
+	</div>
+	<script>
+		app.controller('testCtrl', ['$scope', function($scope) {
+			$scope.show = function() {
+				$scope.module = {
+					title: '弹窗',
+					okClick: function(e) {
+						console.info(e)
+					},
+					noClick: function(e) {
+						console.info(e)
+					}
+				}
+			}
+
+			$scope.$on('session-test',function(e,date){
+				console.info(e);
+				console.info(date);
+			})
+
+			$scope.userList = {
+				list: [{
+					name: '新建广告(待投放)',
+					id: '1'
+				}, {
+					name: '广点通单选(待投放)',
+					id: '2'
+				}, {
+					name: 'adview(待投放)',
+					id: '3'
+				}],
+				callback: function(event, data) {
+					console.dir(data)
+				}
+			}
+
+			$scope.userLists = {
+				list: [{
+					name: '新建广告(待投放)',
+					id: '1'
+				}, {
+					name: '广点通单选(待投放)',
+					id: '2'
+				}, {
+					name: 'adview(待投放)',
+					id: '3'
+				}],
+				callback: function(event, data) {
+					console.dir(data)
+				}
+			}
+		}])
+	</script>
+
+
+
+	<h1>CSS 按钮</h1>
+	<div class="yc-row">
+		<div class="yc-col-1"></div>
+		<div class="yc-col-11">
+			<div class="yc-btn">.yc-btn</div>
+		</div>
+	</div>
+
+
+	<h1>CSS 搜索</h1>
+	<div class="yc-row">
+		<div class="yc-col-1"></div>
+		<div class="yc-col-11">
+			<input type="text" class="yc-search-input" placeholder="请输入日志内容">
+			<div class="yc-btn">.yc-search-input 单独搜索框</div>
+
+			<div class="yc-search-wraper"><input type="text" placeholder="请输入广告名称或ID"> <i class="yc-icon">&#xe623;</i></div>
+			<div class="yc-btn">.yc-search-wraper 包含搜索按钮</div>
+
+			<div class="yc-search-wraper yc-search-long"><input type="text" placeholder="请输入广告名称或ID"> <i class="yc-icon">&#xe623;</i></div>
+			<div class="yc-btn">.yc-search-long 长尺寸搜索功能类</div>
+		</div>
+	</div>
+
+
+	<h1>CSS 加载中提示</h1>
+	<div class="yc-row">
+		<div class="yc-col-1"></div>
+		<div class="yc-col-11 yc-loading">
+			<div class="yc-btn">给当前内容区域容器添加.yc-loading即可</div>
+		</div>
+	</div>
+
+	<h1>CSS 表格</h1>
+	<div class="yc-row">
+		<div class="yc-col-1"></div>
+		<div class="yc-col-6">
+			<table class="yc-table yc-table-trbg ">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>策略包名称</th>
+						<th><span>创建日期</span></th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>1908</td>
+						<td>ycui</td>
+						<td>2015-12-17</td>
+						<td><a href="#" title="修改信息">编辑</a><a href="#" title="删除策略包">删除</a></td>
+					</tr>
+					<tr>
+						<td>1908</td>
+						<td>ycui</td>
+						<td>2015-12-17</td>
+						<td><a href="#" title="修改信息">编辑</a><a href="#" title="删除策略包">删除</a></td>
+					</tr>
+					<tr>
+						<td>1908</td>
+						<td>ycui</td>
+						<td>2015-12-17</td>
+						<td><a href="#" title="修改信息">编辑</a><a href="#" title="删除策略包">删除</a></td>
+					</tr>
+					<tr>
+						<td>1908</td>
+						<td>ycui</td>
+						<td>2015-12-17</td>
+						<td><a href="#" title="修改信息">编辑</a><a href="#" title="删除策略包">删除</a></td>
+					</tr>
+					<tr>
+						<td>1908</td>
+						<td>ycui</td>
+						<td>2015-12-17</td>
+						<td><a href="#" title="修改信息">编辑</a><a href="#" title="删除策略包">删除</a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div class="yc-col-5">
+			<div class="yc-btn">.yc-table 默认样式 .yc-table-trbg 给tbody内偶数行添加背景颜色</div>
+		</div>
+	</div>
+
+
+
+	<h1>CSS 分页页码</h1>
+	<div class="yc-row">
+		<div class="yc-col-1"></div>
+		<div class="yc-col-11">
+			<div class="yc-pages">
+				<span title="跳转到 下一页" class="yc-pages-num">&lt;</span>
+				<span title="当前页" class="yc-pages-num yc-pages-current">1</span><span title="跳转到第 2页" class="yc-pages-num">2</span>
+				<span
+								title="跳转到第 3页" class="yc-pages-num">3</span><span title="跳转到第 4页" class="yc-pages-num">4</span><span title="跳转到第 5页" class="yc-pages-num">5</span>
+					<span title="跳转到 最后一页" class="yc-pages-num">6</span>
+					<span title="跳转到 下一页" class="yc-pages-num">&gt;</span>
+					<span>共6页 跳转到第</span><input type="text" class="yc-pages-input"><span class="group-text">页</span>
+					<button class="yc-pages-go">确定</button>
+			</div><br>
+			<div class="yc-btn">.yc-pages </div>
+		</div>
+	</div>
+
+
+	<h1>CSS 响应式栅格布局</h1>
+	<div class="yc-row">
+		<div class="yc-col-1"></div>
+		<div class="yc-col-11">
+			<div class="yc-btn">.yc-row行</div>
+			<div class="yc-btn">.yc-col-1 列1/12</div>
+			<div class="yc-btn">.yc-col-2 列2/12</div>
+			<div class="yc-btn">.yc-col-3 列3/12</div>
+			<div class="yc-btn">.yc-col-4 列4/12</div>
+			<div class="yc-btn">.yc-col-5 列5/12</div>
+			<div class="yc-btn">.yc-col-6 列6/12</div>
+			<div class="yc-btn">.yc-col-7 列7/12</div>
+			<div class="yc-btn">.yc-col-8 列8/12</div>
+			<div class="yc-btn">.yc-col-9 列9/12</div>
+			<div class="yc-btn">.yc-col-10 列10/12</div>
+			<div class="yc-btn">.yc-col-11 列11/12</div>
+			<div class="yc-btn">.yc-col-12 列12/12</div>
+		</div>
+	</div>
+
+	<h1>CSS Icon图标</h1>
+	<div class="yc-row">
+		<div class="yc-col-1"></div>
+		<div class="yc-col-11  iconList">
+			<div class="yc-btn">图标来自于阿里字体图标库 添加自定义类 .yc-icon和unicode字符 , 颜色、大小、位置自定义</div>
+			<i class="yc-icon" style="color:#005ED9;font-size:32px;">&#xe601;</i>&amp;#xe601;
+			<i class="yc-icon" style="color:#902000;font-size:32px;">&#xe605;</i>&amp;#xe605;
+			<i class="yc-icon" style="color:#207CCA;font-size:32px;">&#xe629;</i>&amp;#xe629;
+			<i class="yc-icon" style="color:#208050;font-size:32px;">&#xe623;</i>&amp;#xe623;
+			<i class="yc-icon" style="color:#A00000;font-size:32px;">&#xe63e;</i>&amp;#xe63e;
+			<i class="yc-icon" style="color:#F09067;font-size:32px;">&#xe642;</i>&amp;#xe642;
+			<i class="yc-icon" style="color:#528F6C;font-size:32px;">&#xe643;</i>&amp;#xe643;
+			<i class="yc-icon" style="color:#800080;font-size:32px;">&#xe644;</i>&amp;#xe644;
+			<div style="border:1px solid #00A2D4;margin:5px 0;width:1450px;"><img src="img/yc-icon.jpg"> </div>
+		</div>
+	</div>
+
+
+
+	<h1>JS&CSS 下拉菜单</h1>
+	<div class="yc-row">
+		<div class="yc-col-1"></div>
+		<div class="yc-col-11">
+			<div class="yc-select">
+				<div class="yc-select-current">今日</div> <i class="yc-icon">&#xe605;</i>
+				<ul class="yc-select-options">
+					<li data-value="1">今日</li>
+					<li data-value="2">昨天</li>
+					<li data-value="3">前天</li>
+					<li data-value="4">最近7天</li>
+					<li data-value="5">最近15天</li>
+					<li data-value="6">最近30天</li>
+					<li data-value="7">本月</li>
+					<li data-value="8">上月</li>
+					<li data-value="9">最近3个月</li>
+				</ul>
+				<input type="hidden" />
+			</div>
+			<div class="yc-btn">.yc-select 下拉菜单</div>
+
+			<div class="yc-select yc-select-long">
+				<div class="yc-select-current">请选择对应栏目项目</div> <i class="yc-icon">&#xe605;</i>
+				<ul class="yc-select-options">
+					<li data-value="1">今日</li>
+					<li data-value="2">昨天</li>
+					<li data-value="3">前天</li>
+					<li data-value="4">最近7天</li>
+					<li data-value="5">最近15天</li>
+					<li data-value="6">最近30天</li>
+					<li data-value="7">本月</li>
+					<li data-value="8">上月</li>
+					<li data-value="9">最近3个月</li>
+				</ul>
+				<input type="hidden" />
+			</div>
+			<div class="yc-btn">.yc-select-long 长下拉菜单功能类</div>
+
+			<script type="text/javascript">
+				ycui.select('.yc-select', function(obj) {
+					ycui.alertInfo('下拉项目 ' + obj.html() + ' 被点击', 'success');
+				});
+			</script>
+			<div class="yc-btn">下拉菜单初始化 ycui.select(选择器或者JQ Dom对象,回调函数) eg: ycui.select('.yc-select',fn)</div>
+		</div>
+	</div>
+
+
+	<h1>JS&CSS jQuery时间段日历选择插件</h1>
+	<link rel="stylesheet" href="lib/dateRange/jQuery.pickerDateRange.css" />
+	<script type="text/javascript" src="lib/dateRange/jQuery.pickerDateRange.js"></script>
+
+	<div class="yc-row">
+		<div class="yc-col-1"></div>
+		<div class="yc-col-11">
+			<div class="yc-btn">new pickerDateRange('inputID'{}) 初始化选择框</div>
+			<div class="yc-calendar-wraper">
+				<label><input type="text" placeholder="请选择投放时间段"  id="dateRange"> <i class="yc-icon">&#xe62e;</i></label>
+			</div>
+			<script type="text/javascript">
+				var dateRange = new pickerDateRange('dateRange', {
+					defaultText: ' 至 ', //选择日期分隔字
+					isSingleDay: false, //是否单日历	
+					stopToday: false, //今天之后不可选
+					stopTodayBefore: true, //今天之前不可选
+					isTodayValid: true, //点击今天是否可选
+					calendars: 2, //日历数量
+					shortbtn: 1, //是否显示快捷操作
+					startDate: '2016-02-01', //默认开始时间
+					endDate: '2016-03-01', //默认结束时间
+					inputTrigger: 'dateRange', //触发日历的input id					
+					success: function(obj) { //选择日期后的回调函数
+						//$('#dateRange').val(obj.startDate)
+					}
+				});
+			</script>
+
+		</div>
+	</div>
+
+
+	<h1>JS&CSS 鼠标经过显示提示信息</h1>
+	<div class="yc-row">
+		<div class="yc-col-1"></div>
+		<div class="yc-col-11">
+			<div class="yc-btn">ycui.showTitle(类名|dom集合),匹配元素需自定义data-title属性值</div>
+			<div class="yc-btn" data-title="此功能旨在替代原<br>生元素title<br>提示的文本信息<br> ycui.showTitle(类名|dom集合)">鼠标经过我</div>
+		</div>
+		<script>
+			ycui.showTitle('div[data-title]');
+		</script>
+	</div>
+
+
+	<h1>JS&CSS 弹出信息提示</h1>
+	<div class="yc-row">
+		<div class="yc-col-1"></div>
+		<div class="yc-col-11">
+			<div class="yc-btn" onclick="ycui.alertInfo('弹出成功信息','success',3)">点击弹出成功信息</div>
+			<div class="yc-btn" onclick="ycui.alertInfo('弹出显示信息','info',3)">点击弹出显示信息</div>
+			<div class="yc-btn" onclick="ycui.alertInfo('弹出警告信息','warning',3)">点击弹出警告信息</div>
+			<div class="yc-btn" onclick="ycui.alertInfo('弹出危险信息','danger',3)">点击弹出危险信息</div>
+			<div class="yc-btn" onclick="ycui.alert({title:'提示信息框',content:'提示信息框内容提示信息，在这里'})">点击弹出提示信息框</div>
+			<div class="yc-btn" onclick="ycui.confirm({title:'确认信息框',content:'确认信息框内容提示信息，在这里'})">点击弹出确认信息框</div>
+		</div>
+	</div>
+
+
+	<h1>JS tab切换</h1>
+	<div class="yc-row">
+		<div class="yc-col-1"></div>
+		<div class="yc-col-2">
+			<div class="yc-tabSwitch">
+				<div>
+					<div class="yc-btn yc-tab-item">选择一</div>
+					<div class="yc-btn yc-tab-item">选择二</div>
+					<div class="yc-btn yc-tab-item">选择三</div>
+				</div>
+				<div>
+					<div class="yc-tab-con">选择一 内容区域</div>
+					<div class="yc-tab-con">选择二内容区域</div>
+					<div class="yc-tab-con">选择三内容区域</div>
+				</div>
+			</div>
+		</div>
+		<div class="yc-col-9">
+			<div class="yc-btn">.tabSwitch tab切换的初始化类，ycui.tabSwitch('.yc-tabSwitch',回调函数)，dom结构严格按照此例</div>
+		</div>
+		<script>
+			ycui.tabSwitch('.yc-tabSwitch', function(n, c) {
+				ycui.alertInfo(c.html(), 'success');
+			})
+		</script>
+	</div>
+
+
+	<h1>JS&css 数据验证提示</h1>
+	<div class="yc-row">
+		<div class="yc-col-1"></div>
+		<ul class="yc-col-11">
+			<style>
+				.formValidation li {
+					margin-bottom: 6px;
+				}
+				
+				.formValidation input {
+					border: 1px solid #ccc;
+					width: 150px;
+				}
+			</style>
+			<form class="formValidation">
+				<li>姓名：<input type="text" name="name" /></li>
+				<li>电话：<input type="text" name="tel" /></li>
+				<li>邮箱：<input type="text" name="email" /></li>
+				<li>网站：<input type="text" name="url" /></li>
+				<li><input type="submit" value="提交数据" /> <input type="button" value="验证数据" onclick="$('.formValidation').valid()" /></li>
+			</form>
+			<script src="lib/validation/jquery.validate.js"></script>
+			<script src="lib/validation/jquery.validate.messages.js"></script>
+			<script>
+				$('.formValidation').validate({
+					rules: {
+						name: "required",
+						tel: {
+							required: true,
+							phone: true
+						},
+						email: {
+							required: true,
+							email: true
+						},
+						url: {
+							required: true,
+							url: true
+						}
+					},
+					errorClass: 'error-span',
+					errorElement: 'span'
+				})
+			</script>
+		</ul>
+	</div>
+
+	<h1>JS&&css 区域定向筛选</h1>
+	<div class="yc-row">
+		<div class="yc-col-1"></div>
+		<div class="yc-col-11" id="areasdemo">
+			<script>
+				$.getJSON("js/data/areas.json", function(data) {
+					var getResult = ycui.createAreas(data, [32, 33, 34, 360, 361, 362, 363, 364, 30], '#areasdemo');
+					$('#getResult').click(function() {
+						$('#resultArea').html(JSON.stringify(getResult()));
+					})
+				});
+			</script>
+			<code> 
+               			var getResult=ycui.createAreas(data,[],'#areasdemo'); //创建选择区域 data：显示的数据[],[]:已选择的数据,#areasdemo:生成的内容所在的容器 <br>              			
+               			getResult() //获取选择的结果 <br>                		
+               	</code>
+			<div class="yc-btn" id="getResult">获取选择结果</div>
+			<div id="resultArea" style="margin-bottom:15px;"></div>
+		</div>
+	</div>
+
+	<h1>JS&&css 投放策略筛选</h1>
+	<div class="yc-row">
+		<div class="yc-col-1"></div>
+		<div class="yc-col-11" id="testa">
+
+		</div>
+	</div>
+
+</body>
+
+</html>

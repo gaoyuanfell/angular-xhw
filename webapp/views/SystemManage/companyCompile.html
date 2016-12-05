@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>修改所属-所属管理-系统管理</title>
+    <meta name="keywords" content="修改所属-所属管理-系统管理"/>
+    <meta name="description" content="修改所属-所属管理-系统管理"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../../static/css/global.css"/>
+    <link rel="stylesheet" href="../../static/css/SystemManage.css"/>
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../../static/lib/validation/jquery.validate.js"></script>
+    <script type="text/javascript" src="../../static/lib/validation/jquery.validate.messages.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/js/systemManage.js"></script>
+</head>
+<body ng-controller="limitCtrl" class="companyManage">
+    <nav class="header">
+        <div class="scroll scroll-nav">
+            <a class="nav" href="javascript:void(0)" >系统设置 &gt;</a>
+            <a class="nav" href="javascript:void(0)" data-route="ViewCompany">所属 &gt;</a>
+            <a class="nav" href="javascript:void(0)" data-route="ViewCompany">所属列表 &gt;</a>
+            <a class="nav active" href="javascript:void(0)">编辑所属</a>
+        </div>  
+    </nav>
+    <div class="container" ng-controller="companyEditCtrl">
+        <form class="form">
+            <div class="form-group">
+                <label class="yc-col-2 control-label"> <span>*</span> 所属名称：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" name="userName" type="text" ng-placeholder="请输入所属名称" disabled ng-value="companyName">
+                </div>
+            </div>
+            <!--<div class="form-group">
+                <label class="yc-col-2 control-label"> <span>*</span> 所属类型：</label>
+                <div class="yc-col-10">
+                    <div class="companyType" yc-select="companyTypeSel" width="150" value="companyType" resname="{{companyType | companyTypeFtr}}" key="id" placeholder="所属类型"></div>
+                    <span class="error" ng-show="validate && !companyType">请选择所属类型</span>
+                </div>
+            </div>-->
+            <div class="form-group">
+                <label class="yc-col-2 control-label"> <span>*</span> 所属类型：</label>
+                <div class="yc-col-10">
+                    <label class="radio" ng-show="companyType == 2"> <input type="radio" class="form-control" disabled ng-model="companyType" value="2">分公司 </label>
+
+                    <label class="radio" ng-show="companyType == 1"> <input type="radio" class="form-control" disabled ng-model="companyType" value="1">总公司 </label>
+                </div>
+            </div>
+            <div class="form-group" ng-show="companyType == 2">
+                <label class="yc-col-2 control-label"> 所属区域：</label>
+                <div class="yc-col-10">
+                    <div class="selectArea">
+                        <dl class="selectArea-dl" ng-repeat="areaList in areaList">
+                            <dt>
+                                <b>{{areaList.areaName}}</b>
+                            </dt>
+                            <dd>
+                                <div class="area-self" ng-repeat="areaNext in areaList.parentList">
+                                    <label class="radio"><input type="radio" value="{{areaNext.parentId}}" ng-model="$parent.$parent.companyAreaId" data-level="{{areaNext.level}}">{{areaNext.parentName}}</label>
+                                </div>
+                            </dd>
+                        </dl>
+                    </div>
+                    <!--<span class="error" ng-show="validate && companyType == 2 && companyAreaId == undefined">请选择所属地域</span>-->
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="yc-col-2 control-label"> 管理员：</label>
+                <div class="yc-col-10">
+                    <input type="text" class="form-control" name="companyPerson" ng-placeholder="请输入管理员" id="principal" ng-model="manager">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="yc-col-2 control-label"> 手机：</label>
+                <div class="yc-col-10">
+                     <input name="phone" class="form-control" type="text" ng-placeholder="请输入手机" ng-model="phone">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="yc-col-2 control-label"> 座机：</label>
+                <div class="yc-col-10">
+                     <input name="telephone" class="form-control" type="text" ng-placeholder="请输入座机" ng-model="telephone">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="yc-col-2 control-label"> 联系邮箱：</label>
+                <div class="yc-col-10">
+                     <input name="myEmail" class="form-control" type="email" ng-placeholder="请输入联系邮箱" id="Email" ng-model="email">
+                </div>
+            </div>
+            <div class="form-group-btn">
+                <label class="yc-col-2 control-label"></label>
+                <div class="yc-col-10">
+                    <a href="javascript:void(0)" class="yc-btn" ng-click="postEdit()" ng-if="systemManageRule['ManageCompany']">提 交</a>
+                    <a href="javascript:void(0)" data-route="ViewCompany" class="yc-btn-out">取 消</a>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</body>
+</html>

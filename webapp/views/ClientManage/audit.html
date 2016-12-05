@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="zh-CN" ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>审核客户-客户-客户管理</title>
+    <meta name="keywords" content="审核客户-客户-客户管理"/>
+    <meta name="description" content="审核客户-客户-客户管理"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../../static/css/global.css"/>
+    <link rel="stylesheet" href="../../static/css/ClientManage.css"/>
+</head>
+<body ng-controller="clientLimitCtrl">
+<div class="yc-main-top clear">
+    <a href="../{{rule.url}}" ng-repeat="rule in ruleListTab" ng-class="{'cur':isLocation(rule.urlAll)}"><span ng-bind="rule.name"></span></a>
+</div>
+<div class="yc-main-wraper clientAdd" ng-controller="auditCtrl">
+    <div class="yc-compile-add">
+        <div class="yc-compile-head">审核客户</div>
+    </div>
+
+    <form class="yc-compile-articl clientAddForm">
+        <div class="yc-compile-section clear">
+            <div class="yc-section-text yc-col-1">客户名称：<span class="yc-section-text-symbol">*</span></div>
+            <div class="yc-section-company yc-col-11" id="yc-company">
+                <input name="clientName" type="text" disabled="disabled" ng-placeholder="请输入客户名称" ng-model="clientModel.customerName">
+            </div>
+        </div>
+
+        <div class="yc-compile-section clear">
+            <div class="yc-section-text yc-col-1">客户简称：<span class="yc-section-text-symbol">*</span></div>
+            <div class="yc-section-input yc-col-11">
+                <input name="clientAbbrev" type="text" disabled="disabled" ng-placeholder="请输入客户简称" ng-model="clientModel.abbrName">
+            </div>
+        </div>
+
+        <div class="yc-compile-section clear">
+            <div class="yc-section-text yc-col-1">客户类型：<span class="yc-section-text-symbol">*</span></div>
+            <div class="yc-section-input  yc-col-11">
+                <div class="yc-select departmentMa-departmentType yc-select2">
+                    <div class="yc-select-current yc-select-current1">{{clientModel.customerType | customerTypeFtr}}</div>
+                    <i class="yc-icon">&#xe605;</i>
+                </div>
+            </div>
+        </div>
+
+        <!--<div class="yc-compile-section clear" ng-show="clientModel.customerType==3">-->
+            <!--<div class="yc-section-text yc-col-1">代理名称：<span class="yc-section-text-symbol">*</span></div>-->
+            <!--<div class="yc-section-input  yc-col-11">-->
+                <!--<div class="yc-select departmentMa-departmentType yc-select3">-->
+                    <!--<div class="yc-select-current yc-select-current1">请选择</div>-->
+                    <!--<i class="yc-icon">&#xe605;</i>-->
+                    <!--<ul class="yc-select-options">-->
+                        <!--<li ng-repeat="item in childList" data-value="{{item.id}}" ng-click="updateSelect('parentId',item.id)">{{item.customerName}}</li>-->
+                    <!--</ul>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+
+        <div class="yc-compile-section clear">
+            <div class="yc-section-text yc-col-1">官网地址：<span class="yc-section-text-symbol">*</span></div>
+            <div class="yc-section-input yc-col-11" id="yc-genre">
+                <input name="myUrl" type="url" disabled="disabled" ng-model="clientModel.companyUrl">
+            </div>
+        </div>
+
+        <div class="yc-compile-section clear">
+            <div class="yc-section-text yc-col-1">客户属性：<span class="yc-section-text-symbol">*</span></div>
+            <div class="yc-section-input yc-col-11">
+                <input name="customerAttr" type="text" disabled="disabled" ng-model="clientModel.customerProperty">
+            </div>
+        </div>
+
+        <div class="yc-compile-section clear">
+            <div class="yc-section-text yc-col-1">备注：</div>
+            <div class="yc-section-input yc-col-11">
+                <textarea name="myText" disabled="disabled" ng-model="clientModel.remark"></textarea>
+            </div>
+        </div>
+
+        <div class="userIn-account userIn_account1">业务关系
+            <div class="yc-user-message"></div>
+        </div>
+
+        <div class="yc-compile-section clear">
+            <div class="yc-section-text yc-col-1">客户等级：<span class="yc-section-text-symbol">*</span></div>
+            <div class="yc-section-input  yc-col-11">
+                <div class="yc-select departmentMa-departmentType yc-select4">
+                    <div class="yc-select-current yc-select-current1">{{clientModel.customerLevel | customerLevelFtr}}</div>
+                    <i class="yc-icon">&#xe605;</i>
+                </div>
+            </div>
+        </div>
+
+        <div class="yc-compile-section clear">
+            <div class="yc-section-text yc-col-1">折扣比例：<span class="yc-section-text-symbol">*</span></div>
+            <div class="yc-section-input yc-col-11">
+                <input type="text" name="discount" disabled="disabled" ng-model="clientModel.discount" ng-pattern="/^[0-9]*$/" required>
+                <span class="yc-section-input-symbol">%</span>
+            </div>
+        </div>
+
+        <div class="yc-compile-section clear">
+            <div class="yc-section-text yc-col-1">业务员名称：<span class="yc-section-text-symbol">*</span></div>
+            <div class="yc-section-input  yc-col-11">
+                <div>
+                    <div ng-repeat="label in labelClientList track by $index" class="label">{{label.trueName}}</div>
+                </div>
+                <div>
+                    <input type="button" class="btn-default clientAdd-btn" value="选择业务员" ng-click="showAdClient()">
+                </div>
+            </div>
+        </div>
+
+        <div class="userIn-account">联系信息
+            <div class="addContact-btn">
+            </div>
+        </div>
+
+        <div class="contact-info">
+            <table class="yc-table">
+                <thead>
+                <tr>
+                    <th>联系人 *</th>
+                    <th>职位 *</th>
+                    <th>手机</th>
+                    <th>座机</th>
+                    <th>邮箱</th>
+                    <th>备注</th>
+                    <!--<th class="center">操作</th>-->
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="client in clientList track by $index">
+                    <th><label><input name="contactUser" type="text" ng-model="client.contactUser" ng-placeholder="请输入联系人"></label></th>
+                    <th><label><input name="contactPosition" type="text" ng-model="client.contactPosition" ng-placeholder="请输入职位"></label></th>
+                    <th><label><input name="contactPhone" type="text" ng-model="client.contactPhone" ng-placeholder="请输入手机"></label></th>
+                    <th><label><input name="contactTelephone" type="text" ng-model="client.contactTelephone" ng-placeholder="请输入座机"></label></th>
+                    <th><label><input name="contactEmail" type="text" ng-model="client.contactEmail" ng-placeholder="请输入邮箱"></label></th>
+                    <th><label><input name="remark" type="text" ng-model="client.remark" ng-placeholder="请输入备注"></label></th>
+                    <!--<th class="center">-->
+                        <!--<a href="javascript:void(0)"><i ng-click="switchingPosition($index,-1)" class="yc-icon">&#xe64e;</i></a>-->
+                        <!--<a href="javascript:void(0)"><i ng-click="switchingPosition($index,1)" class="yc-icon">&#xe64f;</i></a>-->
+                        <!--<a href="javascript:void(0)" ng-click="removeContact($index)"><i class="yc-icon">&#xe617;</i></a>-->
+                    <!--</th>-->
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="yc-compile-section yc-audit clear">
+            <div class="yc-section-text yc-col-1">审核状态：<span class="yc-section-text-symbol">*</span></div>
+            <div class="yc-section-input  yc-col-11">
+                <div class="yc-select">
+                    <div class="yc-select-current yc-select-current1">
+                        审核通过
+                    </div>
+                    <i class="yc-icon">&#xe605;</i>
+                    <ul class="yc-select-options">
+                        <li ng-click="clientModel.customerState = 1;clientModel.auditRemark = ''">审核通过</li>
+                        <li ng-click="clientModel.customerState = -1;clientModel.auditRemark = ''">审核未通过</li>
+                    </ul>
+                    <input type="hidden"/>
+                </div>
+            </div>
+        </div>
+
+        <div class="yc-compile-section clear" ng-show="clientModel.customerState==-1">
+            <div class="yc-section-text yc-col-1">备注：<span class="yc-section-text-symbol">*</span></div>
+            <div class="yc-section-input yc-col-11">
+                <textarea name="auditRemark" id="departName" maxlength="200" ng-placeholder="请输入不通过审核的原因，最多200个字；" ng-model="clientModel.auditRemark"></textarea>
+                <span>{{200-clientModel.auditRemark.length+'/'+200}}</span>
+            </div>
+        </div>
+
+        <div class="yc-compile-bottl">
+            <input type="submit" class="yc-bott-alter btn-default" value="提 交" ng-click="postEdit()">
+            <a class="yc-bott-alter-scal" href="clientManageh.html">取消</a>
+        </div>
+    </form>
+
+</div>
+
+<script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+<script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+<script type="text/javascript" src="../../static/js/ycui.js"></script>
+<script type="text/javascript" src="../../static/lib/validation/jquery.validate.js"></script>
+<script type="text/javascript" src="../../static/lib/validation/jquery.validate.messages.js"></script>
+<script type="text/javascript" src="../../static/js/global.js"></script>
+<script type="text/javascript" src="../../static/js/application.js"></script>
+<script type="text/javascript" src="../../static/js/ClientManage.js"></script>
+</body>
+</html>

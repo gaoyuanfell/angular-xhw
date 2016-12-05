@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>客户-客户管理</title>
+    <meta name="keywords" content="客户-客户管理"/>
+    <meta name="description" content="客户-客户管理"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../../static/css/global.css"/>
+    <link rel="stylesheet" href="../../static/css/ClientManage.css"/>
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/webuploader.min.js"></script>
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/js/ClientManage.js"></script>
+</head>
+<body ng-controller="clientLimitCtrl">
+<nav class="header">
+    <div class="scroll">
+        <a class="nav" data-route="ViewCustomer">客户列表</a>
+    </div>
+</nav>
+<div class="container" ng-controller="clientManageCtrl">
+    <div class="button-group clear">
+        <div class="button-g fl">
+            <a href="javascript:void (0)" data-route="ViewCustomerAdd" class="yc-btn" ng-if="clientRule['ManageCustomer']">新增客户</a>
+            <a href="javascript:void (0)" class="yc-btn" ng-click="customerOut()">导出客户</a>
+            <a href="javascript:void (0)" class="yc-btn" ng-click="customerDown()">下载模板</a>
+            <div class="yc-btn-web" id="customerImport">导入客户</div>
+        </div>
+        <div class="query-g fr">
+            <div yc-select="clientTypeSel" width="160" query="query" add="全部" value="paramInt2" key="id" placeholder="客户类型"></div>
+            <div class="icon-input">
+                <input class="form-control" type="text" ng-placeholder="请输入客户名称或属性" ng-model="query.search">
+                <span class="icon">
+                    <i class="yc-icon calendars" ng-click="redirect(1,search)">&#xe60b;</i>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="table-container">
+        <table class="yc-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>客户名称</th>
+                <!--<th>客户简称</th>-->
+                <th>客户类型</th>
+                <th>代理名称</th>
+                <th>客户属性</th>
+                <th>业务员</th>
+                <th>联系人</th>
+                <th>职位</th>
+                <th>手机</th>
+                <!--<th class="center">审核状态</th>-->
+                <th class="center">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="item in items">
+                <td><span ng-hide="item.hiddenList" ng-bind="::item.id"></span></td>
+                <td><span ng-hide="item.hiddenList" ng-bind="::item.customerName"></span></td>
+                <!--<td><span ng-hide="item.hiddenList" ng-bind="::item.abbrName"></span></td>-->
+                <td><span ng-hide="item.hiddenList" ng-bind="::item.customerType | customerTypeFtr"></span></td>
+                <td><span ng-hide="item.hiddenList" ng-bind="::item.parentName"></span></td>
+                <td><span ng-hide="item.hiddenList" ng-bind="::item.customerProperty"></span></td>
+                <td>
+                    <span ng-hide="item.hiddenList" ng-bind="::item.flowUsers[0].trueName"></span>
+                    <i ng-hide="item.hiddenList || item.flowUserCount == 1" class="yc-icon pointer" title="{{mapList(item.flowUsers)}}">&#xe622;</i>
+                </td>
+                <td>
+                    <span ng-bind="::item.contactUser"></span>
+                    <i ng-hide="item.hiddenList || item.contactUserCount < 2" ng-click="showContacList(item.id,$index,!item.showList)" class="yc-icon pointer">&#xe609;</i>
+                </td>
+                <td ng-bind="::item.contactPosition"></td>
+                <td ng-bind="::item.contactPhone"></td>
+                <!--<td class="center minTdCus">-->
+                <!--<div ng-hide="item.hiddenList">-->
+                <!--<span ng-bind="::item.customerState<=0? (item.customerState != 0 ? '审核未通过' : '审核中') : '审核通过'"></span>-->
+                <!--<i class="yc-icon pointer" ng-if="item.customerState == -1" ng-title="{{item.auditRemark||'没有填写原因'}}">&#xe601;</i>-->
+                <!--</div>-->
+                <!--</td>-->
+                <td class="center minTdWidth">
+                    <div ng-hide="item.hiddenList">
+                        <a title="修改信息" data-route="ViewCustomerEdit?id={{item.id}}" href="javascript:void(0)" ng-if="clientRule['ManageCustomer']">编辑</a>
+                        <a title="查看信息" data-route="ViewCustomerEdit?id={{item.id}}" href="javascript:void(0)" ng-if="!clientRule['ManageCustomer']">查看</a>
+                        <!--<a title="审核信息" style="cursor: pointer;" ng-click="isPassList(item.id,item.customerState)" ng-if="clientRule['AuditCustomer']">审核</a>-->
+                        <a title="资质" data-route="ViewCustomer1?id={{item.id}}&customerName={{item.customerName}}" href="javascript:void(0)">资质</a>
+                        <a href="javascript:;" title="订单" ng-click="listActive(listItems,item.id,item.customerName)" ng-class="{'noLimit':!listItems.length>0}">订单</a>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="client-judge" ng-if="total_page<1">您好，暂时没有符合条件的任何数据</div>
+    <div ng-show="total_page>0" yc-page page="page" redirect="redirect(page.page,search)" query="query"></div>
+</div>
+</body>
+</html>

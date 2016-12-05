@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>角标管理-系统管理</title>
+    <meta name="keywords" content="公告管理-系统管理"/>
+    <meta name="description" content="公告管理-系统管理"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../../static/css/global.css"/>
+    <link rel="stylesheet" href="../../static/css/SystemManage.css"/>
+    <!--<link rel="stylesheet" href="../../static/lib/dateRange/jQuery.pickerDateRange.css"/>-->
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <!--<script src="../../static/lib/dateRange/jQuery.pickerDateRange.js"></script>-->
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/js/systemManage.js"></script>
+</head>
+<body ng-controller="limitCtrl">
+<nav class="header">
+    <div class="scroll">
+        <a class="nav" data-route="ViewADMark">角标列表</a>
+    </div>
+</nav>
+<div class="container" ng-controller="MarkManageCtrl">
+    <div class="button-group clear">
+        <div class="button-g fl">
+            <a href="javascript:void(0)" data-route="ViewADMarkAdd" class="yc-btn" ng-if="systemManageRule['ManageADMark']">新增角标</a>
+        </div>
+        <div class="query-g fr">
+            <div class="icon-input">
+                <input class="form-control" type="text" ng-placeholder="请输入角标名称" ng-model="query.search">
+                <span class="icon">
+                    <i class="yc-icon calendars" ng-click="redirect(1,search)">&#xe60b;</i>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="table-container">
+        <table class="yc-table">
+            <thead>
+            <tr>
+                <th>添加时间</th>
+                <th class="th140">角标ID</th>
+                <th class="th160">角标名称</th>
+                <th>角标打开地址</th>
+                <th>使用范围</th>
+                <th>状态</th>
+                <th class="center th120">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="item in items">
+                <td ng-bind="::item.createTime|dateYMD"></td>
+                <td ng-bind="::item.id"></td>
+                <td>
+                    <a ng-if="item.adMarkUrl" ng-href="{{item.adMarkUrl}}" target="_blank" class="yc-icon" style="color: #a3a3a4;">&#xe61a;</a>
+                    <span ng-bind="::item.adMarkName"></span>
+                </td>
+                <td>
+                    <a ng-show="item.adMarkUrlShow" target="_blank" style="cursor:pointer" ng-href="{{item.adMarkUrlShow}}" ng-bind="item.adMarkUrlShow"></a>
+                </td>
+                <td>{{::item.adMarkType | AdMarkTypeFtr}}</td>
+                <td>{{::item.state == -1? "禁用" : "启用"}}</td>
+                <td class="center yc-roleMa-edit">
+                    <a title="修改信息" data-route="ViewADMarkEdit?id={{item.id}}" ng-if="systemManageRule['ManageADMark']" href="javascript:void(0)">编辑</a>
+                    <a title="查看信息" data-route="ViewADMarkEdit?id={{item.id}}" ng-if="!systemManageRule['ManageADMark']" href="javascript:void(0)">查看</a>
+                    <a title="启用/禁用" ng-if="systemManageRule['ManageADMark']" href="javascript:;" ng-click="enable(item.id,item.state)">{{(item.state)?'启用':'禁用'}}</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="client-judge" ng-if="total_page<1">您好，暂时没有符合条件的任何数据</div>
+    <div ng-show="total_page>0" yc-page page="page" redirect="redirect(page.page,search)" query="query"></div>
+</div>
+</body>
+</html>
+

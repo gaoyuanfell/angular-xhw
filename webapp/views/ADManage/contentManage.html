@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html ng-app="WangCheng">
+<head>
+    <meta charset="utf-8" />
+    <title>内容管理-系统管理</title>
+    <meta name="keywords" content="内容管理-系统管理" />
+    <meta name="description" content="内容管理-系统管理" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico" />
+    <link rel="stylesheet" href="../../static/css/ycui.css" />
+    <link rel="stylesheet" href="../../static/css/global.css" />
+
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/webuploader.min.js"></script>
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/js/order.js"></script>
+</head>
+
+<body ng-controller="orderRuleCtrl">
+    <nav class="header">
+        <div class="scroll">
+            <a class="nav" data-route="ViewContent">内容列表</a>
+        </div>
+    </nav>
+    <div class="container" ng-controller="ContentListCtrl">
+        <div class="button-group clear">
+            <div class="button-g fl">
+                <a class="yc-btn" data-route="ViewContentAdd" ng-if="putManageRule['ManageContent']">新增内容</a>
+            </div>
+            <div class="query-g fr">
+                <div yc-select="stateSel" width="150" query="query" value="checkState" key="id" placeholder="审核状态" session="content_checkState" group="contentListGroup"></div>
+                <div yc-select="mediaListSel" width="150" query="query" value="mediaId" name="mediaName" key="id" placeholder="媒体" add="全部" session="content_mediaId" group="contentListGroup"></div>
+                <div yc-select="channelListSel" width="150" query="query" value="channelId" name="channelName" key="id" placeholder="频道" add="全部" session="content_channelId" group="contentListGroup"></div>
+                <div yc-select="orderNameSel" width="150" query="query" value="orderId" key="id" add="全部" placeholder="订单" name="orderName" session="content_order" group="contentListGroup"></div>
+                <div class="icon-input">
+                    <input class="form-control" type="text" ng-placeholder="请输入内容名称" ng-model="query.search">
+                    <span class="icon">
+                        <i class="yc-icon calendars" ng-click="redirect(1,search)">&#xe60b;</i>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="yc-table">
+                <thead>
+                    <tr>
+                        <th>内容名称</th>
+                        <th>内容附件</th>
+                        <th>订单名称 <i title="订单名称：单击订单名称显示稿件选择的订单广告位详情" class="yc-icon pointer">&#xe622;</i></th>
+                        <th>媒体</th>
+                        <th>频道</th>
+                        <th>创建人</th>
+                        <th>稿件落地页</th>
+                        <th>审核时间</th>
+                        <th>审核人</th>
+                        <th>审核状态</th>
+                        <th class="th120">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="item in items">
+                        <td ng-bind="item.contentName"></td>
+                        <td>
+                            <a ng-href="{{item.contentAnnex}}" ng-show="item.contentAnnex" target="_blank">下载</a>
+                        </td>
+                        <td>
+                            <a href="javascript:void(0)" ng-click="showInfo(item)" ng-bind="item.orderName"></a>
+                        </td>
+                        <td ng-bind="item.mediaName"></td>
+                        <td ng-bind="item.channelName"></td>
+                        <td ng-bind="item.createUserName"></td>
+                        <td>
+                            <a ng-href="{{item.publishAddr}}" ng-show="item.publishAddr" target="_blank">打开</a>
+                        </td>
+                        <td ng-bind="item.checkTime | date:'yyyy-MM-dd HH:mm:ss'"></td>
+                        <td ng-bind="item.checkUserName"></td>
+                        <td>
+                            <span ng-bind="item.checkState | defaultOrderCheckFtr"></span>
+                            <i ng-show="item.checkRemark" class="yc-icon pointer" title="{{item.checkRemark}}">&#xe622;</i>
+                        </td>
+                        <td class="yc-roleMa-edit">
+                            <a title="修改信息" ng-if="putManageRule['ManageContent']" href="javascript:void (0)" data-route="ViewContentEdit?id={{item.id}}&checkState={{item.checkState}}" ng-bind="item.checkState == 1?'查看':'编辑'"></a>
+                            <a title="查看信息" ng-if="!putManageRule['ManageContent']" href="javascript:void (0)" data-route="ViewContentEdit?id={{item.id}}&checkState={{item.checkState}}">查看</a>
+                            <a ng-show="item.checkState == 0" title="审核" ng-if="putManageRule['AuditContent']" href="javascript:void (0)" ng-click="contentCheck(item.id,item.contentName)">审核</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="client-judge" ng-if="total_page<1">您好，暂时没有符合条件的任何数据</div>
+        <div ng-show="total_page>0" yc-page page="page" redirect="redirect(page.page,search)" query="query"></div>
+
+        <!--监控-->
+        <div class="dialog-bg hide" yc-module="contentCheckModule" width="410">
+            <div class="dialog-wraper">
+                <div class="dialog-title">
+                    <span class="title">title</span>
+                    <i class="dialog-close yc-icon">&#xe619;</i>
+                </div>
+                <div class="dialog-con">
+                    <div class="form-group">
+                        <label class="yc-col-3 control-label"> 审核意见：</label>
+                        <div class="yc-col-9">
+                            <label class="radio"><input class="form-control" type="radio" ng-model="_contentCheckModule.checkState" value="1" > 审核通过</label>
+                            <label class="radio"><input class="form-control" type="radio" ng-model="_contentCheckModule.checkState" value="-1" > 审核不通过</label>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="_contentCheckModule.checkState == 1">
+                        <label class="yc-col-3 control-label"> 稿件落地页：</label>
+                        <div class="yc-col-9">
+                            <textarea ng-class="{'border-error':_contentCheckModule.$valid && !contentCheckModule.testValue}" class="form-control" ng-model="_contentCheckModule.publishAddr"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="_contentCheckModule.checkState == -1">
+                        <label class="yc-col-3 control-label"> 审核备注：</label>
+                        <div class="yc-col-9">
+                            <textarea ng-class="{'border-error':_contentCheckModule.$valid && !_contentCheckModule.checkRemark}" class="form-control" ng-model="_contentCheckModule.checkRemark"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="dialog-submit">
+                    <a href="javascript:void(0)" class="ok">确定</a>
+                    <a href="javascript:void(0)" class="no">取消</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

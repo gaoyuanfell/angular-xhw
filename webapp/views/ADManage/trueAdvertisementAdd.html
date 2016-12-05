@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>新增订单-默认广告-订单管理</title>
+    <meta name="keywords" content="新增订单-默认广告-订单管理"/>
+    <meta name="description" content="新增订单-默认广告-订单管理"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../../static/css/global.css"/>
+    <link rel="stylesheet" href="../../static/lib/dateRange/jQuery.pickerDateRange.css"/>
+    <link rel="stylesheet" href="../../static/css/ADManageAddEdit.css"/>
+
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/validation/jquery.validate.js"></script>
+    <script type="text/javascript" src="../../static/lib/validation/jquery.validate.messages.js"></script>
+    <script src="../../static/lib/dateRange/jQuery.pickerDateRange.js"></script>
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/js/defaultOrder.js"></script>
+</head>
+<body>
+<nav class="header">
+    <div class="scroll scroll-nav">
+        <a class="nav" href="javascript:void(0)" >广告订单 &gt;</a>
+        <a class="nav" href="javascript:void(0)" data-route="ViewDefaultOrder">默认订单 &gt;</a>
+        <a class="nav" href="javascript:void(0)" data-route="ViewDefaultOrder">订单列表 &gt;</a>
+        <a class="nav active" href="javascript:void(0)">新增订单</a>
+    </div>
+</nav>
+<div class="container" ng-controller="trueAdvertisementAddCtrl">
+    <form class="form">
+        <div class="header-title">
+            <div class="header-message">基本信息</div>
+        </div>
+
+        <div class="form-group">
+            <label for="" class="yc-col-2 control-label"> <span>*</span> 订单名称：</label>
+            <div class="yc-col-10">
+                <input class="form-control" name="orderName" type="text" ng-placeholder="请输入订单名称" ng-model="orderName">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="" class="yc-col-2 control-label"> <span>*</span> 订单状态：</label>
+            <div class="yc-col-10">
+                <label class="radio"> <input type="radio" class="form-control" value="0" ng-model="state"> 启用 </label>
+                <label class="radio"> <input type="radio" class="form-control" value="-1" ng-model="state"> 禁用 </label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="" class="yc-col-2 control-label"> <span>*</span> 优先级：</label>
+            <div class="yc-col-10">
+                <label class="radio"> <input type="radio" class="form-control" value="0" ng-model="priority"> 默认广告 </label>
+                <label class="radio"> <input type="radio" class="form-control" value="99" ng-model="priority"> 紧急广告 </label>
+            </div>
+        </div>
+
+        <div class="form-group" ng-if="priority == 99" ng-repeat="orderDate in timeArr" repeat-finish="timeArrList">
+            <label for="" class="yc-col-2 control-label" > <i ng-show="$index == 0"> <span>*</span> 投放档期：</i> </label>
+            <div class="yc-col-10">
+                <div class="icon-input">
+                    <label>
+                        <input class="form-control" readonly id="{{orderDate.id}}" type="text">
+                        <span class="icon">
+                            <i class="yc-icon calendars">&#xe60e;</i>
+                        </span>
+                    </label>
+                </div>
+                <span padding-left ng-if="$index == 0">
+                    <i class="yc-icon pointer" ng-click="addDiv()">&#xe61c;</i>
+                </span>
+                <span padding-left ng-if="$index != 0">
+                    <i class="yc-icon pointer" ng-click="removeDiv($event,$index)">&#xe611;</i>
+                </span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="" class="yc-col-2 control-label"> <span>*</span> 落地页：</label>
+            <div class="yc-col-10">
+                <textarea name="myUrl" class="form-control" ng-placeholder="请输入联落地页地址" ng-model="landingPage"></textarea>
+            </div>
+        </div>
+
+        <div class="header-title">
+            <div class="header-message">选择投放媒体</div>
+        </div>
+
+        <div class="form-group">
+            <label for="" class="yc-col-2 control-label"> <span>*</span> 选择媒体：</label>
+            <div class="yc-col-10">
+                <div id="InputValue">
+                    <label ng-repeat="m in media"  class="checkbox">
+                        <input class="form-control" type="checkbox" ng-click="mediaNamePush($event,m.id)"/>
+                        <span ng-bind="m.mediaName"></span>
+                    </label>
+                </div>
+                <span class="error" ng-show="mediaNamePush() == 0 && validate">请选择媒体</span>
+            </div>
+        </div>
+
+        <div class="form-group-btn">
+            <label class="yc-col-2 control-label"></label>
+            <div class="yc-col-10">
+                <a href="javascript:void(0)" class="yc-btn" ng-click="postEdit()">提交并继续</a>
+                <a href="javascript:void(0)" data-route="ViewDefaultOrder" class="yc-btn-out">取 消</a>
+            </div>
+        </div>
+        
+    </form>
+</div>
+</body>
+</html>

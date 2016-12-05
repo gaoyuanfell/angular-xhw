@@ -1,0 +1,368 @@
+/*订单新增*/
+.language .item {
+    width: 100px;
+    display: inline-block;
+    padding-top: 5px;
+}
+/*创意新增*/
+.creative_container{
+    border: 1px solid #ccc;
+    margin-bottom: 8px;
+}
+.creative_container >.header{
+    height: 42px;
+    background: #ebedef;
+    position: relative;
+    user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+}
+.creative_container .header >span {
+    display: inline-block;
+    color: #676767;
+    font-size: 14px;
+    font-weight: 700;
+    padding-top: 10px;
+}
+.creative_container .header >span:nth-child(1){
+    width: 38%;
+    padding-left: 24px;
+}
+.creative_container .header >span:nth-child(2){
+    width: 23%;
+}
+.creative_container .header >span:nth-child(3){
+    width: 26%;
+}
+.creative_container .header >span:nth-child(4){
+    float: right;
+    color: #2698fd;
+    padding-right: 30px;
+    cursor: pointer;
+    font-weight: 400;
+}
+.creative_container .content{
+    padding: 30px;
+    background: #ffffff;
+}
+.creative_container .content .item-left{
+    float: left;
+    width: 55%;
+}
+.creative_container .content .item-right{
+    float: left;
+    width: 45%;
+}
+.creative_container .content .item-header{
+    font-weight: normal;
+    font-size: 12px;
+    color: #999999;
+    border-bottom: 1px #dfe3e6 solid;
+    margin-bottom: 15px;
+    position: relative;
+}
+.creative_container .content .upload{
+    display: inline-block;
+    width: 260px;
+    height: 182px;
+    border: 1px #dfe3e6 solid;
+    background-color: #eeeeee;
+}
+.creative_container .content .upload-left{
+    float: left;
+    display: inline-block;
+    width: 130px;
+    height: 182px;
+    border: 1px #dfe3e6 solid;
+    background-color: #eeeeee;
+}
+.creative_container .content .upload-right{
+    float: left;
+    display: inline-block;
+    width: 130px;
+    height: 182px;
+    border: 1px #dfe3e6 solid;
+    border-left: none;
+    background-color: #eeeeee;
+}
+.creative_container .content .item-header >span:nth-child(1){
+    font-size: 14px;
+    color: #666666;
+    margin-right: 15px;
+    margin-left:0;
+}
+.creative_container .content .item-header >span{
+    display: inline-block;
+    margin-left: 20px;
+    margin-bottom: 15px;
+}
+.creative_container .content .item-header >a{
+    color: #ff5959;
+    font-size: 14px;
+    position: absolute;
+    right: 0;
+}
+.creative_container .content .item-header >a.addAd{
+    right: 35px;
+    color: green;
+}
+.creative_container .content .form-group {
+    padding: 6px 0;
+}
+
+.creative_container .content .yc-btn-web{
+    padding-right: 86px;
+}
+.creative_container .adCreativeTitle{
+    height: 56px;
+}
+
+/*更多设置*/
+.moreConfig .form-group{
+    padding: 0;
+}
+.moreConfig .icon-input .form-control{
+    width: 230px;
+}
+.moreConfig .icon-input{
+    margin-top: 5px;
+}
+
+.moreConfig .adShowDates{
+    overflow: auto;
+    max-height: 270px;
+    margin-bottom: 5px;
+}
+.moreConfig .adShowDates .item{
+    display: inline-block;
+    width: 285px;
+}
+
+
+
+/*快捷选择日期*/
+.quick-adCreate .quick-week .yc-btn-week{
+    border: 1px solid #ced0d4;
+    padding: 4px 14px;
+    margin: 2px 2px;
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    border-radius: 3px;
+}
+.quick-adCreate .quick-week .date-active{
+    background-color: #2499ff;
+    color: white;
+}
+.data-calendars{
+    border: 1px solid #ccc;
+    padding: 0 0 10px 10px;
+    background: #fcfcfc;
+    border-radius:3px;
+    width: 465px;
+}
+.data-calendars .data-tip{
+    display: inline-block;
+}
+.data-calendars .data-tip-left{
+    margin-left: 35px;
+}
+.quick-datePicker{
+    display: inline-block;
+    width: auto;
+    height:210px;
+    /*border: 1px solid #ccc;*/
+    margin: 10px;
+    float: left;
+}
+
+.quick-datePicker .body {
+    width: 185px;
+    margin: 10px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.quick-datePicker .header {
+    margin: 5px 10px 0 10px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.quick-datePicker .week {
+    line-height: 23px;
+    text-align: center;
+    display: inline-block;
+    width: 23px;
+    height: 23px;
+    cursor: pointer;
+    margin: 1px;
+    border-radius: 50%;
+    color: #999999;
+}
+
+.quick-datePicker .date {
+    line-height: 19px;
+    text-align: center;
+    display: inline-block;
+    width: 23px;
+    height: 19px;
+    cursor: pointer;
+    margin: 1px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 10px;
+    border-radius: 5px;
+    color: #999999;
+}
+
+.quick-datePicker .date-display {
+    cursor: default;
+    color: white;
+    pointer-events: none;
+}
+
+.quick-datePicker .date-hidden{
+    cursor: default;
+    pointer-events: none;
+    background-color: #eee;
+}
+
+.quick-datePicker .date-hidden:hover{
+    background-color: #eee;
+    color: #676767;
+}
+
+.quick-datePicker .date-active {
+    background: #2698fd;
+    color: white;
+}
+
+.quick-week .date-active {
+    background: #105188;
+    color: white;
+}
+
+.quick-datePicker .date-true:hover {
+    background-color: #888;
+    color: white;
+}
+
+.quick-datePicker .week:hover {
+    background-color: #888;
+    color: white;
+}
+
+/*按时间段*/
+.showTimeDetail{
+    padding-top: 10px;
+    width: 460px;
+}
+.showTimeDetail .detail{
+    width: 500px;
+    display: inline-block;
+    margin: 1px 0;
+    margin-right: -1px;
+}
+.showTimeDetail .blue{
+    background-color: #69B946
+}
+.showTimeDetail .detail-num{
+    display: block;
+    width: 30px;
+    height: 30px;
+    border: 1px solid rgba(46,132,191,1);
+    position: relative;
+    text-align: center;
+    line-height: 30px;
+}
+.showTimeDetail > label{
+    width:75px;
+    display: inline-block;
+    height:25px;
+}
+.quick-week{
+    padding-top: 6px;
+}
+.quick-week > label{
+    width:65px;
+    display: inline-block;
+    padding-right: 10px;
+}
+.blue .title{
+    font-size:18px;
+    color: #2499ff;
+}
+.display-bolok{
+    display: inline-block;
+    text-align: right;
+}
+
+/*默认订单 创意新增*/
+.default-create-box{
+    background: #fff;
+    max-width:1000px;
+    border: 1px #dfe3e6 solid;
+    padding: 24px;
+}
+
+ .yc-tue-indent{
+    position: relative;
+    display: inline-block;
+    width: 268px;
+    margin: 24px;
+}
+ .yc-tue-indent .ad-close{
+    position: absolute;
+    top: -16px;
+    right: -12px;
+    cursor: pointer;
+    user-select: none;
+}
+ .yc-tue-indent  .local-upload{
+    background: #eeeeee;
+     border: 1px #dfe3e6 solid;
+}
+.yc-tue-indent  .local-upload .yc-imgsize{
+    line-height: 36px;
+    background: #f5f8fa;
+    color: #999999;
+    font-size: 14px;
+    text-align: center;
+}
+.yc-tue-indent .local-upload .yc-indent-article{
+     height:180px;
+     background:url(../../static/img/tjtp.png) center center no-repeat;
+}
+.yc-tue-indent .uploading{
+     text-align: center;
+    margin-top: 20px;
+ }
+
+ /*订单审核*/
+.checkManage .checkState{
+    right: 15px;
+    left: 15px;
+    position: fixed;
+    top: 0;
+    background-color: #f5f8fa;
+    padding-top: 60px;
+    box-shadow: 1px 2px 7px #ccc;
+ }
+.checkManage .checkState .form-group-btn{
+    padding: 10px 0;
+ }
+.checkManage .checkState .checkState-remark{
+    width: 360px;
+    height: 80px;
+ }
+.checkManage .checkState .checkState-table{
+    width: 650px;
+}
+

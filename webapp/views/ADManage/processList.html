@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>流程管理-系统管理</title>
+    <meta name="keywords" content="流程管理-系统管理"/>
+    <meta name="description" content="流程管理-系统管理"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../../static/css/global.css"/>
+    <link rel="stylesheet" href="../../static/css/SystemManage.css"/>
+
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/js/order.js"></script>
+</head>
+<body ng-controller="orderRuleCtrl">
+    <nav class="header">
+        <div class="scroll">
+            <a class="nav" data-route="ViewAuditProcess">流程列表</a>
+        </div>
+    </nav>
+    <div class="container" ng-controller="processListCtrl">
+        <div class="button-group clear">
+            <div class="button-g fl">
+                <a ng-show="putManageRule['ManageAuditProcess']" class="yc-btn" data-route="ViewAuditProcessEdit?id={{query.checkResourceType}}&name={{query.checkResourceName}}">流程编辑</a>
+                <div yc-select="processListSel" width="300" query="query" add="全部" value="checkResourceType,checkResourceName" key="checkResourceType,checkResourceName" name="checkResourceName" placeholder="审核流程" session="process_state"></div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="yc-table">
+            <thead>
+                <tr>
+                    <th class="th80">ID</th>
+                    <th>步骤名称</th>
+                    <th>步骤</th>
+                    <th>审核角色</th>
+                    <th>流程名称</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="i in items track by $index">
+                    <td ng-bind="i.id">ID</td>
+                    <td ng-bind="i.checkName"></td>
+                    <td ng-bind="i.checkStep"></td>
+                    <td>
+                        <span ng-repeat="c in i.checkRoles">
+                            {{c.roleName + ($last?'':'，')}}
+                        </span>
+                    </td>
+                    <td ng-bind="i.checkResourceName"></td>
+                </tr>
+            </tbody>
+            </table>
+        </div>
+        <div class="client-judge" ng-if="total_page<1">您好，暂时没有符合条件的任何数据</div>
+        <div ng-show="total_page>0" yc-page page="page" redirect="redirect(page.page,search)" query="query"></div>
+
+    </div>
+
+</body>
+</html>

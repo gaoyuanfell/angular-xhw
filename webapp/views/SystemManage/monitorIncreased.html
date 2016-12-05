@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>新增监控-系统监控-系统管理</title>
+    <meta name="keywords" content="新增监控-系统监控-系统管理"/>
+    <meta name="description" content="新增监控-系统监控-系统管理"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../../static/css/global.css"/>
+    <link rel="stylesheet" href="../../static/css/SystemManage.css"/>
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/webuploader.min.js"></script>
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../../static/lib/validation/jquery.validate.js"></script>
+    <script type="text/javascript" src="../../static/lib/validation/jquery.validate.messages.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/js/systemManage.js"></script>
+</head>
+<body>
+    <nav class="header">
+        <div class="scroll scroll-nav">
+            <a class="nav" href="javascript:void(0)" >系统设置 &gt;</a>
+            <a class="nav" href="javascript:void(0)" >监控 &gt;</a>
+            <a class="nav" href="javascript:void(0)" data-route="ViewMonitor">监控列表 &gt;</a>
+            <a class="nav active" href="javascript:void(0)">新增监控</a>
+        </div>
+    </nav>
+    <div class="container" ng-controller="MonitorAddCtrl">
+        <form class="form">
+
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 监控名称：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" type="text" ng-model="monitor.monitorName" name="monitorName">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 警告开关：</label>
+                <div class="yc-col-10">
+                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorSwitch" value="0"> 关</label>
+                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorSwitch" value="1"> 开</label>
+                </div>
+            </div>
+            <!--<div class="form-group">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 判断条件：</label>
+                <div class="yc-col-10">
+                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorCondition" value="1"> 等于</label>
+                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorCondition" value="2"> 不等于</label>
+                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorCondition" value="3"> 大于</label>
+                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorCondition" value="4"> 小于</label>
+                </div>
+            </div>-->
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 接口地址：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" type="text" ng-model="monitor.monitorUrl" name="monitorUrl">
+                </div>
+            </div>
+            <!--<div class="form-group">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 接口判断类型：</label>
+                <div class="yc-col-10">
+                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorUrlType" value="1"> http请求正常</label>
+                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorUrlType" value="2"> 标示</label>
+                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorUrlType" value="3"> 值</label>
+                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorUrlType" value="4"> 其他</label>
+                </div>
+            </div>
+            <div class="form-group" ng-show="monitor.monitorUrlType == 2">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 标示：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" type="text" ng-model="monitor.monitorMark" name="monitorMark">
+                </div>
+            </div>-->
+            <!--<div class="form-group">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 邮件：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" type="text" ng-model="monitor.emails" name="emails">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> <span>*</span> 手机：</label>
+                <div class="yc-col-10">
+                    <input class="form-control" type="text" ng-model="monitor.phones" name="phones">
+                </div>
+            </div>-->
+            <div class="form-group">
+                <label for="" class="yc-col-2 control-label"> 备注：</label>
+                <div class="yc-col-10">
+                    <textarea class="form-control" ng-model="monitor.remark"></textarea>
+                </div>
+            </div>
+            <div class="form-group-btn">
+                <label class="yc-col-2 control-label"></label>
+                <div class="yc-col-10">
+                    <a href="javascript:void(0)" class="yc-btn" ng-click="postEdit()">提 交</a>
+                    <a href="javascript:void(0)" data-route="ViewMonitor" class="yc-btn-out">取 消</a>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="zh-CN" ng-app="WangCheng">
+
+<head>
+    <meta charset="utf-8" />
+    <title>订单管理-投放订单</title>
+    <meta name="keywords" content="订单管理-投放订单" />
+    <meta name="description" content="订单管理-投放订单" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico" />
+    <link rel="stylesheet" href="../../static/css/ycui.css" />
+    <link rel="stylesheet" href="../../static/css/global.css" />
+    <link rel="stylesheet" href="../../static/css/listManage.css" />
+    <link rel="stylesheet" href="../../static/lib/dateRange/jQuery.pickerDateRange.css" />
+
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/webuploader.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/dateRange/jQuery.pickerDateRange.js"></script>
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/js/order.js"></script>
+</head>
+<body ng-controller="orderRuleCtrl">
+    <nav class="header">
+        <div class="scroll">
+            <a class="nav" data-route="ViewPutOrder">订单列表</a>
+            <a class="nav" data-route="ViewPutOrderCreate">创意列表</a>
+        </div>
+    </nav>
+    <div class="container" ng-controller="createListCtrl">
+        <div class="button-group clear">
+            <div class="button-g fl">
+                <!-- ng-click="goCreateAd(query.orderId) data-route="ViewPutOrderCreateAdd"  -->
+                <a class="yc-btn" ng-click="goCreateAd(query.orderId)" ng-if="putManageRule['ManagePutOrders']">新增创意</a>
+                <a class="yc-btn" ng-click="setMore(3)" ng-if="putManageRule['ManagePutOrders']">批量投放</a>
+                <a class="yc-btn" ng-click="setMore(2)" ng-if="putManageRule['ManagePutOrders']">批量暂停</a>
+                <a class="yc-btn" ng-click="deleList()" ng-if="putManageRule['ManagePutOrders']">批量作废</a>
+            </div>
+            <div class="query-g fr">
+                <div yc-select="orderNameSel" width="150" query="query" value="orderId" key="id" placeholder="订单" name="orderName" reskey="{{query.orderId}}" session="create_order" group="createListGroup"></div>
+                <div yc-select="superviseSel" width="121" query="query" value="supState" key="id" placeholder="监管状态" session="create_supervise" group="createListGroup"></div>
+                <div yc-select="showStateSel" width="90" query="query" value="showState" key="id" placeholder="投放状态" session="create_showState" group="createListGroup"></div>
+                <div yc-select="sizeSel" width="90" query="query" value="size" key="size" name="size" placeholder="尺寸" session="create_size" group="createListGroup"></div>
+                <div class="icon-input picker-date">
+                    <label>
+                        <input class="form-control time_default" readonly type="text" id="clientAff">
+                        <i class="icon yc-icon calendars">&#xe60e;</i>
+                    </label>
+                </div>
+                <div class="icon-input">
+                    <input class="form-control" type="text" ng-placeholder="请输入广告位名称，创意名称或ID" ng-model="query.search" ng-width="260">
+                    <span class="icon">
+                        <i class="yc-icon calendars" ng-click="redirect(1,search)">&#xe60b;</i>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="table-container">
+            <table class="yc-table">
+            <thead>
+                <tr>
+                    <th class="th90-min">
+                        <label><input ng-if="putManageRule['ManagePutOrders']" ng-click="creativeCheckAll($event)" class="form-control" type="checkbox"> <span>ID</span> </label>
+                    </th>
+                    <th class="th120">创意名称</th>
+                    <th class="th70-min">投放</th>
+                    <th class="th120">订单名称</th>
+                    <th class="th140">广告位名称 <i title="鼠标放置在广告位名称上，显示广告位详情" class="yc-icon pointer">&#xe622;</i></th>
+                    <th class="th100">监管状态 <i title="监管状态：“创意监管”简写为“创”，“素材监管”简写为“素”，“网络安全监管“简写为“网”；黄色代表待审核、绿色代表监管合格、红色代表监管不合格；鼠标放置在相应状态上，显示状态详情；" class="yc-icon pointer">&#xe622;</i></th>
+                    <th class="th80-min">尺寸</th>
+                    <th class="th90-min">曝光量</th>
+                    <th class="th90-min">点击量</th>
+                    <th class="th80-min">点击率</th>
+                    <th class="th130-min">操作</th>
+                </tr>
+            </thead>
+            <tbody id="tBody">
+                <tr ng-hide="items<1">
+                    <td>汇总</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td ng-bind="pvAll | number"></td>
+                    <td ng-bind="clickAll | number"></td>
+                    <td ng-bind="clickAll/pvAll | toTwo"></td>
+                    <td>--</td>
+                </tr>
+                <tr ng-repeat="item in items">
+                    <td>
+                        <label>
+                            <input ng-if="putManageRule['ManagePutOrders']" type="checkbox" ng-model="item.$check" class="form-contrlo"><span ng-bind="item.id"></span>
+                        </label>
+                    </td>
+                    <td>
+                        <span class="th120 ellipsis">
+                            <a href="javascript:void (0)" ng-click="showPhoto(item)" class="yc-icon">&#xe61a;</a>
+                            <span title="{{::item.adCreativeName}}" ng-bind="::item.adCreativeName"></span>
+                        </span>
+                    </td>
+                    <td class="yc-td-posi">{{::item.orderType != 1? "":"--"}}
+                        <div class="stateDiv" ng-show="item.orderType != 1">
+                            <div class="hide" ng-class="{'show':item.showState == 0}">
+                                <div ng-mouseover="showIconState($event)" ng-mouseleave="hideIconState($event)">
+                                    <i title="待投放" class="yc-icon toWait show-l">&#xe623;</i>
+                                    <i ng-click="changeState(item.id,item.showState)" ng-if="putManageRule['ManagePutOrders']" title="投放中" class="yc-icon toGreen hide">&#xe618;</i>
+                                </div>
+                            </div>
+                            <div class="hide" ng-class="{'show':item.showState == 1}">
+                                <div ng-mouseover="showIconState($event)" ng-mouseleave="hideIconState($event)">
+                                    <i title="投放中" class="yc-icon toGreen show-l">&#xe618;</i>
+                                    <i ng-click="changeState(item.id,item.showState)" ng-if="putManageRule['ManagePutOrders']" title="暂停" class="yc-icon toRed hide">&#xe621;</i>
+                                </div>
+                            </div>
+                            <div class="hide" ng-class="{'show':item.showState == 2}">
+                                <div ng-mouseover="showIconState($event)" ng-mouseleave="hideIconState($event)">
+                                    <i title="已暂停" class="yc-icon toRed show-l">&#xe621;</i>
+                                    <i ng-click="changeState(item.id,item.showState)" ng-if="putManageRule['ManagePutOrders']" title="投放中" class="yc-icon toGreen hide">&#xe618;</i>
+                                </div>
+                            </div>
+                            <div class="hide" ng-class="{'show':item.showState == 3}">
+                                <i title="已结束" class="yc-icon toBlack">&#xe665;</i>
+                            </div>
+                            <div class="hide" ng-class="{'show':item.showState == 4}">
+                                <i title="已撤销" class="yc-icon toBlack">&#xe650;</i>
+                            </div>
+                            <div class="hide" ng-class="{'show':item.showState == 5}">
+                                <i title="已作废" class="yc-icon toBlack">&#xe617;</i>
+                            </div>
+                            <div class="hide" ng-class="{'show':item.showState == 6}">
+                                <i title="已失效" class="yc-icon toBlack">&#xe618;</i>
+                            </div>
+                        </div>
+                    </td>
+                    <!--<td><span ng-bind="::item.checkInfo.checkState | createTypeFtr"></span>&nbsp;&nbsp;<i class="yc-icon" ng-show="item.checkInfo.checkState != 0" ng-click="showList(item.checkInfo)">&#xe601;</i></td>-->
+                    <td>
+                        <span class="th120 ellipsis" title="{{::item.orderName}}">
+                            <a href="javascript:void(0)" data-route="ViewPutOrder?creativeToOrderId={{::item.orderId}}" ng-bind="::item.orderName"></a>
+                        </span>
+                    </td>
+                    <td>
+                        <span class="pointer th120 ellipsis" title="{{'广告位名称：' + item.adSpaceName + '\nID：' + item.adSpaceId + '\n媒体名称：' + item.mediaName + '\n频道名称：' + item.channelName}}">
+                            <span ng-bind="item.adSpaceName"></span>
+                        </span>
+                    </td>
+                    <td>
+                        <!--<a href="javascript:void(0)" ng-click="superviseInfo(item)">查看详情</a>-->
+                        <!--<p ng-repeat="li in item.superviseInfoList">
+                            <span title="{{item.superviseInfoTitle}}" class="pointer" ng-bind="li.stateName"></span> 
+                        </p>-->
+                        <span ng-repeat="li in item.superviseInfoList" title="{{item.superviseInfoTitle}}">
+                            <i ng-show="li.type == 2" class="yc-icon" ng-class="{'yellow-co':li.state == 0,'red-co':li.state == -1,'green-co':li.state == 1}">&#xe628;</i>   
+                            <i ng-show="li.type == 1" class="yc-icon" ng-class="{'yellow-co':li.state == 0,'red-co':li.state == -1,'green-co':li.state == 1}">&#xe627;</i>   
+                            <i ng-show="li.type == 3" class="yc-icon" ng-class="{'yellow-co':li.state == 0,'red-co':li.state == -1,'green-co':li.state == 1}">&#xe626;</i>   
+                        </span>
+                    </td>
+                    <td ng-bind="::item.size"></td>
+                    <td ng-bind="::item.pV | number"></td>
+                    <td ng-bind="::item.click | number"></td>
+                    <td ng-bind="::item.click/item.pV | toTwo"></td>
+                    <td>
+                        <span ng-if="putManageRule['ManagePutOrders']">
+                            <span ng-if="item.showState == 3">
+                                <a padding-right ng-if="item.showState == 3" title="查看" href="javascript:void(0)" data-route="ViewPutOrderCreateEdit?id={{item.id}}&editRuleBo=0&showState=3">查看</a>
+                                <!--<a title="审核" href="javascript:;" class="unShow">审核</a>-->
+                            </span>
+                            <span ng-if="item.showState != 3">
+                                <a padding-right ng-if="item.showState != 3" title="编辑" href="javascript:void(0)" data-route="ViewPutOrderCreateEdit?id={{item.id}}&editRuleBo=1">编辑</a>
+                                <!--<a title="审核" href="javascript:;" ng-class="{'unShow': !(putManageRule[13]||putManageRule[14])}" ng-click="isPass(item)">审核</a>-->
+                            </span>
+                            <span ng-show="putManageRule['StopCreative']">
+                                <span ng-show="item.showState != 5">
+                                    <a padding-right title="失效" href="javascript:;" ng-click="deleList(item.id,item.adCreativeName)">作废</a>
+                                </span>
+                            </span>
+                        </span>
+
+                        <span ng-show="(putManageRule['SuperviseNetworkSecurity'] && item.superviseInfo.securitySupState == 0)
+                         || (putManageRule['SuperviseMaterial'] && item.superviseInfo.materialSupState == 0)
+                         || (putManageRule['SuperviseCreative'] && item.superviseInfo.creativeSupState == 0)">
+                            <span>
+                                <a ng-hide="item.showState == 5 || item.showState == 3" padding-right title="监管" href="javascript:void(0)" ng-click="doSupervise(item)">监管</a>
+                            </span>
+                        </span>
+
+                        <span ng-if="!putManageRule['ManagePutOrders']">
+                            <a padding-right title="查看" href="javascript:void(0)" data-route="ViewPutOrderCreateEdit?id={{item.id}}&editRuleBo=0&showState=3">查看</a>
+                            <!--<a title="审核" href="javascript:;" ng-class="{'unShow':item.showState == 3 || !(putManageRule[13]||putManageRule[14])}" ng-click="isPass(item)">审核</a>-->
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+            </table>
+        </div>
+        <div class="client-judge" ng-if="total_page<1">您好，暂时没有符合条件的任何数据</div>
+        <div ng-show="total_page>0" yc-page page="page" redirect="redirect(page.page,search)" query="query"></div>
+
+        <!--showPhoto-->
+        <div class="dialog-bg hide" yc-module="showPhotoModule">
+            <div class="dialog-wraper">
+                <div class="dialog-title">
+                    <span class="title">title</span>
+                    <i class="dialog-close yc-icon">&#xe619;</i>
+                </div>
+                <div class="dialog-con">
+                    <div class="form-group" ng-show="_showPhotoModule.adCreativeTitle">
+                        <label class="yc-col-3 control-label"> 广告标题：</label>
+                        <div class="yc-col-9">
+                            <h2 class="span-lh" ng-bind="_showPhotoModule.adCreativeTitle"></h2>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="_showPhotoModule.adCreativeText">
+                        <label class="yc-col-3 control-label"> 广告描述：</label>
+                        <div class="yc-col-9">
+                            <h2 class="span-lh" ng-bind="_showPhotoModule.adCreativeText"></h2>
+                        </div>
+                    </div>
+                    <div ng-if="_showPhotoModule.$html" ng-bind-html="_showPhotoModule.$html | HtmlFtr"></div>
+                    <div id="showPhotoModule"></div>
+                </div>
+                <div class="dialog-submit">
+                    <a href="javascript:void(0)" class="ok">确定</a>
+                    <a href="javascript:void(0)" class="no">取消</a>
+                </div>
+            </div>
+        </div>
+
+        <!--监管详情-->
+        <div class="dialog-bg hide" yc-module="superviseInfoModule">
+            <div class="dialog-wraper">
+                <div class="dialog-title">
+                    <span class="title">title</span>
+                    <i class="dialog-close yc-icon">&#xe619;</i>
+                </div>
+                <div class="dialog-con">
+                    <table class="yc-table">
+                        <thead>
+                        <tr>
+                            <th>操作时间</th>
+                            <!--<th>监管内容</th>-->
+                            <th>监管状态</th>
+                            <th>备注</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="info in _superviseInfoModule.list">
+                            <td>{{info.time | DateFormatFtr:'yyyy-MM-dd HH:mm:ss'}}</td>
+                            <!--<td>{{info.name}}</td>-->
+                            <td>{{info.stateName}}</td>
+                            <td>{{info.remake}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="dialog-submit">
+                    <a href="javascript:void(0)" class="ok">确定</a>
+                    <a href="javascript:void(0)" class="no">取消</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 监管 -->
+        <div class="dialog-bg hide superviseModule" yc-module="superviseModule" width="825">
+            <div class="dialog-wraper">
+                <div class="dialog-title">
+                    <span class="title">title</span>
+                    <i class="dialog-close yc-icon">&#xe619;</i>
+                </div>
+                <div class="dialog-con">
+                    <div class="supervise-ad">
+                        <div id="superviseModule"></div>
+                        <div ng-bind-html="_superviseModule.previewPhoto | HtmlFtr"></div>
+                        <div class="form-group" ng-show="_superviseModule.items.adCreativeTitle">
+                            <label class="yc-col-3 control-label"> 广告标题：</label>
+                            <div class="yc-col-9">
+                                <h2 style="padding-top:7px" ng-bind="_superviseModule.items.adCreativeTitle"></h2>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-show="_superviseModule.items.adCreativeText">
+                            <label class="yc-col-3 control-label"> 广告描述：</label>
+                            <div class="yc-col-9">
+                                <h2 style="padding-top:7px" ng-bind="_superviseModule.items.adCreativeText"></h2>
+                            </div>
+                        </div>
+
+                        <div class="form-group" ng-show="_superviseModule.items.pvMonitor">
+                            <label class="yc-col-3 control-label"> 曝光监测:</label>
+                            <div class="yc-col-9">
+                                <h2 class="span-lh">
+                                    <a target="_blank" title="{{_superviseModule.items.pvMonitor}}" href="{{_superviseModule.items.pvMonitor}}">{{_superviseModule.items.pvMonitor | WhiteSpaceFtr:35}}</a>
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-show="_superviseModule.items.clickMonitor">
+                            <label class="yc-col-3 control-label"> 点击监测:</label>
+                            <div class="yc-col-9">
+                                <h2 class="span-lh">
+                                    <a target="_blank" title="{{_superviseModule.items.clickMonitor}}" href="{{_superviseModule.items.clickMonitor}}">{{_superviseModule.items.clickMonitor | WhiteSpaceFtr:35}}</a>
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-show="_superviseModule.items.landingPage">
+                            <label class="yc-col-3 control-label"> 落地页:</label>
+                            <div class="yc-col-9">
+                                <h2 class="span-lh">
+                                    <a target="_blank" title="{{_superviseModule.items.landingPage}}" href="{{_superviseModule.items.landingPage}}">{{_superviseModule.items.landingPage | WhiteSpaceFtr:35}}</a>
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="yc-col-3 control-label"> 监管:</label>
+                            <div class="yc-col-9">
+                                <label ng-repeat="su in _superviseModule.superviseList track by $index" class="radio"> 
+                                    <input type="radio" class="form-control" ng-model="_superviseModule.checkSupervise" value="{{su.verify}}"> <span ng-bind="su.rightName"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="yc-col-3 control-label"> 监管意见:</label>
+                            <div class="yc-col-9">
+                                <label class="radio"> <input type="radio" class="form-control" ng-model="_superviseModule.creativeSupState" value="1" ng-change="_superviseModule.change(0)"> 合格</label>
+                                <label class="radio"> <input type="radio" class="form-control" ng-model="_superviseModule.creativeSupState" value="-1" ng-change="_superviseModule.change(1)"> 不合格</label>
+                            </div>
+                        </div>
+                        <div class="form-group" ng-show="_superviseModule.creativeSupState == -1">
+                            <label class="yc-col-3 control-label"> 备注:</label>
+                            <div class="yc-col-9">
+                                <textarea class="form-control" ng-class="{'border-error':!_superviseModule.creativeSupRemark && superviseModule.$valid}" rows="3" cols="35" ng-model="_superviseModule.creativeSupRemark"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div  class="supervise-affche" ng-show="_superviseModule.creativeSupState == -1">
+                        <p> <h1>发布公告</h1>  </p>
+                        <div class="form-group">
+                            <label for="" class="yc-col-3 control-label"> <span>*</span> 公告标题：</label>
+                            <div class="yc-col-9">
+                                <input ng-class="{'border-error':superviseModule.$valid && !_superviseModule.title}" class="form-control" name="myTitle" type="text" ng-placeholder="请输入公告名称" ng-model="_superviseModule.title">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="" class="yc-col-3 control-label"> <span>*</span> 公告内容：</label>
+                            <div class="yc-col-9">
+                                <textarea ng-class="{'border-error':superviseModule.$valid && !_superviseModule.content}" class="form-control affcheContent" ng-model="_superviseModule.content" maxlength="1500" name="myContent" ng-placeholder="请填写公告内容"></textarea>
+                                <p class="msg">您还可以输入{{1500-(_superviseModule.content.length || 0)}}个字</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="" class="yc-col-3 control-label"> 公告附件：</label>
+                            <div class="yc-col-9">
+                                <div class="yc-btn-web" id="affcheAddUpload2"> 上 传 </div>
+                                <a padding-left target="_blank" ng-show="_superviseModule.noticeAttachment" ng-href="{{_superviseModule.noticeAttachment}}" title="{{_superviseModule.noticeAttachment}}">查看</a>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="" class="yc-col-3 control-label"> <span>*</span> 发布范围：</label>
+                            <div class="yc-col-9">
+                                <label class="radio"><input class="form-control" type="radio" ng-model="_superviseModule.publishRange" value="0">至所有用户</label>
+                                <label class="radio"><input class="form-control" type="radio" ng-model="_superviseModule.publishRange" value="1">至所属公司的用户</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="" class="yc-col-3 control-label"> <span>*</span> 发布人：</label>
+                            <div class="yc-col-9">
+                                <input class="form-control" name="publishUser" type="text" disabled="disabled" ng-value="_superviseModule.publishUser">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="" class="yc-col-3 control-label"> <span>*</span> 发布角色：</label>
+                            <div class="yc-col-9">
+                                <label class="radio" ng-repeat="r in _superviseModule.roleList">
+                                    <input class="form-control" type="radio" ng-model="_superviseModule.publishRoleId" value="{{r.id}}">
+                                    {{r.roleName}}
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                </div>
+                <div class="dialog-submit">
+                    <a href="javascript:void(0)" class="ok">确定</a>
+                    <a href="javascript:void(0)" class="no">取消</a>
+                </div>
+            </div>
+        </div>
+
+        <!--创意作废-->
+        <div class="dialog-bg hide" yc-module="deleListModule" width="620" top="300">
+            <div class="dialog-wraper">
+                <div class="dialog-title">
+                    <span class="title">title</span>
+                    <i class="dialog-close yc-icon">&#xe619;</i>
+                </div>
+                <div class="dialog-con">
+                    
+                    <div class="form-group">
+                        <label for="" class="yc-col-3 control-label"> 请确认操作：</label>
+                        <div class="yc-col-9">
+                            <p class="span-lh">作废创意</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group" ng-show="_deleListModule.haveAddAffcheRule">
+                        <label for="" class="yc-col-3 control-label"> 是否需要新增公告：</label>
+                        <div class="yc-col-9">
+                            <label class="radio"> <input class="form-control" ng-model="_deleListModule.isAddaffche" type="radio" value="0" ng-change="_deleListModule.change(0)"> 否 </label>
+                            <label class="radio"> <input class="form-control" ng-model="_deleListModule.isAddaffche" type="radio" value="1" ng-change="_deleListModule.change(1)"> 是 </label>
+                        </div>
+                    </div>
+
+                    <div ng-show="_deleListModule.isAddaffche == 1">
+                        <div class="form-group">
+                            <label for="" class="yc-col-3 control-label"> <span>*</span> 公告标题：</label>
+                            <div class="yc-col-9">
+                                <input ng-class="{'border-error':_deleListModule.$valid && !_deleListModule.title}" class="form-control" name="myTitle" type="text" ng-placeholder="请输入公告名称" ng-model="_deleListModule.title">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="" class="yc-col-3 control-label"> <span>*</span> 公告内容：</label>
+                            <div class="yc-col-9">
+                                <textarea ng-class="{'border-error':_deleListModule.$valid && !_deleListModule.content}" class="form-control affcheContent" ng-model="_deleListModule.content" maxlength="1500" name="myContent" ng-placeholder="请填写公告内容"></textarea>
+                                <span class="msg">您还可以输入{{1500-(_deleListModule.content.length || 0)}}个字</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="" class="yc-col-3 control-label"> 公告附件：</label>
+                            <div class="yc-col-9">
+                                <div class="yc-btn-web" id="affcheAddUpload"> 上 传 </div>
+                                <a padding-left target="_blank" ng-show="_deleListModule.noticeAttachment" ng-href="{{_deleListModule.noticeAttachment}}" title="{{_deleListModule.noticeAttachment}}">查看</a>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="" class="yc-col-3 control-label"> <span>*</span> 发布范围：</label>
+                            <div class="yc-col-9">
+                                <label class="radio"><input class="form-control" type="radio" ng-model="_deleListModule.publishRange" value="0">至所有用户</label>
+                                <label class="radio"><input class="form-control" type="radio" ng-model="_deleListModule.publishRange" value="1">至所属公司的用户</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="" class="yc-col-3 control-label"> <span>*</span> 发布人：</label>
+                            <div class="yc-col-9">
+                                <input class="form-control" name="publishUser" type="text" disabled="disabled" ng-value="_deleListModule.publishUser">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="" class="yc-col-3 control-label"> <span>*</span> 发布角色：</label>
+                            <div class="yc-col-9">
+                                <label class="radio" ng-repeat="r in _deleListModule.roleList">
+                                    <input class="form-control" type="radio" ng-model="_deleListModule.publishRoleId" value="{{r.id}}">
+                                    {{r.roleName}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="dialog-submit">
+                    <a href="javascript:void(0)" class="ok">确定</a>
+                    <a href="javascript:void(0)" class="no">取消</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>订单管理-投放订单</title>
+    <meta name="keywords" content="订单管理-投放订单"/>
+    <meta name="description" content="订单管理-投放订单"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../../static/css/global.css"/>
+    <link rel="stylesheet" href="../../static/css/listManage.css"/>
+    <link rel="stylesheet" href="../../static/lib/dateRange/jQuery.pickerDateRange.css"/>
+
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/dateRange/jQuery.pickerDateRange.js"></script>
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/js/order.js"></script>
+</head>
+<body ng-controller="orderRuleCtrl" class="orderListManage">
+    <nav class="header">
+        <div class="scroll">
+            <a class="nav" data-route="ViewPutOrder">订单列表</a>
+            <a class="nav" data-route="ViewPutOrderCreate">创意列表</a>
+        </div>
+    </nav>
+    <div class="container" ng-controller="putListCtrl">
+        <div class="button-group clear">
+            <div class="button-g fl">
+                <a class="yc-btn" data-route="ViewPutOrderAdd" ng-show="putManageRule['ManagePutOrders']">新增订单</a>
+                <a class="yc-btn" href="javascript:void(0)" ng-click="export()" ng-if="putManageRule['ManagePutOrders']">导出订单</a>
+            </div>
+            <div class="query-g fr">
+                <label padding-right> <input type="checkbox" class="form-control" ng-model="query.inCheck" ng-false-value="0" ng-true-value="1" ng-click="redirect(1)"> 待审核订单 </label>
+                <div yc-select="customerSel" width="150" query="query" value="customerId" resname="{{queryValue.customerName}}" key="id" placeholder="客户名称" name="customerName" session="order_customer" group="putListGroup"></div>
+                <div yc-select="showStateSel" width="100" query="query" value="showState" key="id" placeholder="投放状态" session="order_showState" group="putListGroup"></div>
+                <div yc-select="checkNamesSel" width="125" query="query" value="checkName" key="id" placeholder="审核状态" session="order_check" group="putListGroup"></div>
+                <div yc-select="orderTypeSel" width="100" query="query" value="orderType" key="id" placeholder="订单类型" session="order_orderType" group="putListGroup"></div>
+                <div class="icon-input picker-date">
+                    <label>
+                        <input class="form-control time_default" readonly type="text" id="clientAff4">
+                        <i title="数据搜索" class="icon yc-icon calendars">&#xe60e;</i>
+                    </label>
+                </div>
+                <!--<div class="yc-calendar-wraper" >
+                    <label>
+                        <input readonly type="text" id="clientAff4" class="time_default"> <i class="yc-icon">&#xe62e;</i>
+                    </label>
+                </div>-->
+                <div class="icon-input">
+                    <input class="form-control" style="width: 274px" type="text" ng-placeholder="请输入订单名称或排期单号、合同号" ng-model="query.search">
+                    <span class="icon">
+                        <i class="yc-icon calendars" ng-click="redirect(1,search)">&#xe60b;</i>
+                    </span>
+                </div>
+                <!--<div class="yc-search-wraper">
+                    <input style="width: 200px" type="text" ng-placeholder="请输入订单名称或排期单号、合同号" ng-model="search" ng-value="query.ordersNameOrID"> <i class="yc-icon" ng-click="redirect(1)">&#xe623;</i>
+                </div>-->
+            </div>
+        </div>
+        <div class="table-container">
+            <table class="yc-table">
+                <thead>
+                <tr>
+                    <th style="min-width: 100px;">排期单号</th>
+                    <th style="min-width: 100px;">订单名称</th>
+                    <th style="min-width: 80px;">合同号</th>
+                    <th style="min-width: 80px;">客户名称</th>
+                    <th style="min-width: 60px;">业务员</th>
+                    <th style="min-width: 60px;">投放</th>
+                    <th>审核状态 <i title="审核状态：单击具体记录的审核状态，&#10;了解详细的审核状态" class="yc-icon pointer">&#xe622;</i></th>
+                    <th style="min-width: 160px;">投放档期 <i title="投放档期：单击具体记录的投放状态，&#10;了解详细的投放状态" class="yc-icon pointer">&#xe622;</i></th>
+                    <th>订单金额 <i title="订单金额：鼠标放置在订单金额上，&#10;显示订单金额详情" class="yc-icon pointer">&#xe622;</i></th>
+                    <th style="min-width: 80px;" ng-show="hasDataRights">曝光量</th>
+                    <th style="min-width: 80px;" ng-show="hasDataRights">点击量</th>
+                    <th style="min-width: 120px;" class="center">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-show="query.inCheck != 1 && items.length > 0">
+                    <td>汇总</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td ng-bind="totalMoney | currency:'￥'"></td>
+                    <td ng-bind="pvAll | number" ng-show="hasDataRights"></td>
+                    <td ng-bind="clickAll | number" ng-show="hasDataRights"></td>
+                    <td text-left>--</td>
+                </tr>
+                <tr ng-repeat="item in items">
+                    <td>
+                        <span class="th100 ellipsis" ng-bind="::item.scheduleCode"></span>
+                    </td>
+                    <td title="{{item.orderName}}">
+                        <span class="th100 ellipsis" >
+                            <i ng-show="item.abNormalMsg || item.terminateMsg" class="yc-icon toRed" title="{{item.abNormalMsg || item.terminateMsg}}">&#xe622;</i>
+                            <a href="javascript:void (0)" ng-click="putCreateManage(item.id,item.orderName,item.orderType)" ng-bind="::item.orderName"></a>
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="th80 ellipsis" ng-bind="::item.contractCode"></span>
+                    </td>
+
+                    <td title="{{item.customerName}}">
+                        <a class="th80 ellipsis" ng-hide="item.orderType == 4" href="javascript:;" ng-click="returnToClient(item.customerId)" ng-style="returnToClientStyle" ng-class="{'noCursor':returnToClientShow}">
+                            <span ng-bind="::item.customerName"></span>
+                        </a>
+                    </td>
+
+                    <td title="{{item.flowUserName}}">
+                        <span class="th50 ellipsis" ng-bind="::item.flowUserName"></span>
+                    </td>
+
+                    <td ng-width="55">
+                        <div class="stateDiv" ng-show="item.orderType != 1">
+                            <div class="hide" ng-class="{'show':item.showState == 0}">
+                                <div ng-mouseover="showIconState($event)" ng-mouseleave="hideIconState($event)">
+                                    <i title="待投放" class="yc-icon toWait show-l">&#xe623;</i>
+                                    <i ng-click="changeState(item.id,item.showState)" ng-if="putManageRule['UpdatePutOrdersState']" title="投放中" class="yc-icon toGreen hide">&#xe618;</i>
+                                </div>
+                            </div>
+                            <div class="hide" ng-class="{'show':item.showState == 1}" >
+                                <div ng-mouseover="showIconState($event)" ng-mouseleave="hideIconState($event)">
+                                    <i title="投放中" class="yc-icon toGreen show-l">&#xe618;</i>
+                                    <i ng-click="changeState(item.id,item.showState)" ng-if="putManageRule['UpdatePutOrdersState']" title="暂停" class="yc-icon toRed hide">&#xe621;</i>
+                                </div>
+                            </div>
+                            <div class="hide" ng-class="{'show':item.showState == 2}" >
+                                <div ng-mouseover="showIconState($event)" ng-mouseleave="hideIconState($event)">
+                                    <i title="已暂停" class="yc-icon toRed show-l">&#xe621;</i>
+                                    <i ng-click="changeState(item.id,item.showState)" ng-if="putManageRule['UpdatePutOrdersState']" title="投放中" class="yc-icon toGreen hide">&#xe618;</i>
+                                </div>
+                            </div>
+                            <div class="hide" ng-class="{'show':item.showState == 3}" >
+                                <i title="已完结" class="yc-icon toBlack">&#xe665;</i>
+                            </div>
+                            <div title="{{('已撤销：' + item.remark) || '已撤销'}}" class="hide" ng-class="{'show':item.showState == 4}" >
+                                <i class="yc-icon toBlack">&#xe650;</i>
+                            </div>
+                            <div title="{{('已作废：'+item.remark) || '已作废'}}" class="hide" ng-class="{'show':item.showState == 5}" >
+                                <i class="yc-icon toBlack">&#xe617;</i>
+                            </div>
+                        </div>
+                        <div class="stateDiv" ng-show="item.orderType == 1">
+                            <div ng-show="item.showState == 3">
+                                <i title="已完结" class="yc-icon toBlack">&#xe665;</i>
+                            </div>
+                            <div title="{{('已撤销：' + item.remark) || '已撤销'}}" ng-show="item.showState == 4">
+                                <i class="yc-icon toBlack">&#xe650;</i>
+                            </div>
+                            <div title="{{('已作废：' + item.remark) || '已作废'}}" ng-show="item.showState == 5">
+                                <i class="yc-icon toBlack">&#xe617;</i>
+                            </div>
+                            <span ng-show="item.showState != 5 && item.showState != 4 && item.showState != 3">--</span>
+                        </div>
+                    </td>
+                    <td title="{{item.checkEndState | checkStateFtr:item.orderCheckInfos}}">
+                        <a href="javascript:void (0)" ng-click="checkInfo(item.orderCheckInfos,item.orderName)">
+                            <span class="th110 ellipsis" ng-bind="::item.checkEndState | checkStateFtr:item.orderCheckInfos"></span>
+                        </a>
+                    </td>
+                    <td ng-width="160">
+                        <a href="javascript:void (0)" ng-click="showOrderADSpaces(item.orderADSpaces,item.orderName)"><span ng-bind="(item.orderShowDate.startDate | date:'yyyyMMdd')+' ~ '+(item.orderShowDate.endDate | date:'yyyyMMdd')"></span></a>
+                    </td>
+                    <td>
+                        <span ng-show="(item.isPackage != 2 && (item.orderType == 1 || item.orderType == 2 || item.orderType == 5)) || (item.orderType == 3 || item.orderType == 4)" class="pointer" title="{{'排期购买：' + (item.buyMoney | currency:'￥') + '\n' + '排期配送：' + (item.presentMoney | currency:'￥') + '\n' +'已执行购买：' + (item.executedBuyMoney | currency:'￥') + '\n' +  '已执行配送：' + (item.executedPresentMoney | currency:'￥')}}">
+                            <span ng-bind="((item.buyMoney + item.presentMoney) | currency:'￥')"></span>
+                        </span>
+                        <span ng-show="!((item.isPackage != 2 && (item.orderType == 1 || item.orderType == 2 || item.orderType == 5)) || (item.orderType == 3 || item.orderType == 4))" class="pointer" title="{{'已执行购买：' + (item.executedBuyMoney | currency:'￥') + '\n' +  '已执行配送：' + (item.executedPresentMoney | currency:'￥')}}">
+                            <span ng-bind="(item.packageMoney | currency:'￥')"></span>
+                        </span>
+                    </td>
+                    <td ng-show="hasDataRights">
+                        <span ng-bind="::item.pv | number"></span>
+                    </td>
+                    <td  ng-show="hasDataRights">
+                        <span ng-bind="::item.click | number"></span>
+                    </td>
+                    <td text-left class="yc-roleMa-edit">
+                        <!--编辑 查看-->
+                        <span ng-if="putManageRule['ManagePutOrders']">
+                            <a padding-right href="javascript:void(0)" data-route="ViewPutOrderEdit?id={{item.id}}" ng-show="!(item.showState == 4 || (item.showState == 5 && item.contractCode))">编辑</a>
+                            <a padding-right href="javascript:void(0)" data-route="ViewPutOrderEdit?id={{item.id}}&showState={{item.showState}}" ng-show="(item.showState == 4 || (item.showState == 5 && item.contractCode))">查看</a>
+                        </span>
+                        <!--查看-->
+                        <span ng-if="!putManageRule['ManagePutOrders']">
+                            <a padding-right href="javascript:void(0)" data-route="ViewPutOrderEdit?id={{item.id}}">查看</a>
+                        </span>
+
+                        <!--订单类型 “预定广告位” 撤销（订单） 订单类型 非“预定广告位” 终止（订单和创意）-->
+
+                        <span ng-if="putManageRule['RecallPutOrdersState'] && item.orderType == 1">
+                            <span ng-show="item.showState != 4">
+                                <a padding-right href="javascript:void (0)" ng-click="orderCancel(item.id,item.orderType,item.orderName)"> 撤销 </a>
+                            </span>
+                        </span>
+                        <span ng-if="putManageRule['StopOrders'] && item.orderType != 1">
+                            <span ng-show="item.showState != 5">
+                                <a padding-right href="javascript:void (0)" ng-click="orderCancel(item.id,item.orderType,item.orderName)"> 作废 </a>
+                            </span>
+                        </span>
+
+                        <!--<span ng-if="putManageRule['RecallPutOrdersState'] || putManageRule['StopPutOrdersState']">
+                            <a href="javascript:void (0)" ng-show="item.showState == 4 || item.showState == 5" style="padding: 0 7px;cursor: default"> -- </a>
+                            <a padding-right href="javascript:void (0)"
+                                ng-click="orderCancel(item.id,item.orderType,item.orderName)"
+                                ng-show="!(item.showState == 4 || item.showState == 5)">
+                                {{item.showState | showStateValueFtr:item.orderType}}
+                            </a>
+                        </span>-->
+                        <span ng-init="showCheck(item.orderCheckInfos,item)" ng-show="item.showCheckBo">
+                            <a padding-right href="javascript:void (0)" ng-click="isPassList(item.orderCheckInfos,item.orderName,item.id)">审核</a>
+                        </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="client-judge" ng-if="total_page<1">您好，暂时没有符合条件的任何数据</div>
+        <div ng-show="total_page>0" yc-page page="page" redirect="redirect(page.page,search)" query="query"></div>
+
+        <!--orderShowDate-->
+        <div class="dialog-bg hide" yc-module="orderShowDateModule">
+            <div class="dialog-wraper">
+                <div class="dialog-title">
+                    <span class="title">title</span>
+                    <i class="dialog-close yc-icon">&#xe619;</i>
+                </div>
+                <div class="dialog-con">
+                    <table class="yc-table">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>广告位名称</th>
+                            <th>投放档期</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="c in orderShowDateModule.dataList">
+                            <td ng-bind="c.adSpaceId"></td>
+                            <td>
+                                <span class="th220 ellipsis" ng-bind="c.adSpaceName + '(' + (c.scheduleType | scheduleTypeFtr) + ')'"></span>
+                            </td>
+                            <td title="{{c._adShowDates.join(',') + '\n' + '(' + c._scheduleValueList.join(',') + ')'}}">
+                                <span> {{c._adShowDates.join(',')}} </span><br>
+                                <span> {{'(' + c._scheduleValueList.join(",") + ')'}} </span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="dialog-submit">
+                    <a href="javascript:void(0)" class="ok">确定</a>
+                    <a href="javascript:void(0)" class="no">取消</a>
+                </div>
+            </div>
+        </div>
+
+        <!--checkInfo-->
+        <div class="dialog-bg hide" yc-module="checkInfoModule">
+            <div class="dialog-wraper">
+                <div class="dialog-title">
+                    <span class="title">title</span>
+                    <i class="dialog-close yc-icon">&#xe619;</i>
+                </div>
+                <div class="dialog-con">
+                    <table class="yc-table">
+                        <thead>
+                        <tr>
+                            <th>操作时间</th>
+                            <th>操作内容</th>
+                            <th>备注</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="c in checkInfoModule.list">
+                            <td ng-bind="c.checkTime | DateFormatFtr:'yyyy-MM-dd HH:mm:ss'"></td>
+                            <td>
+                                <span ng-bind="c.checkUser + ':' + c.checkName">
+
+                                </span><span ng-show="c.checkStep != 0" ng-bind="(c.checkState==1?'—审核通过':'—审核不通过')"></span>
+                            </td>
+                            <td ng-bind="c.checkRemark"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="dialog-submit">
+                    <a href="javascript:void(0)" class="ok">确定</a>
+                    <a href="javascript:void(0)" class="no">取消</a>
+                </div>
+            </div>
+        </div>
+
+        <!--check 审核-->
+        <div class="dialog-bg hide checkModule" yc-module="checkModule" width="640">
+            <div class="dialog-wraper">
+                <div class="dialog-title">
+                    <span class="title">title</span>
+                    <i class="dialog-close yc-icon">&#xe619;</i>
+                </div>
+                <div class="dialog-con">
+                    <div class="form-group">
+                        <label class="yc-col-2 control-label"> 审核进程：</label>
+                        <div class="yc-col-10">
+                            <table class="yc-table">
+                                <thead>
+                                <tr>
+                                    <th>操作时间</th>
+                                    <th>操作内容</th>
+                                    <th>备注</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="c in checkModule.data.list">
+                                    <td ng-bind="c.checkTime | DateFormatFtr:'yyyy-MM-dd HH:mm:ss'"></td>
+                                    <td>
+                                        <span ng-bind="c.checkUser + ':' + c.checkName">
+
+                                        </span><span ng-show="c.checkStep != 0" ng-bind="(c.checkState==1?'—审核通过':'—审核不通过')"></span>
+                                    </td>
+                                    <td ng-bind="c.checkRemark"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="yc-col-2 control-label"> 审核意见：</label>
+                        <div class="yc-col-10">
+                            <label class="radio"> <input type="radio" value="1" ng-model="checkModule.data.checkState"> 审核通过 </label>
+                            <label class="radio"> <input type="radio" value="-1" ng-model="checkModule.data.checkState"> 审核不通过 </label>
+
+                            <a href="javascript:void(0)" ng-click="checkModule.data.goRoute()"> 审核详情 </a>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="checkModule.data.checkState == -1">
+                        <label class="yc-col-2 control-label"> 备注：</label>
+                        <div class="yc-col-10">
+                            <textarea class="form-control checkState-remark" ng-class="{'border-error':checkModule.$valid && !checkModule.data.checkRemark}" name="checkRemark" ng-model="checkModule.data.checkRemark" ng-placeholder="请输入不通过审核的原因，最多200个字；" maxlength="200"></textarea>
+                            <p class="massage">你还可以输入{{200-checkModule.data.checkRemark.length}}个字节</p>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="dialog-submit">
+                    <a href="javascript:void(0)" class="ok">确定</a>
+                    <a href="javascript:void(0)" class="no">取消</a>
+                </div>
+            </div>
+        </div>
+
+
+        <!--orderCancel 订单撤销-->
+        <div class="dialog-bg hide" yc-module="orderCancelModule">
+            <div class="dialog-wraper">
+                <div class="dialog-title">
+                    <span class="title">title</span>
+                    <i class="dialog-close yc-icon">&#xe619;</i>
+                </div>
+                <div class="dialog-con">
+                    <div class="form-group">
+                        <label class="yc-col-2 control-label"> 订单：</label>
+                        <div class="yc-col-10">
+                            <input type="text" class="form-control" disabled ng-value="orderCancelModule.data.orderName">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="yc-col-2 control-label"> 备注：</label>
+                        <div class="yc-col-10">
+                            <textarea placeholder="{{orderCancelModule.data.placeholder}}" class="form-control cancel-remark" ng-class="{'border-error':orderCancelModule.$valid && !orderCancelModule.data.remark}" name="checkRemark" ng-model="orderCancelModule.data.remark" maxlength="200"></textarea>
+                            <p class="massage">你还可以输入{{200-checkModule.data.checkRemark.length}}个字节</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="dialog-submit">
+                    <a href="javascript:void(0)" class="ok">确定</a>
+                    <a href="javascript:void(0)" class="no">取消</a>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+</body>
+</html>

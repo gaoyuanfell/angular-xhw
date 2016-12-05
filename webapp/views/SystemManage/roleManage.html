@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>角色管理-系统管理</title>
+    <meta name="keywords" content="角色管理-系统管理"/>
+    <meta name="description" content="角色管理-系统管理"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../../static/css/global.css"/>
+    <link rel="stylesheet" href="../../static/css/SystemManage.css"/>
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/js/systemManage.js"></script>
+</head>
+<body ng-controller="limitCtrl">
+    <nav class="header">
+        <div class="scroll">
+            <a class="nav" data-route="ViewRole">角色列表</a>
+        </div>
+    </nav>
+    <div class="container" ng-controller="roleManageCtrl">
+        <div class="button-group clear">
+            <div class="button-g fl">
+                <a href="javascript:void(0)" data-route="ViewRoleAdd" class="yc-btn" ng-if="systemManageRule['ManageRole']">新增角色</a>
+            </div>
+            <div class="query-g fr">
+                <div yc-select="companyTypeSel" width="150" query="query" value="paramInt1" placeholder="角色属性" session="sys-role-companyType"></div>
+                <div class="icon-input">
+                    <input class="form-control" type="text" ng-placeholder="请输入角色名称" ng-model="query.search">
+                    <span class="icon">
+                <i class="yc-icon calendars" ng-click="redirect(1,search)">&#xe60b;</i>
+            </span>
+                </div>
+            </div>
+        </div>
+        <div class="table-container">
+            <table class="yc-table">
+                <thead>
+                <tr>
+                    <th>添加时间</th>
+                    <th>角色ID</th>
+                    <th>角色</th>
+                    <th>角色属性</th>
+                    <th>状态</th>
+                    <th class="center">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in items">
+                    <td ng-bind="::item.createTime|dateYMD"></td>
+                    <td ng-bind="::item.id"></td>
+                    <td ng-bind="::item.roleName"></td>
+                    <td ng-bind="::item.type==1?'总公司':'分公司'"></td>
+                    <td>
+                        <span ng-if="item.state == -1">禁用</span>
+                        <span ng-if="item.state == 0">启用</span>
+                    </td>
+                    <td class="center yc-roleMa-edit">
+                        <a title="查看" ng-if="!systemManageRule['ManageRole']" data-route="ViewRoleEdit?id={{item.id}}" href="javascript:void(0)">查看</a>
+                        <a title="修改信息" ng-if="systemManageRule['ManageRole']" data-route="ViewRoleEdit?id={{item.id}}" href="javascript:void(0)">编辑</a>
+                        <a href="javascript:void(0)" ng-click="disable(item.id,item.state,item.roleName)"> <span ng-bind="item.state == -1?'启用':'禁用'"></span> </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="client-judge" ng-if="total_page<1">您好，暂时没有符合条件的任何数据</div>
+        <div ng-show="total_page>0" yc-page page="page" redirect="redirect(page.page,search)" query="query"></div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html ng-app="WangCheng">
+<head>
+    <meta charset="utf-8"/>
+    <title>公告管理-系统管理</title>
+    <meta name="keywords" content="公告管理-系统管理"/>
+    <meta name="description" content="公告管理-系统管理"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="shortcut icon" href="../../static/img/favicon.ico"/>
+    <link rel="stylesheet" href="../../static/css/ycui.css"/>
+    <link rel="stylesheet" href="../../static/css/global.css"/>
+    <link rel="stylesheet" href="../../static/css/SystemManage.css"/>
+    <link rel="stylesheet" href="../../static/lib/dateRange/jQuery.pickerDateRange.css"/>
+    <script type="text/javascript" src="../../static/lib/angular.min.js"></script>
+    <script type="text/javascript" src="../../static/lib/jquery-1.11.2.min.js"></script>
+    <script src="../../static/lib/dateRange/jQuery.pickerDateRange.js"></script>
+    <script type="text/javascript" src="../../static/js/ycui.js"></script>
+    <script type="text/javascript" src="../../static/js/global.js"></script>
+    <script type="text/javascript" src="../../static/js/application.js"></script>
+    <script type="text/javascript" src="../../static/js/systemManage.js"></script>
+</head>
+<body ng-controller="limitCtrl">
+    <nav class="header">
+        <div class="scroll">
+            <a class="nav" data-route="ViewNotice">公告列表</a>
+        </div>
+    </nav>
+    <div class="container" ng-controller="afficheManageCtrl">
+        <div class="button-group clear">
+            <div class="button-g fl">
+                <a href="javascript:void(0)" data-route="ViewNoticeAdd" class="yc-btn" ng-if="systemManageRule['ManageNotice']">新增公告</a>
+            </div>
+            <div class="query-g fr">
+                <div class="icon-input">
+                    <input class="form-control" type="text" ng-placeholder="请输入公告名称" ng-model="query.search">
+                    <span class="icon">
+                        <i class="yc-icon calendars" ng-click="redirect(1,search)">&#xe60b;</i>
+                    </span>
+                </div>
+                <div class="icon-input picker-date">
+                    <label>
+                        <input class="form-control time_default" readonly type="text" id="dateRangeAff">
+                        <i class="icon yc-icon calendars">&#xe60e;</i>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="table-container">
+            <table class="yc-table">
+                <thead>
+                <tr>
+                    <th>添加时间</th>
+                    <th>公告ID</th>
+                    <th>公告标题</th>
+                    <th>发布范围</th>
+                    <th>发布人</th>
+                    <th>发布角色</th>
+                    <th>状态</th>
+                    <th class="center">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                <tr ng-repeat="item in items">
+                    <td ng-bind="::item.createTime | dateYMD"></td>
+                    <td ng-bind="::item.id"></td>
+                    <td>
+                        <a ng-show="item.noticeAttachment" href="javascript:void(0)" target="_blank" ng-href="{{item.noticeAttachment}}"> 
+                            <i class="yc-icon">&#xe632;</i> 
+                        </a>
+                        <span ng-bind="item.title"></span>
+                    </td>
+                    <td ng-bind="::item.publishRange == 0?'至所有用户':'至所属公司的用户'"></td>
+                    <td ng-bind="::item.publishUser"></td>
+                    <td ng-bind="::item.publishRole"></td>
+                    <td>{{::item.state==-1? "禁用" : "启用"}}</td>
+                    <td class="center">
+                        <a title="修改信息" data-route="ViewNoticeEdit?id={{item.id}}" ng-show="systemManageRule['ManageNotice']" href="javascript:void(0)">编辑</a>
+                        <a title="修改信息" data-route="ViewNoticeEdit?id={{item.id}}" ng-show="!systemManageRule['ManageNotice']" href="javascript:void(0)">查看</a>
+                        <a title="启用/禁用" href="javascript:void(0)" ng-click="changeState(item.id,item.state)">{{::item.state==-1? "启用" : "禁用"}}</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="client-judge" ng-if="total_page<1">您好，暂时没有符合条件的任何数据</div>
+        <div ng-show="total_page>0" yc-page page="page" redirect="redirect(page.page,search)" query="query"></div>
+    </div>
+</body>
+</html>
+
