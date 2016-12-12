@@ -1,15 +1,3 @@
-// var baseUrl = '//192.168.100.100:8080/XinHuaNet';
-
-//正式地址
-// var baseUrl = '//m1.xinhuanet.com';
-// var fileUrl = "//m2.xinhuanet.com:8081"; //上传地址
-// var xadnUrl = '//m2.xinhuanet.com:8081';//投放js
-
-//正式地址测试
-// var baseUrl = '//m1.xinhuanet.com:8082';
-// var fileUrl = "//m1.xinhuanet.com:8082/fileUpload"; //上传地址
-// var xadnUrl = '//m1.xinhuanet.com:8082/fileUpload';//投放js
-
 //太仓地址
 var baseUrl = '//xhw.adpush.cn';
 var fileUrl = '//xhwCreative.adpush.cn'; //上传地址
