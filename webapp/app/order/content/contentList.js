@@ -8,21 +8,21 @@ app.controller('ContentListCtrl', ['$scope', 'ContentFty', 'AdCreativeFty', '$q'
         callback:function(e,d){
             $scope.channelListSel.$destroy();
             if(d){
-                ContentFty.getChannelsByMedia({mediaId:d.id}).success(function(res){
+                ContentFty.getChannelsByMedia({mediaId:d.id}).then(function(res){
                     $scope.channelListSel.list = res.channels;
                 })
             }
         },
         sessionBack:function(d){
             if(d){
-                ContentFty.getChannelsByMedia({mediaId:d.id}).success(function(res){
+                ContentFty.getChannelsByMedia({mediaId:d.id}).then(function(res){
                     $scope.channelListSel.list = res.channels;
                 })
             }
         }
     };
 
-    ContentFty.mediaList().success(function(res){
+    ContentFty.mediaList().then(function(res){
         if(res && res.code == 200){
             $scope.mediaListSel.list = res.mediaList;
         }
@@ -31,7 +31,6 @@ app.controller('ContentListCtrl', ['$scope', 'ContentFty', 'AdCreativeFty', '$q'
     $scope.orderNameSel = {};
     $scope.stateSel = {
         list:[
-            {name:'全部'},
             {name:'审核中',id:0},
             {name:'审核通过',id:1},
             {name:'审核不通过',id:-1},
@@ -39,7 +38,7 @@ app.controller('ContentListCtrl', ['$scope', 'ContentFty', 'AdCreativeFty', '$q'
     };
 
     //订单
-    var orderNamesForList = AdCreativeFty.orderNamesForList().success(function (response) {
+    var orderNamesForList = AdCreativeFty.orderNamesForList().then(function (response) {
         if (response && response.code == 200) {
             $scope.orderNameSel.list = response.orderNames;
         }
@@ -69,19 +68,19 @@ app.controller('ContentListCtrl', ['$scope', 'ContentFty', 'AdCreativeFty', '$q'
         $scope.items = response.items;
     }
 
-    ContentFty.contentList($scope.query).success(modView);
+    ContentFty.contentList($scope.query).then(modView);
 
     $scope.redirect = function (num, con) {
         ycui.loading.show();
         $scope.query.pageIndex = num || 1;
         $scope.query.searchName = $scope.query.search;
-        ContentFty.contentList($scope.query).success(modView);
+        ContentFty.contentList($scope.query).then(modView);
     };
 
     $scope.$on('contentListGroup',function(){
         ycui.loading.show();
         $scope.query.pageIndex = 1;
-        ContentFty.contentList($scope.query).success(modView);
+        ContentFty.contentList($scope.query).then(modView);
     })
     
 
@@ -99,13 +98,13 @@ app.controller('ContentListCtrl', ['$scope', 'ContentFty', 'AdCreativeFty', '$q'
                 if(body.checkState == -1 && !body.checkRemark){
                     return true;
                 }
-                ContentFty.editCheck(body).success(function (res) {
+                ContentFty.editCheck(body).then(function (res) {
                     if(res && res.code == 200){
                         ycui.alert({
                             content: res.msg,
                             timeout: 10,
                             okclick: function () {
-                                ContentFty.contentList($scope.query).success(modView);
+                                ContentFty.contentList($scope.query).then(modView);
                             }
                         })
                     }
@@ -140,13 +139,13 @@ app.controller('ContentListCtrl', ['$scope', 'ContentFty', 'AdCreativeFty', '$q'
             title: '【' + name + '】内容删除',
             content: '确定要删除此内容?',
             okclick: function () {
-                ContentFty.contentDelete({ id: id }).success(function (res) {
+                ContentFty.contentDelete({ id: id }).then(function (res) {
                     if (res && res.code == 200) {
                         ycui.alert({
                             content: res.msg,
                             timeout: -1,
                             okclick: function () {
-                                ContentFty.contentList($scope.query).success(modView);
+                                ContentFty.contentList($scope.query).then(modView);
                             }
                         })
                     }

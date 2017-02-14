@@ -9,14 +9,14 @@ app.controller('ContentAddCtrl', ['$scope', 'ContentFty', 'UploadKeyFty', 'Custo
             callback:function(e,d){
                 $scope.channelListSel.$destroy();
                 if(d){
-                    ContentFty.getChannelsByMedia({mediaId:d.id}).success(function(res){
+                    ContentFty.getChannelsByMedia({mediaId:d.id}).then(function(res){
                         $scope.channelListSel.list = res.channels;
                     })
                 }
             }
         };
 
-        ContentFty.mediaList().success(function(res){
+        ContentFty.mediaList().then(function(res){
             if(res && res.code == 200){
                 $scope.mediaListSel.list = res.mediaList;
             }
@@ -54,7 +54,7 @@ app.controller('ContentAddCtrl', ['$scope', 'ContentFty', 'UploadKeyFty', 'Custo
                     }
                     ycui.loading.show();
                     uploader.stop(file);
-                    UploadKeyFty.uploadKey().success(function (da) {
+                    UploadKeyFty.uploadKey().then(function (da) {
                         key = da.items;
                         uploader.upload(file);
                     });
@@ -89,13 +89,13 @@ app.controller('ContentAddCtrl', ['$scope', 'ContentFty', 'UploadKeyFty', 'Custo
                 getAdvertising();
             }
         }
-        var adCreativeOrderNames = AdCreativeFty.adCreativeOrderNames().success(function (response) {
+        var adCreativeOrderNames = AdCreativeFty.adCreativeOrderNames().then(function (response) {
             if (response) {
                 $scope.orderListSel.list = response.orderNames;
             }
         });
 
-        var adMarkSelect = SysMarkFty.adMarkSelect({adMarkType:1}).success(function (res) {
+        var adMarkSelect = SysMarkFty.adMarkSelect({adMarkType:1}).then(function (res) {
             if(res && res.length > 0){
                 $scope.adMarkSelect = res;
             }
@@ -108,7 +108,7 @@ app.controller('ContentAddCtrl', ['$scope', 'ContentFty', 'UploadKeyFty', 'Custo
         function getAdvertising() {
             $scope.advertising = [];
             ycui.loading.show();
-            AdCreativeFty.adSpaceNamesByOrderId({ orderId: $scope.content.orderId }).success(function (response) {
+            AdCreativeFty.adSpaceNamesByOrderId({ orderId: $scope.content.orderId }).then(function (response) {
                 ycui.loading.hide();
                 $scope.adShow = true; //数据展现
                 $scope.advertising = response.adSpaceNames;
@@ -127,7 +127,7 @@ app.controller('ContentAddCtrl', ['$scope', 'ContentFty', 'UploadKeyFty', 'Custo
                 beforeFileQueued:function(than,file){
                     ycui.loading.show();
                     than.stop(file);
-                    UploadKeyFty.uploadKey().success(function (da) {
+                    UploadKeyFty.uploadKey().then(function (da) {
                         key = da.items;
                         than.upload(file);
                     });
@@ -255,8 +255,10 @@ app.controller('ContentAddCtrl', ['$scope', 'ContentFty', 'UploadKeyFty', 'Custo
                         }
                         var _da = angular.copy(da);
                         //角标
+                        var list = angular.copy($scope.adMarkSelect);
+                        list.unshift({adMarkName:'无',id:0})
                         _da.adMarkSelectSel = {
-                            list:angular.copy($scope.adMarkSelect),
+                            list:list,
                             callback:function(e,d){
                                 _da.adMarkArea = 3
                             }
@@ -437,7 +439,7 @@ app.controller('ContentAddCtrl', ['$scope', 'ContentFty', 'UploadKeyFty', 'Custo
             $scope.content.creativeList = arr;
 
             ycui.loading.show();
-            ContentFty.contentAdd($scope.content).success(function (res) {
+            ContentFty.contentAdd($scope.content).then(function (res) {
                 ycui.loading.hide();
                 if (res && res.code == 200) {
                     ycui.alert({

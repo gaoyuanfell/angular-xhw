@@ -12,9 +12,18 @@ app.controller('QualificationAddCtrl', ["$scope", "$http", "QualificationFty", "
                     multiple: false
                 },
                 beforeFileQueued:function(uploader,file){
+                    var size = 3*1024*1024;
+                    if(file.size > size){
+                        ycui.alert({
+                            content: "文件大小不能超过3M(1M等于1024KB)",
+                            timeout: 10,
+                            error:true
+                        });
+                        return false;
+                    }
                     ycui.loading.show();
                     uploader.stop();
-                    UploadKeyFty.uploadKey().success(function (da) {
+                    UploadKeyFty.uploadKey().then(function (da) {
                         key = da.items;
                         uploader.upload();
                     });
@@ -45,82 +54,6 @@ app.controller('QualificationAddCtrl', ["$scope", "$http", "QualificationFty", "
             }
             uploadInit(config);
         }
-
-
-
-        // var uploadInit = function (id) {
-        //         var cof = {
-        //                 server: fileUrl + '/contract/fileUpload.htm',
-        //                 method: "POST",
-        //                 compress:false,
-        //                 pick: {
-        //                     id: id,
-        //                     multiple: false
-        //                 },
-        //                 formData: {size: 3145728},
-        //                 fileNumLimit: 10,
-        //                 fileSingleSizeLimit: 3145728,
-        //                 duplicate: true,
-        //                 accept: {
-        //                     title: 'Images',
-        //                     extensions: 'gif,jpg,jpeg,bmp,png',
-        //                     mimeTypes: 'image/*'
-        //                 }
-        //             },
-        //             uploader = WebUploader.create(cof);
-        //         var key = "";
-        //         uploader.on('beforeFileQueued', function (file) {
-        //             ycui.loading.show();
-        //             uploader.stop();
-        //             UploadKeyFty.uploadKey().success(function (da) {
-        //                 key = da.items;
-        //                 uploader.upload();
-        //             });
-        //             if (file.size > cof.fileSingleSizeLimit) {
-        //                 ycui.alert({
-        //                     content: '图片大小不得超过3M,请重新选择，谢谢。'
-        //                 });
-        //                 uploader.reset();
-        //                 ycui.loading.hide();
-        //                 return false
-        //             }
-        //         });
-        //         uploader.on('uploadSuccess', function (file, res) {
-        //             ycui.loading.hide();
-        //             if (res.file) {
-        //                 uploader.makeThumb(file, function (error, src) {
-        //                     var show = $('<div class="upload-show"></div>'), parent;
-        //                     if (!error) {
-        //                         show.append('<img src="' + src + '" data-src="' + res.file + '">');
-        //                         parent = $(id).parents('.yc-Qualification-uploading'), parent.find('.upload-show').remove(), parent.append(show);
-        //                     }
-        //                 });
-        //             } else {
-        //                 ycui.alert({
-        //                     content: "不正确的操作"
-        //                 });
-        //                 uploader.reset();
-        //             }
-        //         });
-        //         uploader.on('uploadError', function (file, res) {
-        //             ycui.loading.hide();
-        //             ycui.alert({
-        //                 content: res
-        //             });
-        //             uploader.reset();
-        //         });
-        //         uploader.on('uploadBeforeSend', function (ob, data) {
-        //             data.uploadKey = key;
-        //         })
-        //         uploader.on('error', function () {
-        //             ycui.loading.hide();
-        //             ycui.alert({
-        //                 content: "错误的文件类型",
-        //                 timeout: -1
-        //             });
-        //             uploader.reset();
-        //         })
-        //     }, i = 1;
 
         var industry = {
             "leve2": [[],[{"id": 197, "name": "安保服务"}, {"id": 198, "name": "安保器材"}, {
@@ -328,7 +261,7 @@ app.controller('QualificationAddCtrl', ["$scope", "$http", "QualificationFty", "
         }
 
         $scope.childListSel = {}
-        var getAllCustomer = CustomerFty.getAllCustomer().success(function (response) {
+        var getAllCustomer = CustomerFty.getAllCustomer().then(function (response) {
             if(response){
                 $scope.childListSel.list = response.items;//param1
             }
@@ -410,7 +343,7 @@ app.controller('QualificationAddCtrl', ["$scope", "$http", "QualificationFty", "
                 industryId: $scope.industryId,
                 qualificationsFileUrl: src,
                 qualificationsName: name
-            }).success(function (response) {
+            }).then(function (response) {
                 ycui.loading.hide();
                 if (response) {
                     ycui.alert({
@@ -457,7 +390,7 @@ app.controller('QualificationAddCtrl', ["$scope", "$http", "QualificationFty", "
             //         industryId: $scope.industryResult.id,
             //         qualificationsFileUrl: files.qualificationsFileUrl,
             //         qualificationsName: files.qualificationsName
-            //     }).success(function (response) {
+            //     }).then(function (response) {
             //         ycui.loading.hide();
             //         if (response) {
             //             ycui.alert({
@@ -478,7 +411,7 @@ app.controller('QualificationAddCtrl', ["$scope", "$http", "QualificationFty", "
         //     newvalue.id != -1 && $('#industryType').find('.error-message').remove();
         // }, true);
 
-        // CustomerFty.getAllCustomer().success(function (response) {
+        // CustomerFty.getAllCustomer().then(function (response) {
         //     $scope.clients = response.items
         // });
         // ycui.select('.yc-select'), uploadInit('#uplaodBtn');

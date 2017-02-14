@@ -168,6 +168,18 @@ input::-ms-clear {
     width: 230px !important;
 }
 
+.th270 {
+    width: 270px !important;
+}
+
+.th280 {
+    width: 280px !important;
+}
+
+.th300 {
+    width: 300px !important;
+}
+
 .th40-min {
     min-width: 40px !important;
 }
@@ -545,6 +557,11 @@ label{
     color: #666;
     cursor: pointer;
 }
+.full-y-color{
+    background-color: rgb(255, 51, 0);
+    color: #666;
+    cursor: pointer;
+}
 
 /*自定义滚动条*/
 .scroll-btn{
@@ -839,7 +856,7 @@ textarea.form-control {
 }
 .form-control{
     display: inline-block;
-    height: 34px;
+    height: 32.5px;
     padding: 6px 12px;
     font-size: 14px;
     color: #555;
@@ -1181,6 +1198,14 @@ textarea.form-control{
     height: 30px;
     margin: 5px 6px 5px 0;
     border-radius:4px;
+}
+.tag-span{
+    border: 1px solid #ccc;
+    padding: 2px;
+    background: #43a7ff;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
 }
 .tag i.yc-icon{
     font-size: 14px;

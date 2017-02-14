@@ -4,7 +4,7 @@
 app.controller("mediaAddCtrl", ['$scope', '$http', 'ResMediaFty','$q',
     function ($scope, $http, ResMediaFty,$q) {
         $scope.companyListSel = {}
-        var companyList = ResMediaFty.companyList().success(function (res) {
+        var companyList = ResMediaFty.companyList().then(function (res) {
             if (res && res.code == 200) {
                 $scope.companyListSel.list = res.companyList;
             }
@@ -67,7 +67,7 @@ app.controller("mediaAddCtrl", ['$scope', '$http', 'ResMediaFty','$q',
                 return;
             }
             ycui.loading.show()
-            ResMediaFty.mediaAdd({medias: $scope.medias}).success(function (response) {
+            ResMediaFty.mediaAdd({medias: $scope.medias}).then(function (response) {
                 ycui.loading.hide();
                 if (response && response.code == 200) {
                     ycui.alert({

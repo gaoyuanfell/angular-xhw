@@ -4,7 +4,7 @@
 app.controller("roleAddCtrl", ['$scope', '$http', 'SysRuleUserFty','SysRoleFty',
     function ($scope, $http, SysRuleUserFty,SysRoleFty) {
         ycui.loading.show();
-        SysRuleUserFty.levelsRights().success(function (res) {
+        SysRuleUserFty.levelsRights().then(function (res) {
             ycui.loading.hide();
             if(res){
                 var array = changeRuleDate(res);
@@ -27,7 +27,7 @@ app.controller("roleAddCtrl", ['$scope', '$http', 'SysRuleUserFty','SysRoleFty',
             ycui.loading.show();
             var body = $scope.role;
             body.roleCluster = roleClusterId.join(",");
-            SysRoleFty.addRole(body).success(function (res) {
+            SysRoleFty.addRole(body).then(function (res) {
                 ycui.loading.hide();
                 if(res && res.code == 200){
                     ycui.alert({

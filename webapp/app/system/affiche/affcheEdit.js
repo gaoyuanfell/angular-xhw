@@ -7,14 +7,14 @@ app.controller("affcheEditCtrl", ['$scope', '$http', 'SysNoticeFty','SysUserFty'
         ycui.loading.show();
 
         $scope.$on('loginUserInfo',function () {
-            SysUserFty.userInfo({id: $scope.$parent.user.id}).success(function (res) {
+            SysUserFty.userInfo({id: $scope.$parent.user.id}).then(function (res) {
                 if (res) {
                     $scope.roleList = res.roleList;
                 }
             })
         });
         
-        SysNoticeFty.edit({id: id}).success(function (response) {
+        SysNoticeFty.edit({id: id}).then(function (response) {
             ycui.loading.hide();
             if (!response) return;
             $scope.affche = response;
@@ -66,7 +66,7 @@ app.controller("affcheEditCtrl", ['$scope', '$http', 'SysNoticeFty','SysUserFty'
                     }
                     ycui.loading.show();
                     uploader.stop(file);
-                    UploadKeyFty.uploadKey().success(function (da) {
+                    UploadKeyFty.uploadKey().then(function (da) {
                         key = da.items;
                         uploader.upload(file);
                     });
@@ -94,7 +94,9 @@ app.controller("affcheEditCtrl", ['$scope', '$http', 'SysNoticeFty','SysUserFty'
             if(!$(".form").valid())return;
             delete body.createTime;
             delete body.updateTime;
-            SysNoticeFty.updateNotice(body).success(function (res) {
+            ycui.loading.show();
+            SysNoticeFty.updateNotice(body).then(function (res) {
+                ycui.loading.hide();
                 if(res && res.code == 200){
                     ycui.alert({
                         content: res.msg,

@@ -18,13 +18,13 @@ app.controller('MarkManageCtrl',['$scope','SysMarkFty',function ($scope,SysMarkF
         $scope.total_page = response.total_page;
     };
 
-    SysMarkFty.adMarkList($scope.query).success(modView);
+    SysMarkFty.adMarkList($scope.query).then(modView);
 
     $scope.redirect = function (num, con) {
         ycui.loading.show();
         $scope.query.pageIndex = num || 1;
         $scope.query.param1 = $scope.query.search
-        SysMarkFty.adMarkList($scope.query).success(modView);
+        SysMarkFty.adMarkList($scope.query).then(modView);
     };
 
     $scope.delete = function (id) {
@@ -32,13 +32,13 @@ app.controller('MarkManageCtrl',['$scope','SysMarkFty',function ($scope,SysMarkF
             title:'角标删除',
             content:'确定要删除此角标?',
             okclick:function () {
-                SysMarkFty.deleteAdMark({id:id}).success(function (res) {
+                SysMarkFty.deleteAdMark({id:id}).then(function (res) {
                     if(res && res.code == 200){
                         ycui.alert({
                             content:res.msg,
                             timeout:-1,
                             okclick:function () {
-                                SysMarkFty.adMarkList($scope.query).success(modView);
+                                SysMarkFty.adMarkList($scope.query).then(modView);
                             }
                         })
                     }
@@ -52,13 +52,13 @@ app.controller('MarkManageCtrl',['$scope','SysMarkFty',function ($scope,SysMarkF
             title:'角标启用/禁用',
             content:'确定要'+ (~state?'禁用':'启用') +'此角标?',
             okclick:function () {
-                SysMarkFty.enableAdMark({id:id,state:~state}).success(function (res) {
+                SysMarkFty.enableAdMark({id:id,state:~state}).then(function (res) {
                     if(res && res.code == 200){
                         ycui.alert({
                             content:res.msg,
                             timeout:-1,
                             okclick:function () {
-                                SysMarkFty.adMarkList($scope.query).success(modView);
+                                SysMarkFty.adMarkList($scope.query).then(modView);
                             }
                         })
                     }
@@ -93,9 +93,18 @@ app.controller('MarkAddCtrl',['$scope','UploadKeyFty','SysMarkFty',function ($sc
                 ycui.loading.hide();
             },
             beforeFileQueued:function (uploader,file) {
+                var size = 3*1024*1024;
+                if(file.size > size){
+                    ycui.alert({
+                        content: "文件大小不能超过3M(1M等于1024KB)",
+                        timeout: 10,
+                        error:true
+                    });
+                    return false;
+                }
                 ycui.loading.show();
                 uploader.stop(file);
-                UploadKeyFty.uploadKey().success(function (da) {
+                UploadKeyFty.uploadKey().then(function (da) {
                     key = da.items;
                     uploader.upload(file);
                 });
@@ -107,7 +116,7 @@ app.controller('MarkAddCtrl',['$scope','UploadKeyFty','SysMarkFty',function ($sc
             uploadSuccess:function (uploader, file, res) {
                 if(res && res.code == 200){
                     $scope.imgList = [];
-                    var wh = proportionPhoto(res.width,res.height,20,20);
+                    var wh = proportionPhoto(res.width,res.height,30,30);
                     var da = {
                         width:wh[0],
                         height:wh[1],
@@ -142,7 +151,9 @@ app.controller('MarkAddCtrl',['$scope','UploadKeyFty','SysMarkFty',function ($sc
             bo = false;
         }
         if(!bo){return};
-        SysMarkFty.addAdMark($scope.mark).success(function (res) {
+        ycui.loading.show();
+        SysMarkFty.addAdMark($scope.mark).then(function (res) {
+            ycui.loading.hide();
             if(res && res.code == 200){
                 ycui.alert({
                     content:res.msg,
@@ -171,13 +182,13 @@ app.controller('MarkAddCtrl',['$scope','UploadKeyFty','SysMarkFty',function ($sc
 app.controller('MarkCompileCtrl',['$scope','SysMarkFty','UploadKeyFty',function ($scope,SysMarkFty,UploadKeyFty) {
     var id = getSearch("id");
     $scope.mark = {};
-    SysMarkFty.getAdMark({id:id}).success(function (res) {
+    SysMarkFty.getAdMark({id:id}).then(function (res) {
         if(res){
             $scope.mark = res;
             $scope.imgList = [];
             var da = {
-                width:20,
-                height:20,
+                width:24,
+                height:14,
                 uploadFile:res.adMarkUrl
             };
             $scope.imgList.push(da);
@@ -205,9 +216,18 @@ app.controller('MarkCompileCtrl',['$scope','SysMarkFty','UploadKeyFty',function 
                 ycui.loading.hide();
             },
             beforeFileQueued:function (uploader,file) {
+                var size = 3*1024*1024;
+                if(file.size > size){
+                    ycui.alert({
+                        content: "文件大小不能超过3M(1M等于1024KB)",
+                        timeout: 10,
+                        error:true
+                    });
+                    return false;
+                }
                 ycui.loading.show();
                 uploader.stop(file);
-                UploadKeyFty.uploadKey().success(function (da) {
+                UploadKeyFty.uploadKey().then(function (da) {
                     key = da.items;
                     uploader.upload(file);
                 });
@@ -219,7 +239,7 @@ app.controller('MarkCompileCtrl',['$scope','SysMarkFty','UploadKeyFty',function 
             uploadSuccess:function (uploader, file, res) {
                 if(res && res.code == 200){
                     $scope.imgList = [];
-                    var wh = proportionPhoto(res.width,res.height,20,20);
+                    var wh = proportionPhoto(res.width,res.height,30,30);
                     var da = {
                         width:wh[0],
                         height:wh[1],
@@ -262,8 +282,9 @@ app.controller('MarkCompileCtrl',['$scope','SysMarkFty','UploadKeyFty',function 
             adMarkUrl:$scope.mark.adMarkUrl,
             adMarkType:$scope.mark.adMarkType
         };
-
-        SysMarkFty.updateAdMark(body).success(function (res) {
+        ycui.loading.show();
+        SysMarkFty.updateAdMark(body).then(function (res) {
+            ycui.loading.hide();
             if(res && res.code == 200){
                 ycui.alert({
                     content:res.msg,

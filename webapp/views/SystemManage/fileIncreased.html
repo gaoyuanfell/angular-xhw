@@ -42,6 +42,7 @@
                 <div class="yc-col-10">
                     <div id="documentUrl" class="yc-btn-web">上&emsp;传</div>
                     <span padding-left ng-bind="document.documentUrl"></span>
+                    <span class="error" ng-show="!document.documentUrl && validShow">请上传文档附件</span>
                 </div>
             </div>
             <div class="form-group">

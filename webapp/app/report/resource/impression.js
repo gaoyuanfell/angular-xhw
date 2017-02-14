@@ -7,7 +7,7 @@ app.controller('impressionSysCtrl', ["$scope", "ImpressionFty", "ResAdvertisingF
     function ($scope, ImpressionFty, ResAdvertisingFty, $q, ResChannelFty) {
         $scope.query = {pageSize: 10,pageIndex: 1}
         //获取媒体下拉
-        var downListForSearch = ResAdvertisingFty.downListForSearch().success(function (response) {
+        var downListForSearch = ResAdvertisingFty.downListForSearch().then(function (response) {
             $scope.mediaListSel.list = response.mediaList;
         });
 
@@ -15,7 +15,7 @@ app.controller('impressionSysCtrl', ["$scope", "ImpressionFty", "ResAdvertisingF
             callback: function (event, data) {
                 $scope.channelListSel.$destroy();
                 if(!data){return};
-                ResChannelFty.getChannelsByMedia({mediaId: data.id}).success(function (response) {
+                ResChannelFty.getChannelsByMedia({mediaId: data.id}).then(function (response) {
                     $scope.channelListSel.list = response.channels;
                 })
             }
@@ -26,8 +26,8 @@ app.controller('impressionSysCtrl', ["$scope", "ImpressionFty", "ResAdvertisingF
         $scope.$on('impression-sys',function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            ImpressionFty.osReport($scope.query).success(modViewD);
-            ImpressionFty.collectOSReport($scope.query).success(summarizingD);
+            ImpressionFty.osReport($scope.query).then(modViewD);
+            ImpressionFty.collectOSReport($scope.query).then(summarizingD);
         })
 
         ycui.loading.show();
@@ -49,16 +49,16 @@ app.controller('impressionSysCtrl', ["$scope", "ImpressionFty", "ResAdvertisingF
             $scope.summarizing = response.items;
         };
 
-        ImpressionFty.osReport($scope.query).success(modViewD);
-        ImpressionFty.collectOSReport($scope.query).success(summarizingD);
+        ImpressionFty.osReport($scope.query).then(modViewD);
+        ImpressionFty.collectOSReport($scope.query).then(summarizingD);
 
         //搜索框
         $scope.redirect = function (num, con) {
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.param1 = $scope.query.search;
-            ImpressionFty.osReport($scope.query).success(modViewD);
-            ImpressionFty.collectOSReport($scope.query).success(summarizingD);
+            ImpressionFty.osReport($scope.query).then(modViewD);
+            ImpressionFty.collectOSReport($scope.query).then(summarizingD);
         };
 
         //日历查询
@@ -75,8 +75,8 @@ app.controller('impressionSysCtrl', ["$scope", "ImpressionFty", "ResAdvertisingF
                 $scope.query.startTime = obj.startDate;
                 $scope.query.endTime = obj.endDate;
                 $scope.query.pageIndex = 1;
-                ImpressionFty.osReport($scope.query).success(modViewD);
-                ImpressionFty.collectOSReport($scope.query).success(summarizingD);
+                ImpressionFty.osReport($scope.query).then(modViewD);
+                ImpressionFty.collectOSReport($scope.query).then(summarizingD);
             }
         });
 
@@ -107,7 +107,7 @@ app.controller('impressionBowCtrl', ["$scope", "ImpressionFty", "ResAdvertisingF
     function ($scope, ImpressionFty, ResAdvertisingFty, $q, ResChannelFty) {
         $scope.query = {pageSize: 10,pageIndex: 1}
         //获取媒体下拉
-        var downListForSearch = ResAdvertisingFty.downListForSearch().success(function (response) {
+        var downListForSearch = ResAdvertisingFty.downListForSearch().then(function (response) {
             $scope.mediaListSel.list = response.mediaList;
         });
 
@@ -115,7 +115,7 @@ app.controller('impressionBowCtrl', ["$scope", "ImpressionFty", "ResAdvertisingF
             callback: function (event, data) {
                 $scope.channelListSel.$destroy();
                 if(!data){return};
-                ResChannelFty.getChannelsByMedia({mediaId: data.id}).success(function (response) {
+                ResChannelFty.getChannelsByMedia({mediaId: data.id}).then(function (response) {
                     $scope.channelListSel.list = response.channels;
                 })
             }
@@ -126,8 +126,8 @@ app.controller('impressionBowCtrl', ["$scope", "ImpressionFty", "ResAdvertisingF
         $scope.$on('impression-bow',function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            ImpressionFty.browserReport($scope.query).success(modViewD);
-            ImpressionFty.collectBrowserReport($scope.query).success(summarizingD);
+            ImpressionFty.browserReport($scope.query).then(modViewD);
+            ImpressionFty.collectBrowserReport($scope.query).then(summarizingD);
         })
 
         ycui.loading.show();
@@ -149,16 +149,16 @@ app.controller('impressionBowCtrl', ["$scope", "ImpressionFty", "ResAdvertisingF
             $scope.summarizing = response.items;
         };
 
-        ImpressionFty.browserReport($scope.query).success(modViewD);
-        ImpressionFty.collectBrowserReport($scope.query).success(summarizingD);
+        ImpressionFty.browserReport($scope.query).then(modViewD);
+        ImpressionFty.collectBrowserReport($scope.query).then(summarizingD);
 
         //搜索框
         $scope.redirect = function (num, con) {
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.param1 = $scope.query.search;
-            ImpressionFty.browserReport($scope.query).success(modViewD);
-            ImpressionFty.collectBrowserReport($scope.query).success(summarizingD);
+            ImpressionFty.browserReport($scope.query).then(modViewD);
+            ImpressionFty.collectBrowserReport($scope.query).then(summarizingD);
         };
 
         //日历查询
@@ -175,8 +175,8 @@ app.controller('impressionBowCtrl', ["$scope", "ImpressionFty", "ResAdvertisingF
                 $scope.query.startTime = obj.startDate;
                 $scope.query.endTime = obj.endDate;
                 $scope.query.pageIndex = 1;
-                ImpressionFty.browserReport($scope.query).success(modViewD);
-                ImpressionFty.collectBrowserReport($scope.query).success(summarizingD);
+                ImpressionFty.browserReport($scope.query).then(modViewD);
+                ImpressionFty.collectBrowserReport($scope.query).then(summarizingD);
             }
         });
 
@@ -208,7 +208,7 @@ app.controller('impressionChinaCtrl', ["$scope", "ImpressionFty", "ResAdvertisin
     function ($scope, ImpressionFty, ResAdvertisingFty, $q, ResChannelFty) {
         $scope.query = {pageSize: 10,pageIndex: 1}
         //获取媒体下拉
-        var downListForSearch = ResAdvertisingFty.downListForSearch().success(function (response) {
+        var downListForSearch = ResAdvertisingFty.downListForSearch().then(function (response) {
             $scope.mediaListSel.list = response.mediaList;
         });
 
@@ -216,7 +216,7 @@ app.controller('impressionChinaCtrl', ["$scope", "ImpressionFty", "ResAdvertisin
             callback: function (event, data) {
                 $scope.channelListSel.$destroy();
                 if(!data){return};
-                ResChannelFty.getChannelsByMedia({mediaId: data.id}).success(function (response) {
+                ResChannelFty.getChannelsByMedia({mediaId: data.id}).then(function (response) {
                     $scope.channelListSel.list = response.channels;
                 })
             }
@@ -227,8 +227,8 @@ app.controller('impressionChinaCtrl', ["$scope", "ImpressionFty", "ResAdvertisin
         $scope.$on('impression-china',function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            ImpressionFty.countryReport($scope.query).success(modViewD);
-            ImpressionFty.collectCountryReport($scope.query).success(summarizingD);
+            ImpressionFty.countryReport($scope.query).then(modViewD);
+            ImpressionFty.collectCountryReport($scope.query).then(summarizingD);
         })
 
         ycui.loading.show();
@@ -250,16 +250,16 @@ app.controller('impressionChinaCtrl', ["$scope", "ImpressionFty", "ResAdvertisin
             $scope.summarizing = response.items;
         };
 
-        ImpressionFty.countryReport($scope.query).success(modViewD);
-        ImpressionFty.collectCountryReport($scope.query).success(summarizingD);
+        ImpressionFty.countryReport($scope.query).then(modViewD);
+        ImpressionFty.collectCountryReport($scope.query).then(summarizingD);
 
         //搜索框
         $scope.redirect = function (num, con) {
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.param1 = $scope.query.search;
-            ImpressionFty.countryReport($scope.query).success(modViewD);
-            ImpressionFty.collectCountryReport($scope.query).success(summarizingD);
+            ImpressionFty.countryReport($scope.query).then(modViewD);
+            ImpressionFty.collectCountryReport($scope.query).then(summarizingD);
         };
 
         //日历查询
@@ -276,8 +276,8 @@ app.controller('impressionChinaCtrl', ["$scope", "ImpressionFty", "ResAdvertisin
                 $scope.query.startTime = obj.startDate;
                 $scope.query.endTime = obj.endDate;
                 $scope.query.pageIndex = 1;
-                ImpressionFty.countryReport($scope.query).success(modViewD);
-                ImpressionFty.collectCountryReport($scope.query).success(summarizingD);
+                ImpressionFty.countryReport($scope.query).then(modViewD);
+                ImpressionFty.collectCountryReport($scope.query).then(summarizingD);
             }
         });
 
@@ -308,7 +308,7 @@ app.controller('impressionCityCtrl', ["$scope", "ImpressionFty", "ResAdvertising
     function ($scope, ImpressionFty, ResAdvertisingFty, $q, ResChannelFty) {
         $scope.query = {pageSize: 10,pageIndex: 1}
         //获取媒体下拉
-        var downListForSearch = ResAdvertisingFty.downListForSearch().success(function (response) {
+        var downListForSearch = ResAdvertisingFty.downListForSearch().then(function (response) {
             $scope.mediaListSel.list = response.mediaList;
         });
 
@@ -316,7 +316,7 @@ app.controller('impressionCityCtrl', ["$scope", "ImpressionFty", "ResAdvertising
             callback: function (event, data) {
                 $scope.channelListSel.$destroy();
                 if(!data){return};
-                ResChannelFty.getChannelsByMedia({mediaId: data.id}).success(function (response) {
+                ResChannelFty.getChannelsByMedia({mediaId: data.id}).then(function (response) {
                     $scope.channelListSel.list = response.channels;
                 })
             }
@@ -327,8 +327,8 @@ app.controller('impressionCityCtrl', ["$scope", "ImpressionFty", "ResAdvertising
         $scope.$on('impression-city',function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            ImpressionFty.cityReport($scope.query).success(modViewD);
-            ImpressionFty.collectCityReport($scope.query).success(summarizingD);
+            ImpressionFty.cityReport($scope.query).then(modViewD);
+            ImpressionFty.collectCityReport($scope.query).then(summarizingD);
         })
 
         ycui.loading.show();
@@ -350,16 +350,16 @@ app.controller('impressionCityCtrl', ["$scope", "ImpressionFty", "ResAdvertising
             $scope.summarizing = response.items;
         };
 
-        ImpressionFty.cityReport($scope.query).success(modViewD);
-        ImpressionFty.collectCityReport($scope.query).success(summarizingD);
+        ImpressionFty.cityReport($scope.query).then(modViewD);
+        ImpressionFty.collectCityReport($scope.query).then(summarizingD);
 
         //搜索框
         $scope.redirect = function (num, con) {
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.param1 = $scope.query.search;
-            ImpressionFty.cityReport($scope.query).success(modViewD);
-            ImpressionFty.collectCityReport($scope.query).success(summarizingD);
+            ImpressionFty.cityReport($scope.query).then(modViewD);
+            ImpressionFty.collectCityReport($scope.query).then(summarizingD);
         };
 
         //日历查询
@@ -376,8 +376,8 @@ app.controller('impressionCityCtrl', ["$scope", "ImpressionFty", "ResAdvertising
                 $scope.query.startTime = obj.startDate;
                 $scope.query.endTime = obj.endDate;
                 $scope.query.pageIndex = 1;
-                ImpressionFty.cityReport($scope.query).success(modViewD);
-                ImpressionFty.collectCityReport($scope.query).success(summarizingD);
+                ImpressionFty.cityReport($scope.query).then(modViewD);
+                ImpressionFty.collectCityReport($scope.query).then(summarizingD);
             }
         });
 

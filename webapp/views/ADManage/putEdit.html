@@ -48,8 +48,8 @@
         <div class="form-group" ng-show="order.orderType == 1">
             <label  class="yc-col-2 control-label"> <span>*</span> 打包合同：</label>
             <div class="yc-col-10">
-                <label class="radio"><input class="form-control" type="radio" ng-model="order.isPackage" value="1" ng-change="isPackageChange(1)"> 否</label>
-                <label class="radio"><input class="form-control" type="radio" ng-model="order.isPackage" value="2" ng-change="isPackageChange(2)"> 是</label>
+                <label class="radio"><input class="form-control" type="radio" ng-model="order.isPackage" ng-value="1" ng-change="isPackageChange(1)"> 否</label>
+                <label class="radio"><input class="form-control" type="radio" ng-model="order.isPackage" ng-value="2" ng-change="isPackageChange(2)"> 是</label>
             </div>
         </div>
 
@@ -58,8 +58,8 @@
             <div class="form-group">
                 <label  class="yc-col-2 control-label"> <span>*</span> 合同签订情况：</label>
                 <div class="yc-col-10">
-                    <label class="radio"><input class="form-control" type="radio" ng-disabled="!_checkEndState && !_contractType" ng-model="order.contractType" value="1" ng-change="contractTypeChange(1)"> 已签合同</label>
-                    <label class="radio"><input class="form-control" type="radio" ng-disabled="!_checkEndState && !_contractType" ng-model="order.contractType" value="2" ng-change="contractTypeChange(2)"> 暂无合同</label>
+                    <label class="radio"><input class="form-control" type="radio" ng-disabled="!_checkEndState && !_contractType" ng-model="order.contractType" ng-value="1" ng-change="contractTypeChange(1)"> 已签合同</label>
+                    <label class="radio"><input class="form-control" type="radio" ng-disabled="!_checkEndState && !_contractType" ng-model="order.contractType" ng-value="2" ng-change="contractTypeChange(2)"> 暂无合同</label>
                 </div>
             </div>
 
@@ -67,6 +67,7 @@
                 <label  class="yc-col-2 control-label"> <span>*</span> 请选择合同：</label>
                 <div class="yc-col-10">
                     <div yc-select="contractCodeSel" width="260" search="hand" disabled="{{!_checkEndState && order.contractCode && _checkEndStateTrue}}" input-holder="请输入完整合同号进行查询" default-search="查询结果无此合同号，请重新输入" query="order" value="contractCode" key="contractCode" resname="{{order.contractCode}}" name="contractCode" placeholder="请查询合同"></div>
+                    <span class="error" ng-show="!order.contractCode && validShow">请选择合同</span>
                 </div>
             </div>
 
@@ -149,8 +150,8 @@
             <div class="form-group" ng-show="selectContractShow || order.contractType == 2">
                 <label  class="yc-col-2 control-label"> <span>*</span> 打包合同：</label>
                 <div class="yc-col-10">
-                    <label class="radio"><input class="form-control" type="radio" ng-model="order.isPackage" ng-disabled="!_checkEndState || order.contractType == 1" value="1" ng-change="isPackageChange(1)"> 否</label>
-                    <label class="radio"><input class="form-control" type="radio" ng-model="order.isPackage" ng-disabled="!_checkEndState || order.contractType == 1" value="2" ng-change="isPackageChange(2)"> 是</label>
+                    <label class="radio"><input class="form-control" type="radio" ng-model="order.isPackage" ng-disabled="!_checkEndState || order.contractType == 1" ng-value="1" ng-change="isPackageChange(1)"> 否</label>
+                    <label class="radio"><input class="form-control" type="radio" ng-model="order.isPackage" ng-disabled="!_checkEndState || order.contractType == 1" ng-value="2" ng-change="isPackageChange(2)"> 是</label>
                 </div>
             </div>
 
@@ -158,12 +159,22 @@
                 <label  class="yc-col-2 control-label"> 暂无合同历史数据：</label>
                 <div class="yc-col-10">
                     <p style="line-height: 40px">
+                        <span ng-show="order.historyData.futureMoney">
                             预估合同金额：{{order.historyData.futureMoney | currency:'￥'}}，
+                        </span>
+                        <span ng-show="order.historyData.historyScheduleMoney">
                             历史排期金额：{{order.historyData.historyScheduleMoney | currency:'￥'}}，
+                        </span>
+                        <span ng-show="order.historyData.discount">
                             合同折扣：{{order.historyData.discount}}%，
+                        </span>
+                        <span ng-show="order.historyData.present">
                             合同配送：{{order.historyData.present}}%，
+                        </span>
+                        <span ng-show="order.historyData.isPackage != undefined">
                             打包合同：{{order.historyData.isPackage == 1?'否':'是'}}
-                        </p>
+                        </span>
+                    </p>
                 </div>
             </div>
 
@@ -182,40 +193,47 @@
         <div class="form-group" ng-show="order.orderType == 4">
             <label  class="yc-col-2 control-label"> <span>*</span> 选择部门：</label>
             <div class="yc-col-10">
-                <div yc-select="departmentListSel" width="260" query="order" value="agencyNumber" key="agencyNumber" name="departmentName" recursion="nextDepts" placeholder="部门"></div>
+                <div yc-select="departmentListSel" width="260" query="order" value="agencyNumber" key="agencyNumber" name="departmentName" resname="{{order.agencyDepName}}" recursion="nextDepts" placeholder="部门"></div>
             </div>
         </div>
 
         <!--补偿刊登-->
+        <!--审核通过的关联订单是不能修改的，补偿订单的合同属性等都是根据关联订单而成，是不能修改的 若是未进入审核流程或者审核不通过的情况，可修改关联订单-->
         <div ng-show="order.orderType == 5">
             <div class="form-group">
                 <label  class="yc-col-2 control-label"> <span>*</span> 关联订单：</label>
                 <div class="yc-col-10">
-                    <a href="javascript:void(0)" class="yc-btn" ng-click="showOrderCarList('#orderCarList')">{{_cache._relatedOrderName || '选择订单'}}
+                    <span class="tag pointer" ng-click="_checkEndState && showOrderCarList('#orderCarList')">
+                        {{_cache._relatedOrderName || '选择订单'}}
+                        <span ng-show="order.relatedOrderId != undefined && _checkEndState" ng-click="hideRelatedOrder($event)">
+                            <i class="yc-icon pointer">&#xe61b;</i>
+                        </span>
+                    </span>
+                    <!--<a href="javascript:void(0)" class="yc-btn" ng-click="showOrderCarList('#orderCarList')">{{_cache._relatedOrderName || '选择订单'}}
                         <i style="position: absolute;top: -13px;right: -10px;cursor: pointer;" ng-show="order.relatedOrderId != undefined" class="yc-icon" ng-click="hideRelatedOrder($event)">&#xe654;</i>
-                    </a>
+                    </a>-->
                 </div>
             </div>
 
             <div class="form-group">
                 <label  class="yc-col-2 control-label"> <span>*</span> 合同签订情况：</label>
                 <div class="yc-col-10">
-                    <label class="radio"><input class="form-control" type="radio" disabled="disabled" ng-model="order.contractType" value="1"> 已签合同</label>
-                    <label class="radio"><input class="form-control" type="radio" disabled="disabled" ng-model="order.contractType" value="2"> 暂无合同</label>
+                    <label class="radio"><input class="form-control" type="radio" disabled="disabled" ng-model="order.contractType" ng-value="1"> 已签合同</label>
+                    <label class="radio"><input class="form-control" type="radio" disabled="disabled" ng-model="order.contractType" ng-value="2"> 暂无合同</label>
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" ng-show="order.contractType == 1">
                 <label  class="yc-col-2 control-label"> <span>*</span> 合同号：</label>
                 <div class="yc-col-10">
-                    <p>{{order.contractCode}}</p>
+                    <input type="text" disabled class="form-control" ng-value="order.contractCode">
                 </div>
             </div>
 
             <div class="form-group" ng-show="order.contractType == 2">
                 <label  class="yc-col-2 control-label"> <span>*</span> 预估合同金额：</label>
                 <div class="yc-col-10">
-                    <input class="form-control" name="futureMoney" type="text" ng-placeholder="请输入预估合同金额" ng-model="order.futureMoney">
+                    <input class="form-control" name="futureMoney" type="text" disabled="disabled" ng-placeholder="请输入预估合同金额" ng-model="order.futureMoney">
                     <span class="msg" ng-show="order.futureMoney" ng-bind="'(' +(order.futureMoney | currency:'￥') + ')'"></span>
                 </div>
             </div>
@@ -223,7 +241,7 @@
             <div class="form-group" ng-show="order.contractType == 2">
                 <label  class="yc-col-2 control-label"> <span>*</span> 历史排期金额：</label>
                 <div class="yc-col-10">
-                    <input class="form-control" name="historyScheduleMoney" type="text" ng-placeholder="请输入历史排期金额" ng-model="order.historyScheduleMoney">
+                    <input class="form-control" name="historyScheduleMoney" type="text" disabled="disabled" ng-placeholder="请输入历史排期金额" ng-model="order.historyScheduleMoney">
                     <span class="msg" ng-show="order.historyScheduleMoney" ng-bind="'(' +(order.historyScheduleMoney | currency:'￥') + ')'"></span>
                 </div>
             </div>
@@ -255,8 +273,8 @@
             <div class="form-group">
                 <label  class="yc-col-2 control-label"> <span>*</span> 打包合同：</label>
                 <div class="yc-col-10">
-                    <label class="radio"><input class="form-control" type="radio" ng-model="order.isPackage" disabled="disabled" value="1" name="contractType"> 否</label>
-                    <label class="radio"><input class="form-control" type="radio" ng-model="order.isPackage" disabled="disabled" value="2" name="contractType"> 是</label>
+                    <label class="radio"><input class="form-control" type="radio" ng-model="order.isPackage" disabled="disabled" ng-value="1" name="contractType"> 否</label>
+                    <label class="radio"><input class="form-control" type="radio" ng-model="order.isPackage" disabled="disabled" ng-value="2" name="contractType"> 是</label>
                 </div>
             </div>
 
@@ -331,7 +349,7 @@
                 <p style="padding-right: 6px"><a ng-click="showPhotoFun(!showPhoto)" style="color: #247BD3;" href="javascript:void(0)">
                     图片</a>
                     <i ng-show="!showPhoto" class="yc-icon" style="font-size: 12px">&#xe612;</i>
-                    <i ng-show="showPhoto" class="yc-icon" style="font-size: 12px">&#xe609;</i>
+                    <i ng-show="showPhoto" class="yc-icon" style="font-size: 12px">&#xe60a;</i>
                 </p>
             </label>
             <div class="yc-col-10">
@@ -391,7 +409,7 @@
                         <td>
                             <!--排期类型：0正常购买 1免费配送 2自用 3 打包-->
                             <label class="radio" ng-click="scheduleTypeChange(ad,type.id)" ng-repeat="type in scheduleTypeList">
-                                <input ng-disabled="ad.adSpaceId != undefined" class="form-control" ng-model="ad.scheduleType" type="radio" value="{{type.id}}">{{type.name}}
+                                <input ng-disabled="ad.adSpaceId != undefined" class="form-control" ng-model="ad.scheduleType" type="radio" ng-value="type.id">{{type.name}}
                             </label>
                         </td>
                         <td><span>{{(ad.price | currency:'') + '/'}}{{ad.priceCycle | isDay}}</span></td>
@@ -493,8 +511,8 @@
         <div class="form-group" ng-init="areasListShow = 0">
             <label class="yc-col-2 control-label"> 地域定向：</label>
             <div class="yc-col-10">
-                <label class="radio"><input class="form-control" type="radio" ng-model="areasListShow" value="0" ng-disabled="!_checkEndState  && !_checkEndStateTrue"> 不限</label>
-                <label class="radio"><input class="form-control" type="radio" ng-model="areasListShow" value="1" ng-disabled="!_checkEndState  && !_checkEndStateTrue"> 选择省份</label>
+                <label class="radio"><input class="form-control" type="radio" ng-model="areasListShow" ng-value="0" ng-disabled="!_checkEndState  && !_checkEndStateTrue"> 不限</label>
+                <label class="radio"><input class="form-control" type="radio" ng-model="areasListShow" ng-value="1" ng-disabled="!_checkEndState  && !_checkEndStateTrue"> 选择省份</label>
             </div>
         </div>
 
@@ -508,8 +526,8 @@
         <div class="form-group" ng-init="languageShow = 0">
             <label class="yc-col-2 control-label"> 语言定向：</label>
             <div class="yc-col-10">
-                <label class="radio"><input class="form-control" type="radio" ng-model="languageShow" value="0" ng-disabled="!_checkEndState  && !_checkEndStateTrue"> 不限</label>
-                <label class="radio"><input class="form-control" type="radio" ng-model="languageShow" value="1" ng-disabled="!_checkEndState  && !_checkEndStateTrue"> 选择语言</label>
+                <label class="radio"><input class="form-control" type="radio" ng-model="languageShow" ng-value="0" ng-disabled="!_checkEndState  && !_checkEndStateTrue"> 不限</label>
+                <label class="radio"><input class="form-control" type="radio" ng-model="languageShow" ng-value="1" ng-disabled="!_checkEndState  && !_checkEndStateTrue"> 选择语言</label>
             </div>
         </div>
 
@@ -518,7 +536,7 @@
             <div class="yc-col-10">
                 <span ng-repeat="la in languageList">
                     <label class="item">
-                        <input class="form-control" type="checkbox" ng-true-value="{{la.id}}" ng-false-value="0" ng-model="la.value">
+                        <input class="form-control" type="checkbox" ng-model="la.value" ng-true-value="{{la.id}}" ng-false-value="'0'">
                         {{la.name}}
                     </label>
                     <br ng-show="($index+1)%7 == 0">
@@ -529,7 +547,7 @@
         <div class="form-group-btn">
             <label class="yc-col-2 control-label"></label>
             <div class="yc-col-10">
-                <a href="javascript:void(0)" class="yc-btn" ng-click="postEdit()" ng-if="putManageRule['ManagePutOrders']">提 交</a>
+                <a href="javascript:void(0)" class="yc-btn" ng-click="postEdit()" ng-if="putManageRule['ManagePutOrders'] && editManage == 1">提 交</a>
                 <a href="javascript:void(0)" data-route="ViewPutOrder" class="yc-btn-out">取 消</a>
             </div>
         </div>
@@ -559,8 +577,8 @@
                 <div class="form-group">
                     <label class="yc-col-3 control-label"> 档期选择：</label>
                     <div class="yc-col-9">
-                        <label class="radio"><input class="form-control" ng-disabled="_checkEndStateTrue" ng-model="scheduleTemp.dateType" type="radio" value="0"> 选择指定日期</label>
-                        <label class="radio"><input class="form-control" ng-disabled="_checkEndStateTrue" ng-model="scheduleTemp.dateType" type="radio" value="1"> 快捷时间选择</label>
+                        <label class="radio"><input class="form-control" ng-disabled="_checkEndStateTrue && scheduleTemp.adSpaceId != undefined" ng-model="scheduleTemp.dateType" type="radio" ng-value="0"> 选择指定日期</label>
+                        <label class="radio"><input class="form-control" ng-disabled="_checkEndStateTrue && scheduleTemp.adSpaceId != undefined" ng-model="scheduleTemp.dateType" type="radio" ng-value="1"> 快捷时间选择</label>
                         <i title="快捷时间选择：适宜多个有规律的时间期段，例如每周三、周四" class="yc-icon pointer">&#xe622;</i>
                     </div>
                 </div>
@@ -577,14 +595,14 @@
                             <div class="show-l" ng-show="!_checkEndState && !data.pickerDateRange">
                                 <div class="icon-input">
                                     <label>
-                                        <input class="form-control picker" readonly id="{{data.pickerStart}}" value="{{data.startTime}}" type="text">
+                                        <input class="form-control picker" readonly id="{{data.pickerStart}}" ng-value="data.startTime" type="text">
                                         <i class="icon yc-icon calendars">&#xe60e;</i>
                                     </label>
                                 </div>
                                 -
                                 <div class="icon-input">
                                     <label>
-                                        <input class="form-control picker" readonly id="{{data.pickerEnd}}" value="{{data.endTime}}" type="text">
+                                        <input class="form-control picker" readonly id="{{data.pickerEnd}}" ng-value="data.endTime" type="text">
                                         <i class="icon yc-icon calendars">&#xe60e;</i>
                                     </label>
                                 </div>
@@ -606,8 +624,8 @@
                     <label class="yc-col-3 control-label"> 设置日期：</label>
                     <div class="yc-col-9">
                         <div class="item">
-                            <label class="radio"> <input class="form-control" ng-model="scheduleTemp.weekOrDate" ng-disabled="_checkEndStateTrue" type="radio" value="0" ng-change="scheduleTemp.changeQuickType(0)"> 快捷选择档期内的星期 </label>
-                            <label class="radio"> <input class="form-control" ng-model="scheduleTemp.weekOrDate" ng-disabled="_checkEndStateTrue" type="radio" value="1" ng-change="scheduleTemp.changeQuickType(1)"> 自由快捷选择日期</label>
+                            <label class="radio"> <input class="form-control" ng-model="scheduleTemp.weekOrDate" ng-disabled="_checkEndStateTrue && scheduleTemp.adSpaceId != undefined" type="radio" ng-value="0" ng-change="scheduleTemp.changeQuickType(0)"> 快捷选择档期内的星期 </label>
+                            <label class="radio"> <input class="form-control" ng-model="scheduleTemp.weekOrDate" ng-disabled="_checkEndStateTrue && scheduleTemp.adSpaceId != undefined" type="radio" ng-value="1" ng-change="scheduleTemp.changeQuickType(1)"> 自由快捷选择日期</label>
                             <div class="quick-adCreate">
                                 <div class="quick-week" ng-show="scheduleTemp.weekOrDate == 0">
                                     <label ng-repeat="w in scheduleTemp.quickWeek.list">
@@ -636,8 +654,8 @@
                                         </div>
                                     </div>
                                     <div class="data-tip massage">单击日期或者星期【选择/取消】日期</div>
-                                    <div ng-hide="scheduleTemp._checkEndStateTrue" class="yc-btn data-tip data-tip-left" ng-click="scheduleTemp.empty()">清空</div>
-                                    <div ng-hide="scheduleTemp._checkEndStateTrue" class="yc-btn data-tip data-tip-left" ng-click="scheduleTemp.init()">重置</div>
+                                    <div ng-hide="_checkEndStateTrue && scheduleTemp.adSpaceId != undefined" class="yc-btn data-tip data-tip-left" ng-click="scheduleTemp.empty()">清空</div>
+                                    <div ng-hide="_checkEndStateTrue && scheduleTemp.adSpaceId != undefined" class="yc-btn data-tip data-tip-left" ng-click="scheduleTemp.init()">重置</div>
                                 </div>
                             </div>
                         </div>
@@ -648,8 +666,8 @@
                     <div class="form-group">
                         <label class="yc-col-3 control-label"> 投放时段：</label>
                         <div class="yc-col-9">
-                            <label class="radio"><input class="form-control" ng-model="scheduleTemp.showTimeBox" type="radio" value="0"> 全时间段</label>
-                            <label class="radio"><input class="form-control" ng-model="scheduleTemp.showTimeBox" type="radio" value="1"> 指定时间段</label>
+                            <label class="radio"><input class="form-control" ng-model="scheduleTemp.showTimeBox" type="radio" ng-value="0"> 全时间段</label>
+                            <label class="radio"><input class="form-control" ng-model="scheduleTemp.showTimeBox" type="radio" ng-value="1"> 指定时间段</label>
                         </div>
                     </div>
                     <div class="form-group">
@@ -823,7 +841,7 @@
                     </tbody>
                 </table>
                 <div class="client-judge" ng-if="total_page2<1">您好，暂时没有符合条件的任何数据</div>
-                <div ng-show="total_page2>0" yc-page page="page2" redirect="redirect2(page.page,query2.search)" query="query" session="0"></div>
+                <div ng-show="total_page2>0" yc-page page="page2" redirect="redirect2(page2.page,query2.search)" query="query" session="0"></div>
                 
 
             </div>
@@ -834,7 +852,7 @@
         </div>
     </div>
 
-    <div class="dialog-bg hide" yc-module="adSpaceModule" width="950">
+    <div class="dialog-bg hide" yc-module="adSpaceModule" width="1000">
         <div class="dialog-wraper">
             <div class="dialog-title">
                 <span class="title">弹窗</span>
@@ -843,13 +861,16 @@
             <div class="dialog-con">
                 <div class="button-group clear">
                     <div class="query-g fl">
-                        <div yc-select="companyListSel" width="200" query="query" value="companyId" key="id" placeholder="所属名称" reskey="{{_cache.adInCompanyId}}" name="companyName" disabled="1" group="orderAddGroup"></div>
+                        <div yc-select="companyListSel" width="170" query="query" value="companyId" key="id" placeholder="所属名称" reskey="{{_cache.adInCompanyId}}" name="companyName" disabled="1" group="orderAddGroup"></div>
+                        
+                        <div ng-show="departmentListAdSel && (departmentListAdSel.list.length > 1 || departmentListAdSel.$list.length > 1)" yc-select="departmentListAdSel" width="160" query="query" value="depScope" name="departmentName" disabled="1" key="agencyNumber" reskey="{{_cache.adInDepScope}}" add="全部" recursion="nextDepts" placeholder="部门范围" ></div>
+
                         <div yc-select="mediaListSel" width="120" query="query" value="mediaId" key="id" add="全部" placeholder="选择媒体" name="mediaName" group="orderAddGroup"></div>
                         <div yc-select="periodicationSel" width="120" query="query" value="channelId" key="id" add="全部" placeholder="频道" name="channelName" group="orderAddGroup"></div>
-                        <div yc-select="sizeListSel" width="120" query="query" value="size" key="size" add="全部" placeholder="选择尺寸" name="size" group="orderAddGroup"></div>
-                        <div yc-select="typeListSel" width="120" query="query" value="adSpaceTypeId" add="全部" key="id" placeholder="广告类型" group="orderAddGroup"></div>
+                        <div yc-select="sizeListSel" width="100" query="query" value="size" key="size" add="全部" placeholder="选择尺寸" name="size" group="orderAddGroup"></div>
+                        <div yc-select="typeListSel" width="100" query="query" value="adSpaceTypeId" add="全部" key="id" placeholder="广告类型" group="orderAddGroup"></div>
                         <div class="icon-input">
-                            <input ng-width="200" type="text" ng-placeholder="请输入广告位名称或ID" ng-model="query.search" class="form-control">
+                            <input ng-width="160" type="text" ng-placeholder="请输入广告位名称或ID" ng-model="query.search" class="form-control">
                             <span class="icon">
                                 <i class="yc-icon calendars" ng-click="redirect(1,search)">&#xe60b;</i>
                             </span>
@@ -902,6 +923,7 @@
                         </table>
                         <div class="client-judge" ng-if="total_page<1">您好，暂时没有符合条件的任何数据或请选择所属</div>
                         <div ng-show="total_page >= 1" yc-page page="page" redirect="redirect(page.page,search)" query="query" session="0"></div>
+                        <p style="color: red;text-align: left;padding: 5px 0;">说明：一个订单选择的所有广告位仅限同一范围下的媒体资源 </p>
                     </div>
                     <div class="search_denuded">
                         <h4>

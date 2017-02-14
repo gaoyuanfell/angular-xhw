@@ -41,17 +41,17 @@
             <div class="form-group">
                 <label for="" class="yc-col-2 control-label"> <span>*</span> 警告开关：</label>
                 <div class="yc-col-10">
-                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorSwitch" value="0"> 关</label>
-                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorSwitch" value="1"> 开</label>
+                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorSwitch" ng-value="0"> 关</label>
+                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorSwitch" ng-value="1"> 开</label>
                 </div>
             </div>
             <!--<div class="form-group">
                 <label for="" class="yc-col-2 control-label"> <span>*</span> 判断条件：</label>
                 <div class="yc-col-10">
-                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorCondition" value="1"> 等于</label>
-                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorCondition" value="2"> 不等于</label>
-                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorCondition" value="3"> 大于</label>
-                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorCondition" value="4"> 小于</label>
+                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorCondition" ng-value="1"> 等于</label>
+                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorCondition" ng-value="2"> 不等于</label>
+                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorCondition" ng-value="3"> 大于</label>
+                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorCondition" ng-value="4"> 小于</label>
                 </div>
             </div>-->
             <div class="form-group">
@@ -63,10 +63,10 @@
             <!--<div class="form-group">
                 <label for="" class="yc-col-2 control-label"> <span>*</span> 接口判断类型：</label>
                 <div class="yc-col-10">
-                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorUrlType" value="1"> http请求正常</label>
-                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorUrlType" value="2"> 标示</label>
-                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorUrlType" value="3"> 值</label>
-                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorUrlType" value="4"> 其他</label>
+                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorUrlType" ng-value="1"> http请求正常</label>
+                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorUrlType" ng-value="2"> 标示</label>
+                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorUrlType" ng-value="3"> 值</label>
+                    <label class="radio"><input type="radio" class="form-control" ng-model="monitor.monitorUrlType" ng-value="4"> 其他</label>
                 </div>
             </div>
             <div class="form-group" ng-show="monitor.monitorUrlType == 2">

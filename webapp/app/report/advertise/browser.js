@@ -4,15 +4,15 @@
 app.controller('browserCtrl', ["$scope", "$http", "ReportAdvertiseFty",'$q',
     function ($scope, $http, ReportAdvertiseFty,$q) {
         $scope.orderListSel = {};
-        var allNDefaultOrderNames = ReportAdvertiseFty.allNDefaultOrderNames().success(function (response) {
+        var allNDefaultOrderNames = ReportAdvertiseFty.allNDefaultOrderNames().then(function (response) {
             $scope.orderListSel.list = response.items;
         });
 
         $scope.$on('ad-report-browser',function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            ReportAdvertiseFty.totalBrowser($scope.query).success(modViewF);
-            ReportAdvertiseFty.collectBrowser($scope.query).success(summarizingF);
+            ReportAdvertiseFty.totalBrowser($scope.query).then(modViewF);
+            ReportAdvertiseFty.collectBrowser($scope.query).then(summarizingF);
         })
 
         ycui.loading.show();
@@ -31,7 +31,7 @@ app.controller('browserCtrl', ["$scope", "$http", "ReportAdvertiseFty",'$q',
         $scope.query = {pageSize: pageSize,pageIndex: 1}
 
         //列表
-        ReportAdvertiseFty.totalBrowser({pageSize: pageSize}).success(modViewF);
+        ReportAdvertiseFty.totalBrowser({pageSize: pageSize}).then(modViewF);
 
         //汇总
         var summarizingF = function (response) {
@@ -40,15 +40,15 @@ app.controller('browserCtrl', ["$scope", "$http", "ReportAdvertiseFty",'$q',
             }
         };
 
-        ReportAdvertiseFty.collectBrowser($scope.query).success(summarizingF);
+        ReportAdvertiseFty.collectBrowser($scope.query).then(summarizingF);
 
         //搜索框
         $scope.redirect = function (num, con) {
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.param1 = $scope.query.search;
-            ReportAdvertiseFty.totalBrowser($scope.query).success(modViewF);
-            ReportAdvertiseFty.collectBrowser($scope.query).success(summarizingF);
+            ReportAdvertiseFty.totalBrowser($scope.query).then(modViewF);
+            ReportAdvertiseFty.collectBrowser($scope.query).then(summarizingF);
         };
 
         //日历查询
@@ -65,8 +65,8 @@ app.controller('browserCtrl', ["$scope", "$http", "ReportAdvertiseFty",'$q',
                 $scope.query.pageIndex = 1;
                 $scope.query.startTime = obj.startDate;
                 $scope.query.endTime = obj.endDate;
-                ReportAdvertiseFty.totalBrowser($scope.query).success(modViewF);
-                ReportAdvertiseFty.collectBrowser($scope.query).success(summarizingF);
+                ReportAdvertiseFty.totalBrowser($scope.query).then(modViewF);
+                ReportAdvertiseFty.collectBrowser($scope.query).then(summarizingF);
             }
         });
 

@@ -1,25 +1,28 @@
 /**
  * Created by moka on 16-6-17.
  */
-app.controller("channelEditCtrl", ['$scope', '$http','ResChannelFty','UploadKeyFty','ResChannelLevelFty',
-    function ($scope, $http, ResChannelFty,UploadKeyFty,ResChannelLevelFty) {
+app.controller("channelEditCtrl", ['$scope', '$http','ResChannelFty','UploadKeyFty','ResChannelLevelFty','SysDepartmentFty',
+    function ($scope, $http, ResChannelFty,UploadKeyFty,ResChannelLevelFty,SysDepartmentFty) {
 
+        $scope.departmentListSel = {};
         $scope.levelListSel = {}
-        ResChannelLevelFty.channelLevelList().success(function(res){
+        ResChannelLevelFty.channelLevelList().then(function(res){
             console.info(res);
             $scope.levelListSel.list = res.levels
         })
 
         
         var id = getSearch("id");
+        $scope.editManage = getSearch("editManage");
 
         ycui.loading.show();
-        ResChannelFty.getChannel({id:id}).success(function (response) {
+        ResChannelFty.getChannel({id:id}).then(function (response) {
             ycui.loading.hide();
             $scope.channelName = response.channelName;
             $scope.level = response.level;
             $scope.mediaName = response.mediaName;
             $scope.mediaId = response.mediaId;
+            $scope.depScope = response.depScope;
 
             if(response.imageUrl){
                 $scope.imageUrl = response.imageUrl;
@@ -34,6 +37,13 @@ app.controller("channelEditCtrl", ['$scope', '$http','ResChannelFty','UploadKeyF
                         }
                     })
                 }
+            }
+            if(response.companyId == 3){
+                SysDepartmentFty.parentDeps({companyId:response.companyId}).then(function(res){
+                    if(res && res.code == 200){
+                        $scope.departmentListSel.list = res.departmentList;
+                    }
+                })
             }
         });
 
@@ -58,13 +68,14 @@ app.controller("channelEditCtrl", ['$scope', '$http','ResChannelFty','UploadKeyF
                 id: id,
                 channelName: $scope.channelName,
                 level: $scope.level,
-                mediaId: $scope.mediaId
+                mediaId: $scope.mediaId,
+                depScope:$scope.depScope
             }
 
             $scope.imageUrl && (body.imageUrl = $scope.imageUrl);
             if(pass){
                 ycui.loading.show();
-                ResChannelFty.channelUpdate(body).success(function (res) {
+                ResChannelFty.channelUpdate(body).then(function (res) {
                     ycui.loading.hide();
                     if (res && res.code == 200) {
                         ycui.alert({
@@ -100,7 +111,7 @@ app.controller("channelEditCtrl", ['$scope', '$http','ResChannelFty','UploadKeyF
                 beforeFileQueued:function(uploader,file){
                     ycui.loading.show();
                     uploader.stop(file);
-                    UploadKeyFty.uploadKey().success(function (da) {
+                    UploadKeyFty.uploadKey().then(function (da) {
                         key = da.items;
                         uploader.upload(file);
                     });

@@ -21,7 +21,7 @@ app.controller('errorLogCtrl', ['$scope', '$http', 'SysLogFty', function ($scope
         ycui.loading.show();
         $scope.query.pageIndex = num || 1;
         $scope.query.descr = $scope.query.search;
-        SysLogFty.errorLogList($scope.query).success(modView);
+        SysLogFty.errorLogList($scope.query).then(modView);
     };
     function getLastDate(currentDate, day) {
         var dd = new Date();

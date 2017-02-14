@@ -17,14 +17,14 @@ app.controller('clientAddCtrl', ['$scope', '$http', 'SysLoginUserFty', 'Customer
          * 获取子客户
          */
         $scope.childListSel = {}
-        CustomerFty.getAllCustomer({customerType: 2}).success(function (response) {
+        CustomerFty.getAllCustomer({customerType: 2}).then(function (response) {
             if(response){
                 $scope.childListSel.list = response.items;
             }
         });
 
 
-        SysLoginUserFty.loginUserInfo().success(function (data) {
+        SysLoginUserFty.loginUserInfo().then(function (data) {
             $scope.labelClientList.push({
                 trueName:data.trueName,
                 id:data.id
@@ -66,7 +66,7 @@ app.controller('clientAddCtrl', ['$scope', '$http', 'SysLoginUserFty', 'Customer
             });
 
             ycui.loading.show();
-            CustomerFty.addCustomer(query).success(function (response) {
+            CustomerFty.addCustomer(query).then(function (response) {
                 ycui.loading.hide();
                 if (response && response.code == 200) {
                     ycui.alert({
@@ -103,14 +103,14 @@ app.controller('clientAddCtrl', ['$scope', '$http', 'SysLoginUserFty', 'Customer
         $scope.companyListSel = {
             callback:function(e,d){
                 $scope.departmentListSel.$destroy();
-                d && SysUserFty.depAndUserList({companyId:d.id}).success(function (res) {
+                d && SysUserFty.depAndUserList({companyId:d.id}).then(function (res) {
                     if(res && res.code == 200){
                         $scope.departmentListSel.list = res.departmentList;
                     }
                 });
             }
         };
-        SysCompanyFty.companyList().success(function (res) {
+        SysCompanyFty.companyList().then(function (res) {
             if(res){
                 $scope.companyListSel.list = res;
             }
@@ -130,15 +130,15 @@ app.controller('clientAddCtrl', ['$scope', '$http', 'SysLoginUserFty', 'Customer
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.logNameOrTrueName = $scope.query.search;
-            CustomerFty.getCustomerFlowUser($scope.query).success(modView);
+            CustomerFty.getCustomerFlowUser($scope.query).then(modView);
         };
 
         $scope.$on('client-add',function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            CustomerFty.getCustomerFlowUser($scope.query).success(modView);
+            CustomerFty.getCustomerFlowUser($scope.query).then(modView);
         })
-        CustomerFty.getCustomerFlowUser($scope.query).success(modView);
+        CustomerFty.getCustomerFlowUser($scope.query).then(modView);
 
         /**
          * 业务员

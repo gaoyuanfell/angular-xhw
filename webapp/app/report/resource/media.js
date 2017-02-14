@@ -18,22 +18,22 @@ app.controller('resourceCtrl', ["$scope", "$http", "ReportResourceFty",
 
         $scope.query = {pageSize:pageSize,pageIndex:1}
 
-        ReportResourceFty.mediaConsume($scope.query).success(modViewA);
+        ReportResourceFty.mediaConsume($scope.query).then(modViewA);
 
         //汇总
         summarizingA = function (response) {
             if(!response) return;
             $scope.summarizing = response.items;
         };
-        ReportResourceFty.collectMediaConsume($scope.query).success(summarizingA);
+        ReportResourceFty.collectMediaConsume($scope.query).then(summarizingA);
 
         //搜索框
         $scope.redirect = function (num, con) {
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.param1 = $scope.query.search;
-            ReportResourceFty.mediaConsume($scope.query).success(modViewA);
-            ReportResourceFty.collectMediaConsume($scope.query).success(summarizingA);
+            ReportResourceFty.mediaConsume($scope.query).then(modViewA);
+            ReportResourceFty.collectMediaConsume($scope.query).then(summarizingA);
         };
 
         //日历查询
@@ -50,8 +50,8 @@ app.controller('resourceCtrl', ["$scope", "$http", "ReportResourceFty",
                 $scope.query.pageIndex = 1;
                 $scope.query.startTime = obj.startDate;
                 $scope.query.endTime = obj.endDate;
-                ReportResourceFty.mediaConsume($scope.query).success(modViewA);
-                ReportResourceFty.collectMediaConsume($scope.query).success(summarizingA);
+                ReportResourceFty.mediaConsume($scope.query).then(modViewA);
+                ReportResourceFty.collectMediaConsume($scope.query).then(summarizingA);
             }
         });
 

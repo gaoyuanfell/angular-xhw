@@ -801,7 +801,9 @@ $.extend( $.validator, {
 				} else if ( this.settings.errorPlacement ) {
 					this.settings.errorPlacement( place, $( element ) );
 				} else {
-					place.insertAfter( element );
+					// element.parentNode.appendChild(place);
+					$( element ).parent().append(place);
+					// place.insertAfter( element );
 				}
 
 				// Link error back to the element

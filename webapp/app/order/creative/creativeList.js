@@ -16,10 +16,9 @@ app.controller('createListCtrl', ["$scope", "$http", "$location", "AdCreativeFty
         $scope.sizeSel = {};
         $scope.superviseSel = {
             list:[
-                {name:'全部'},
-                {name:'素材待监管',id:1},
-                {name:'素材监管合格',id:2},
-                {name:'素材监管不合格',id:3},
+                {name:'法规待监管',id:1},
+                {name:'法规监管合格',id:2},
+                {name:'法规监管不合格',id:3},
                 {name:'创意待监管',id:4},
                 {name:'创意监管合格',id:5},
                 {name:'创意监管不合格',id:6},
@@ -32,7 +31,6 @@ app.controller('createListCtrl', ["$scope", "$http", "$location", "AdCreativeFty
         }
         $scope.showStateSel = {
             list:[
-                {name:'全部'},
                 {name:'待投放',id:'0'},
                 {name:'投放中',id:'1'},
                 {name:'已暂停',id:'2'},
@@ -44,16 +42,14 @@ app.controller('createListCtrl', ["$scope", "$http", "$location", "AdCreativeFty
         }
 
         //订单
-        var orderNamesForList = AdCreativeFty.orderNamesForList().success(function (response) {
+        var orderNamesForList = AdCreativeFty.orderNamesForList().then(function (response) {
             if (response && response.code == 200) {
                 $scope.orderNameSel.list = response.orderNames;
-                $scope.orderNameSel.list.unshift({orderName:'全部'})
             }
         });
-        var sizeAllName = ResSizeFty.sizeAllName().success(function (response) {
+        var sizeAllName = ResSizeFty.sizeAllName().then(function (response) {
             if (response && response.code == 200) {
                 $scope.sizeSel.list = response.sizeList;
-                $scope.sizeSel.list.unshift({size:'全部'})
             }
         });
 
@@ -73,7 +69,7 @@ app.controller('createListCtrl', ["$scope", "$http", "$location", "AdCreativeFty
                 var info = item.superviseInfo;
                 var list = [
                     {type:1,name:'创意监管',stateName:superviseToName('creativeSupState',info.creativeSupState),time:info.creativeSupTime,remake:info.creativeSupRemark,state:info.creativeSupState},
-                    {type:2,name:'素材监管',stateName:superviseToName('materialSupState',info.materialSupState),time:info.materialSupTime,remake:info.materialSupRemark,state:info.materialSupState},
+                    {type:2,name:'法规监管',stateName:superviseToName('materialSupState',info.materialSupState),time:info.materialSupTime,remake:info.materialSupRemark,state:info.materialSupState},
                     {type:3,name:'网络安全监管',stateName:superviseToName('securitySupState',info.securitySupState),time:info.securitySupTime,remake:info.securitySupRemark,state:info.securitySupState}
                 ];
                 item.superviseInfoList = list;
@@ -115,11 +111,11 @@ app.controller('createListCtrl', ["$scope", "$http", "$location", "AdCreativeFty
                 case 'materialSupState':
                     switch(state){
                         case 0:
-                        return '素材待监管';
+                        return '法规待监管';
                         case 1:
-                        return '素材监管合格';
+                        return '法规监管合格';
                         case -1:
-                        return '素材监管不合格';
+                        return '法规监管不合格';
                     }
                 break;
                 case 'securitySupState':
@@ -155,14 +151,14 @@ app.controller('createListCtrl', ["$scope", "$http", "$location", "AdCreativeFty
         $scope.queryValue.orderType = search.orderType;
         $scope.query.orderId = id;
         
-        AdCreativeFty.adCreativeList($scope.query).success(modViewA)
-        AdCreativeFty.adCreativeDataCount($scope.query).success(getDataCount);
+        AdCreativeFty.adCreativeList($scope.query).then(modViewA)
+        AdCreativeFty.adCreativeDataCount($scope.query).then(getDataCount);
 
         $scope.$on('createListGroup',function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            AdCreativeFty.adCreativeList($scope.query).success(modViewA)
-            AdCreativeFty.adCreativeDataCount($scope.query).success(getDataCount);
+            AdCreativeFty.adCreativeList($scope.query).then(modViewA)
+            AdCreativeFty.adCreativeDataCount($scope.query).then(getDataCount);
         })
 
         /*搜索框*/
@@ -170,8 +166,8 @@ app.controller('createListCtrl', ["$scope", "$http", "$location", "AdCreativeFty
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.adCreativeName = $scope.query.search;
-            AdCreativeFty.adCreativeList($scope.query).success(modViewA);
-            AdCreativeFty.adCreativeDataCount($scope.query).success(getDataCount);
+            AdCreativeFty.adCreativeList($scope.query).then(modViewA);
+            AdCreativeFty.adCreativeDataCount($scope.query).then(getDataCount);
         };
 
 
@@ -186,20 +182,19 @@ app.controller('createListCtrl', ["$scope", "$http", "$location", "AdCreativeFty
         $scope.changeState = function (id, state) {
             var queryApi = { id: id, showState: state };
             ycui.loading.show();
-            AdCreativeFty.adCreativeUpState(queryApi).success(function (response) {
+            AdCreativeFty.adCreativeUpState(queryApi).then(function (response) {
                 ycui.loading.hide();
                 if (response && response.code == 200) {
-                    AdCreativeFty.adCreativeList($scope.query).success(modViewA);
-                    AdCreativeFty.adCreativeDataCount($scope.query).success(getDataCount);
+                    AdCreativeFty.adCreativeList($scope.query).then(modViewA);
+                    AdCreativeFty.adCreativeDataCount($scope.query).then(getDataCount);
                 }
             })
         };
 
         $scope.$on('loginUserInfo',function () {
-            SysUserFty.userInfo({id: $scope.$parent.user.id}).success(function (res) {
+            SysUserFty.userInfo({id: $scope.$parent.user.id}).then(function (res) {
                 if (res) {
                     $scope.$user = res;
-                    console.info(res);
                 }
             })
         });
@@ -241,7 +236,7 @@ app.controller('createListCtrl', ["$scope", "$http", "$location", "AdCreativeFty
 
             //角标
             if(items.adMarkId){
-                var getAdMark = AdCreativeFty.getAdMark({ id: items.adMarkId }).success(function (res) {
+                var getAdMark = AdCreativeFty.getAdMark({ id: items.adMarkId }).then(function (res) {
                     if (res) {
                         items.adMarkUrl = res.adMarkUrl;
                     }
@@ -319,13 +314,13 @@ app.controller('createListCtrl', ["$scope", "$http", "$location", "AdCreativeFty
                         if (!httpPost) {
                             return true;
                         }
-                        httpPost.success(function (res) {
+                        httpPost.then(function (res) {
                             if (res && res.code == 200) {
                                 ycui.alert({
                                     content: res.msg,
                                     timeout: 10,
                                     okclick:function () {
-                                        AdCreativeFty.adCreativeList($scope.query).success(modViewA);
+                                        AdCreativeFty.adCreativeList($scope.query).then(modViewA);
                                     }
                                 })
                             }
@@ -353,6 +348,7 @@ app.controller('createListCtrl', ["$scope", "$http", "$location", "AdCreativeFty
             var adMarkArea = items.adMarkArea;
             var catagory = items.catagory;
             var urlOrContent = items.urlOrContent;
+            var fileType = items.fileType;
 
             switch(+catagory){
                 case 1:
@@ -360,35 +356,38 @@ app.controller('createListCtrl', ["$scope", "$http", "$location", "AdCreativeFty
                     case 2:
                         var wh2 = size2.split("*");
                         if (typeId == 11) {
-                            html += photoAndSwfPreview2({
+                            html += showMaterials({
                                 src: url,
                                 width: 200,
                                 height: 200,
                                 size: wh,
                                 landingPage: landingPage,
                                 adMarkUrl: adMarkUrl,
+                                fileType: fileType,
                                 adMarkArea: adMarkArea
-                            }, { src: url2, width: 200, height: 200, size: wh2, landingPage: landingPage });
+                            }, { src: url2, width: 200, height: 200, size: wh2, landingPage: landingPage,fileType: fileType,adMarkUrl: adMarkUrl,adMarkArea: adMarkArea });
                         } else {
                             if (url != undefined) {
-                                html += photoAndSwfPreview({
+                                html += showMaterials({
                                     src: url,
                                     width: 200,
                                     height: 200,
                                     size: wh,
                                     landingPage: landingPage,
                                     adMarkUrl: adMarkUrl,
+                                    fileType: fileType,
                                     adMarkArea: adMarkArea
                                 });
                             }
                             if (url2 != undefined) {
-                                html += photoAndSwfPreview({
+                                html += showMaterials({
                                     src: url2,
                                     width: 200,
                                     height: 200,
                                     size: wh2,
                                     landingPage: landingPage,
                                     adMarkUrl: adMarkUrl,
+                                    fileType: fileType,
                                     adMarkArea: adMarkArea
                                 });
                             }
@@ -396,39 +395,42 @@ app.controller('createListCtrl', ["$scope", "$http", "$location", "AdCreativeFty
                         break;
                     case 3:
                         if (url != undefined) {
-                            html += photoAndSwfPreview({
+                            html += showMaterials({
                                 src: url,
                                 width: 200,
                                 height: 200,
                                 size: wh,
                                 landingPage: landingPage,
                                 adMarkUrl: adMarkUrl,
+                                fileType: fileType,
                                 adMarkArea: adMarkArea
                             });
                         }
                         break;
                     case 4:
                         if (url != undefined) {
-                            html += photoAndSwfPreview({
+                            html += showMaterials({
                                 src: url,
                                 width: 200,
                                 height: 200,
                                 size: wh,
                                 landingPage: landingPage,
                                 adMarkUrl: adMarkUrl,
+                                fileType: fileType,
                                 adMarkArea: adMarkArea
                             });
                         }
                         break;
                     case 5:
                         if (url != undefined) {
-                            html += photoAndSwfPreview({
+                            html += showMaterials({
                                 src: url,
                                 width: 200,
                                 height: 200,
                                 size: wh,
                                 landingPage: landingPage,
                                 adMarkUrl: adMarkUrl,
+                                fileType: fileType,
                                 adMarkArea: adMarkArea
                             });
                         }
@@ -495,7 +497,7 @@ app.controller('createListCtrl', ["$scope", "$http", "$location", "AdCreativeFty
             //获取角标地址
             if(data.adMarkId){
                 ycui.loading.show();
-                var getAdMark = AdCreativeFty.getAdMark({ id: data.adMarkId }).success(function (res) {
+                var getAdMark = AdCreativeFty.getAdMark({ id: data.adMarkId }).then(function (res) {
                     ycui.loading.hide();
                     if (res) {
                         data.adMarkUrl = res.adMarkUrl;
@@ -561,13 +563,13 @@ app.controller('createListCtrl', ["$scope", "$http", "$location", "AdCreativeFty
                             AdCreativeFty.adCreativeBatchOpt({
                                 orderAdCreativeList: arrId,
                                 type: 3
-                            }).success(function (response) {
+                            }).then(function (response) {
                                 if (response.code == 200) {
                                     ycui.alert({
                                         content: response.msg,
                                         timeout: -1,
                                         okclick: function () {
-                                            AdCreativeFty.adCreativeList($scope.query).success(modViewA);
+                                            AdCreativeFty.adCreativeList($scope.query).then(modViewA);
                                         }
                                     });
                                 } else if (response.code == 203) {
@@ -578,7 +580,7 @@ app.controller('createListCtrl', ["$scope", "$http", "$location", "AdCreativeFty
                                     ycui.alert({
                                         content: array.join(",") + ",创意投放结束，无法修改状态",
                                         okclick: function () {
-                                            AdCreativeFty.adCreativeList($scope.query).success(modViewA);
+                                            AdCreativeFty.adCreativeList($scope.query).then(modViewA);
                                         },
                                         timeout: -1
                                     });
@@ -593,13 +595,13 @@ app.controller('createListCtrl', ["$scope", "$http", "$location", "AdCreativeFty
                             AdCreativeFty.adCreativeBatchOpt({
                                 orderAdCreativeList: arrId,
                                 type: 2
-                            }).success(function (response) {
+                            }).then(function (response) {
                                 if (response.code == 200) {
                                     ycui.alert({
                                         content: response.msg,
                                         timeout: -1,
                                         okclick: function () {
-                                            AdCreativeFty.adCreativeList($scope.query).success(modViewA);
+                                            AdCreativeFty.adCreativeList($scope.query).then(modViewA);
                                         }
                                     });
                                 } else if (response.code == 202) {
@@ -610,7 +612,7 @@ app.controller('createListCtrl', ["$scope", "$http", "$location", "AdCreativeFty
                                     ycui.alert({
                                         content: array.join(",") + ",创意投放结束，无法修改状态",
                                         okclick: function () {
-                                            AdCreativeFty.adCreativeList($scope.query).success(modViewA);
+                                            AdCreativeFty.adCreativeList($scope.query).then(modViewA);
                                         },
                                         timeout: -1
                                     });
@@ -655,7 +657,7 @@ app.controller('createListCtrl', ["$scope", "$http", "$location", "AdCreativeFty
                     }
                     ycui.loading.show();
                     uploader.stop(file);
-                    UploadKeyFty.uploadKey().success(function (da) {
+                    UploadKeyFty.uploadKey().then(function (da) {
                         key = da.items;
                         uploader.upload(file);
                     });
@@ -706,7 +708,7 @@ app.controller('createListCtrl', ["$scope", "$http", "$location", "AdCreativeFty
 
             $scope._deleListModule  = {publishRange:0,isAddaffche:0,uploadId:'affcheAddUpload'};
             //判断是否有公告管理权限
-            var haveAddAffcheRule = SysRuleUserFty.getUserRightsByParentId({rightsParentId: 5}).success(function (res) {
+            var haveAddAffcheRule = SysRuleUserFty.getUserRightsByParentId({rightsParentId: 5}).then(function (res) {
                 $scope._deleListModule.haveAddAffcheRule = false;
                 if(res && res.items){
                     res.items.forEach(function(data){
@@ -754,13 +756,13 @@ app.controller('createListCtrl', ["$scope", "$http", "$location", "AdCreativeFty
                             return true;
                         }
                         $scope._deleListModule.noticeAttachment && (body.notice.noticeAttachment = $scope._deleListModule.noticeAttachment);
-                        AdCreativeFty.adCreativeBatchOpt(body).success(function(response){
+                        AdCreativeFty.adCreativeBatchOpt(body).then(function(response){
                             if (response.code == 200) {
                                 ycui.alert({
                                     content: response.msg,
                                     timeout: -1,
                                     okclick: function () {
-                                        AdCreativeFty.adCreativeList($scope.query).success(modViewA);
+                                        AdCreativeFty.adCreativeList($scope.query).then(modViewA);
                                     }
                                 });
                             } else if (response.code == 201) {
@@ -774,7 +776,7 @@ app.controller('createListCtrl', ["$scope", "$http", "$location", "AdCreativeFty
                                     ycui.alert({
                                         content: response.delList.join(",") + "作废成功" + response.canNotDelList.join(",") + "已有投放数据,不能作废",
                                         okclick: function () {
-                                            AdCreativeFty.adCreativeList($scope.query).success(modViewA);
+                                            AdCreativeFty.adCreativeList($scope.query).then(modViewA);
                                         },
                                         timeout: 10
                                     });
@@ -782,7 +784,7 @@ app.controller('createListCtrl', ["$scope", "$http", "$location", "AdCreativeFty
                                     ycui.alert({
                                         content: "作废成功",
                                         okclick: function () {
-                                            AdCreativeFty.adCreativeList($scope.query).success(modViewA);
+                                            AdCreativeFty.adCreativeList($scope.query).then(modViewA);
                                         },
                                         timeout: 10
                                     });
@@ -808,8 +810,8 @@ app.controller('createListCtrl', ["$scope", "$http", "$location", "AdCreativeFty
                 $scope.query.startTime = obj.startDate;
                 $scope.query.endTime = obj.endDate;
                 $scope.query.pageIndex = 1;
-                AdCreativeFty.adCreativeList($scope.query).success(modViewA);
-                AdCreativeFty.adCreativeDataCount($scope.query).success(getDataCount);
+                AdCreativeFty.adCreativeList($scope.query).then(modViewA);
+                AdCreativeFty.adCreativeDataCount($scope.query).then(getDataCount);
             }
         });
 
@@ -839,7 +841,7 @@ app.controller('createListCtrl', ["$scope", "$http", "$location", "AdCreativeFty
             if(id == undefined){
                 goRoute(hash);
             }else{
-                OrdersFty.orderDetail({ id: id }).success(function (res) {
+                OrdersFty.orderDetail({ id: id }).then(function (res) {
                     if (res && res.code == 200) {
                         if (res.orders.orderType == 1 || res.orders.showState == 5) {
                             ycui.alert({

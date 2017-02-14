@@ -8,7 +8,7 @@ app.controller("channelLevelAddCtrl", ['$scope', 'ResChannelLevelFty',
         $scope.postEdit = function () {
             if(!$(".form").valid())return;
             ycui.loading.show();
-            ResChannelLevelFty.channelLevelAdd($scope.channelLevel).success(function(res){
+            ResChannelLevelFty.channelLevelAdd($scope.channelLevel).then(function(res){
                 console.info(res);
                 ycui.loading.hide();
                 if (res.code == 200) {

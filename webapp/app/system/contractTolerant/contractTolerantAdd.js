@@ -3,7 +3,7 @@
  */
 app.controller('contractTolerantAddCtrl', ['$scope', '$http', 'SysContractTolerantFty',
     function ($scope, $http, SysContractTolerantFty) {
-        SysContractTolerantFty.contractTolerantCurrent().success(function (res) {
+        SysContractTolerantFty.contractTolerantCurrent().then(function (res) {
             if(res){
                 $scope._cache = angular.copy(res);
                 $scope.tolerantRule = res.tolerantRule;
@@ -32,7 +32,7 @@ app.controller('contractTolerantAddCtrl', ['$scope', '$http', 'SysContractTolera
                 tolerant:$scope.tolerant * .01,
                 tolerantMoney:$scope.tolerantMoney,
                 tolerantRule:$scope.tolerantRule
-            }).success(function (res) {
+            }).then(function (res) {
                 ycui.loading.hide();
                 if(res && res.code == 200){
                     ycui.alert({

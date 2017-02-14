@@ -271,7 +271,7 @@ app.directive("adverCouplet", ["$timeout", "UploadKeyFty",
                                     .on('beforeFileQueued', function (file) {
                                         ycui.loading.show();
                                         uploaderleft.stop(file);
-                                        UploadKeyFty.uploadKey().success(function (da) {
+                                        UploadKeyFty.uploadKey().then(function (da) {
                                             keyleft = da.items;
                                             uploaderleft.upload(file);
                                         });
@@ -328,7 +328,7 @@ app.directive("adverCouplet", ["$timeout", "UploadKeyFty",
                                     .on('beforeFileQueued', function (file) {
                                         ycui.loading.show();
                                         uploaderRight.stop(file);
-                                        UploadKeyFty.uploadKey().success(function (da) {
+                                        UploadKeyFty.uploadKey().then(function (da) {
                                             keyright = da.items;
                                             uploaderRight.upload(file);
                                         });
@@ -468,7 +468,7 @@ app.directive("adverChannelIn", ["$timeout", "UploadKeyFty",
                                     .on('beforeFileQueued', function (file) {
                                         ycui.loading.show();
                                         uploader.stop(file);
-                                        UploadKeyFty.uploadKey().success(function (da) {
+                                        UploadKeyFty.uploadKey().then(function (da) {
                                             key = da.items;
                                             uploader.upload(file);
                                         });
@@ -617,7 +617,7 @@ app.directive("adverChannelIn2", ["$timeout", "UploadKeyFty",
                                     .on('beforeFileQueued', function (file) {
                                         ycui.loading.show();
                                         uploader.stop(file);
-                                        UploadKeyFty.uploadKey().success(function (da) {
+                                        UploadKeyFty.uploadKey().then(function (da) {
                                             key = da.items;
                                             uploader.upload(file);
                                         });
@@ -738,7 +738,7 @@ app.directive("adverChannel", ["$timeout", "UploadKeyFty",
                                     .on('beforeFileQueued', function (file) {
                                         ycui.loading.show();
                                         uploader.stop(file);
-                                        UploadKeyFty.uploadKey().success(function (da) {
+                                        UploadKeyFty.uploadKey().then(function (da) {
                                             key = da.items;
                                             uploader.upload(file);
                                         });

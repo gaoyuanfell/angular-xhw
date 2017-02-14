@@ -1,13 +1,12 @@
 /**
  * Created by moka on 16-6-21.
  */
-app.controller('putListCtrl', ["$scope", "$http", "OrdersFty", "SysRuleUserFty", "CustomerFty","$q","FlowFty",'SysUserFty',
-    function ($scope, $http, OrdersFty, SysRuleUserFty, CustomerFty,$q,FlowFty,SysUserFty ) {
+app.controller('putListCtrl', ["$scope", "$http", "OrdersFty", "SysRuleUserFty", "CustomerFty","$q","FlowFty",'SysUserFty','ConfigFty',
+    function ($scope, $http, OrdersFty, SysRuleUserFty, CustomerFty,$q,FlowFty,SysUserFty,ConfigFty) {
         //获取客户名称
         $scope.customerSel = {}
         $scope.showStateSel = {
             list:[
-                {name:'全部',id:-1},
                 {name:'待投放',id:0},
                 {name:'投放中',id:1},
                 {name:'已暂停',id:2},
@@ -18,7 +17,6 @@ app.controller('putListCtrl', ["$scope", "$http", "OrdersFty", "SysRuleUserFty",
         }
         $scope.showStateSel = {
             list:[
-                {name:'全部',id:-1},
                 {name:'待投放',id:0},
                 {name:'投放中',id:1},
                 {name:'已暂停',id:2},
@@ -31,7 +29,6 @@ app.controller('putListCtrl', ["$scope", "$http", "OrdersFty", "SysRuleUserFty",
 
         $scope.orderTypeSel = {
             list:[
-                {name:'全部',id:-1},
                 {name:'预定广告位',id:1},
                 {name:'正式投放',id:2},
                 {name:'试用推广',id:3},
@@ -39,19 +36,17 @@ app.controller('putListCtrl', ["$scope", "$http", "OrdersFty", "SysRuleUserFty",
                 {name:'补偿刊登',id:5}
             ]
         }
-        var getPartCustomer = CustomerFty.getCustomerInOrder({customerType: 2}).success(function (res) {
+        var getPartCustomer = CustomerFty.getCustomerInOrder({customerType: 2}).then(function (res) {
             if (res && res.code == 200) {
                 $scope.customerSel.list = res.items;
-                $scope.customerSel.list.unshift({customerName:'全部'})
             }
         });
 
         //获取审核流程名称
-        var checkNames = FlowFty.checkNames().success(function(res){
+        var checkNames = FlowFty.checkNames().then(function(res){
             if(res && res.code == 200){
                 var arr = res.checkNames;
-                arr.unshift('全部');
-                arr.push('审核通过','审核不通过');
+                arr.push('审核通过','审核未通过');
                 $scope.checkNamesSel.list = arr.map(function(a){
                     return {
                         id:a,
@@ -97,13 +92,23 @@ app.controller('putListCtrl', ["$scope", "$http", "OrdersFty", "SysRuleUserFty",
         $scope.queryValue.customerName = customerName;
 
         // 如果有需要审核的订单 默认显示本角色下的需要审核的订单
-        var checkOrdersCount = top.window.document.querySelector('._checkOrdersCount');
-        if(checkOrdersCount){
-            var num = parseInt(checkOrdersCount.innerText);
-            if(num > 0){
-                $scope.query.inCheck = 1;
+        // var checkOrdersCount = top.window.document.querySelector('._checkOrdersCount');
+        // if(checkOrdersCount){
+        //     var num = parseInt(checkOrdersCount.innerText);
+        //     if(num > 0){
+        //         $scope.query.inCheck = 1;
+        //     }
+        // }
+        var getCheckOrdersCount = SysUserFty.getCheckOrdersCount().then(function (res) {
+            if (res && res.code == 200) {
+                var count = res.count;
+                if(count > 0){
+                    $scope.query.inCheck = 1;
+                }else{
+                    $scope.query.inCheck = 0;
+                }
             }
-        }
+        });
 
         function showCheckFun(target,than) {
             if(target){
@@ -131,7 +136,7 @@ app.controller('putListCtrl', ["$scope", "$http", "OrdersFty", "SysRuleUserFty",
             }
         };
         $scope.$on('loginUserInfo',function (e, data) {
-            var userInfo = SysUserFty.userInfo({id: data.id}).success(function (res) {
+            var userInfo = SysUserFty.userInfo({id: data.id}).then(function (res) {
                 if (res) {
                     var list = [];
                     res.roleList.forEach(function (da) {
@@ -140,9 +145,22 @@ app.controller('putListCtrl', ["$scope", "$http", "OrdersFty", "SysRuleUserFty",
                     $scope.$watch('items',function (newV, oldV) {
                         if(newV != oldV && newV){
                             newV.forEach(function (da) {
-                                var bo = showCheckFun(da.checkList,list);
-                                var state = da.showState == 0 || da.showState == 1 || da.showState == 2;
-                                da.showCheckBo = state && bo
+                                var bo = showCheckFun(da.checkList,list);//判断是否有角色审核
+                                var state = da.showState == 0 || da.showState == 1 || da.showState == 2;//判断 是否 0=未投放|1=投放中|2=暂停投放
+
+                                //判断审核前两步用户部门和数据之间的包含关系
+                                var orderCheckInfo;
+                                da.orderCheckInfos && da.orderCheckInfos.forEach(function(da){
+                                    if((da.checkStep == 1 || da.checkStep == 2) && da.checkStepState == 0){
+                                        orderCheckInfo = da;
+                                    }
+                                })
+                                var InDepBo = true;
+                                if(orderCheckInfo){
+                                    InDepBo = da.orderInDepScope.indexOf(res.agencyNumber) != -1;
+                                }
+                                
+                                da.showCheckBo = state && bo && InDepBo
                             })
                         }
                     });
@@ -151,16 +169,16 @@ app.controller('putListCtrl', ["$scope", "$http", "OrdersFty", "SysRuleUserFty",
 
             
 
-            $q.all([userInfo]).then(function () {
+            $q.all([userInfo,getCheckOrdersCount]).then(function () {
                 if (customerName) {
-                    OrdersFty.ordersList($scope.query).success(modView);
-                    $scope.query.inCheck != 1 && OrdersFty.orderDataCount($scope.query).success(getAllDate);
+                    OrdersFty.ordersList($scope.query).then(modView);
+                    $scope.query.inCheck != 1 && OrdersFty.orderDataCount($scope.query).then(getAllDate);
                 } else if (creativeToOrderId) {
-                    OrdersFty.ordersList({creativeToOrderId: creativeToOrderId}).success(modView);
-                    $scope.query.inCheck != 1 && OrdersFty.orderDataCount({creativeToOrderId: creativeToOrderId}).success(getAllDate);
+                    OrdersFty.ordersList({creativeToOrderId: creativeToOrderId}).then(modView);
+                    $scope.query.inCheck != 1 && OrdersFty.orderDataCount({creativeToOrderId: creativeToOrderId}).then(getAllDate);
                 } else {
-                    OrdersFty.ordersList($scope.query).success(modView);
-                    $scope.query.inCheck != 1 && OrdersFty.orderDataCount($scope.query).success(getAllDate);
+                    OrdersFty.ordersList($scope.query).then(modView);
+                    $scope.query.inCheck != 1 && OrdersFty.orderDataCount($scope.query).then(getAllDate);
                 }
             })
         })
@@ -185,25 +203,24 @@ app.controller('putListCtrl', ["$scope", "$http", "OrdersFty", "SysRuleUserFty",
             ycui.loading.show();
             $scope.query.ordersNameOrID = $scope.query.search;
             $scope.query.pageIndex = num || 1;
-            OrdersFty.ordersList($scope.query).success(modView);
-            $scope.query.inCheck != 1 && OrdersFty.orderDataCount($scope.query).success(getAllDate);
+            OrdersFty.ordersList($scope.query).then(modView);
+            $scope.query.inCheck != 1 && OrdersFty.orderDataCount($scope.query).then(getAllDate);
         };
 
         $scope.$on('putListGroup',function(){
             $scope.query.pageIndex = 1;
             ycui.loading.show();
-            OrdersFty.ordersList($scope.query).success(modView);
-            $scope.query.inCheck != 1 && OrdersFty.orderDataCount($scope.query).success(getAllDate);
+            OrdersFty.ordersList($scope.query).then(modView);
+            $scope.query.inCheck != 1 && OrdersFty.orderDataCount($scope.query).then(getAllDate);
         })
 
         //点击跳转到客户列表页面 获取客户权限
 
-        //TODO
         $scope.returnToClientShow = true;
         $scope.returnToClientStyle = {
             color: "#9f9f9f"
         };
-        SysRuleUserFty.getUserRightsByParentId({rightsParentId: 3}).success(function (data) {
+        SysRuleUserFty.getUserRightsByParentId({rightsParentId: 3}).then(function (data) {
             if (data.code != 200) return false;
             if (data.items.length > 0)
                 $scope.returnToClientShow = false, $scope.returnToClientStyle = {}
@@ -213,7 +230,7 @@ app.controller('putListCtrl', ["$scope", "$http", "OrdersFty", "SysRuleUserFty",
 
         $scope.returnToClient = function (id) {
             if ($scope.returnToClientShow) return;
-            CustomerFty.getCustomer({id: id}).success(function (response) {
+            CustomerFty.getCustomer({id: id}).then(function (response) {
                 if (response.code == 200) {
                     goRoute('ViewCustomer',{
                         paramInt1:id
@@ -288,14 +305,14 @@ app.controller('putListCtrl', ["$scope", "$http", "OrdersFty", "SysRuleUserFty",
         //                     checkRemark:checkRemark
         //                 })
         //             });
-        //             OrdersFty.batchCheck({orderCheckInfos:body}).success(function (res) {
+        //             OrdersFty.batchCheck({orderCheckInfos:body}).then(function (res) {
         //                 if(res && res.code == 200){
         //                     ycui.alert({
         //                         content:res.msg,
         //                         timeout:-1,
         //                         okclick:function () {
-        //                             OrdersFty.ordersList($scope.query).success(modView);
-        //                             OrdersFty.orderDataCount($scope.query).success(getAllDate);
+        //                             OrdersFty.ordersList($scope.query).then(modView);
+        //                             OrdersFty.orderDataCount($scope.query).then(getAllDate);
         //                         }
         //                     });
         //                 }else if(res && res.code == 201){
@@ -316,8 +333,8 @@ app.controller('putListCtrl', ["$scope", "$http", "OrdersFty", "SysRuleUserFty",
         //                         content:'<div style="margin: 10px;text-align: left;max-width: 700px;overflow-y: auto;max-height: 300px;">'+ html +'</div>',
         //                         timeout:-1,
         //                         okclick:function () {
-        //                             OrdersFty.ordersList($scope.query).success(modView);
-        //                             OrdersFty.orderDataCount($scope.query).success(getAllDate);
+        //                             OrdersFty.ordersList($scope.query).then(modView);
+        //                             OrdersFty.orderDataCount($scope.query).then(getAllDate);
         //                         }
         //                     });
         //                 }
@@ -355,11 +372,11 @@ app.controller('putListCtrl', ["$scope", "$http", "OrdersFty", "SysRuleUserFty",
         $scope.changeState = function (id, state) {
             var queryApi = {id: id, showState: state};
             ycui.loading.show();
-            OrdersFty.changeShowState(queryApi).success(function (response) {
+            OrdersFty.changeShowState(queryApi).then(function (response) {
                 ycui.loading.hide();
                 if (response.code == 200) {
-                    OrdersFty.ordersList($scope.query).success(modView);
-                    $scope.query.inCheck != 1 && OrdersFty.orderDataCount($scope.query).success(getAllDate);
+                    OrdersFty.ordersList($scope.query).then(modView);
+                    $scope.query.inCheck != 1 && OrdersFty.orderDataCount($scope.query).then(getAllDate);
                 }
             })
         };
@@ -387,9 +404,9 @@ app.controller('putListCtrl', ["$scope", "$http", "OrdersFty", "SysRuleUserFty",
                     query.remark = this.data.remark;
 
                     if(type == 1){
-                        OrdersFty.orderCancel(query).success(orderCancelOrTerminate);
+                        OrdersFty.orderCancel(query).then(orderCancelOrTerminate);
                     }else{
-                        OrdersFty.orderTerminate(query).success(orderCancelOrTerminate);
+                        OrdersFty.orderTerminate(query).then(orderCancelOrTerminate);
                     }
                     function orderCancelOrTerminate(res){
                         if(res && res.code == 200){
@@ -397,7 +414,7 @@ app.controller('putListCtrl', ["$scope", "$http", "OrdersFty", "SysRuleUserFty",
                                 content:res.msg,
                                 timeout:10,
                                 okclick:function(){
-                                    OrdersFty.ordersList($scope.query).success(modView);
+                                    OrdersFty.ordersList($scope.query).then(modView);
                                 }
                             })
                         }
@@ -462,19 +479,19 @@ app.controller('putListCtrl', ["$scope", "$http", "OrdersFty", "SysRuleUserFty",
                         }
                         query.checkRemark = this.data.checkRemark
                     }
-                    OrdersFty.orderCheck(query).success(function (res) {
+                    OrdersFty.orderCheck(query).then(function (res) {
                         if (res.code == 200) {
                             ycui.alert({
                                 content: res.msg,
                                 okclick: function () {
-                                    OrdersFty.ordersList($scope.query).success(modView);
-                                    $scope.query.inCheck != 1 && OrdersFty.orderDataCount($scope.query).success(getAllDate);
+                                    OrdersFty.ordersList($scope.query).then(modView);
+                                    $scope.query.inCheck != 1 && OrdersFty.orderDataCount($scope.query).then(getAllDate);
                                     //改变审核数量
-                                    SysUserFty.getCheckOrdersCount().success(function (res) {
+                                    SysUserFty.getCheckOrdersCount().then(function (res) {
                                         if (res && res.code == 200) {
                                             var count = res.count;
                                             count = count > 99?99:count;
-                                            window.top.$checkNumChange && window.top.$setCheckNumChange(count);
+                                            window.top.$setCheckNumChange && window.top.$setCheckNumChange(count);
                                         }
                                     });
                                     
@@ -547,10 +564,10 @@ app.controller('putListCtrl', ["$scope", "$http", "OrdersFty", "SysRuleUserFty",
         //     var query = {pageSize: pageSize};
         //     $scope.query.pageIndex = 1;
         //     angular.extend(query, $scope.query);
-        //     OrdersFty.ordersList(query).success(modView);
+        //     OrdersFty.ordersList(query).then(modView);
         //     window.sessionStorage.setItem("orderListSession", JSON.stringify(query));
         //     window.sessionStorage.setItem("orderValueSession", JSON.stringify($scope.queryValue));
-        //     OrdersFty.orderDataCount(query).success(getAllDate);
+        //     OrdersFty.orderDataCount(query).then(getAllDate);
         // });
 
         var dateRange = new pickerDateRange('clientAff4', {
@@ -567,8 +584,8 @@ app.controller('putListCtrl', ["$scope", "$http", "OrdersFty", "SysRuleUserFty",
                 $scope.query.endDate = obj.endDate;
                 var query = {pageSize: pageSize, pageIndex: 1};
                 query = angular.extend(query, $scope.query);
-                OrdersFty.ordersList(query).success(modView);
-                OrdersFty.orderDataCount(query).success(getAllDate);
+                OrdersFty.ordersList(query).then(modView);
+                OrdersFty.orderDataCount(query).then(getAllDate);
                 window.sessionStorage.setItem("orderListSession", JSON.stringify(query))
             }
         });
@@ -653,16 +670,52 @@ app.controller('putListCtrl', ["$scope", "$http", "OrdersFty", "SysRuleUserFty",
             var url = baseUrl + derive + '?' + body + '&showColumns=' + array.join();
             window.open(url, '_blank')
         };
-    }]);
 
-// app.filter('showStateValueFtr',function () {
-//     return function (input,orderType) {
-//         if(input == 4 || input == 5){
-//             return '  --  '
-//         }
-//         if(orderType == 1){
-//             return '撤销'
-//         }
-//         return '作废'
-//     }
-// });
+        $scope.$on('loginUserRole',function(e,d){
+            var role = d.ViewPutOrder;
+            if(role){
+                ConfigFty.detail({type:1}).then(function(res){
+                    if(res && res.code == 200){
+                        var date = res.config.value;
+                        $scope.orderValidDate = date;
+                    }
+                })
+            }
+        })
+
+        $scope.modifyOrderEdit = function(event){
+            $scope.$orderValidDate = $scope.orderValidDate;
+            $scope.orderValidDateReadonly = !$scope.orderValidDateReadonly;
+            setTimeout(function() {
+                var input = document.querySelector('#orderValidDate')
+                input.select();
+                input.focus();
+            }, 100);
+        }
+        
+        /*修改预定订单有效期*/
+        $scope.modifyOrderDate = function(){
+            $scope.orderValidDateReadonly = true;
+            var date = $scope.orderValidDate;
+            var $date = $scope.$orderValidDate;
+            if(date == $date)return;
+            if(isNaN(parseInt(date)) || date <= 0 || /\./.test(date)){
+                ycui.alert({
+                    error:true,
+                    timeout:10,
+                    content:'请填写有效的正整数！'
+                });
+                return;
+            }
+            ycui.loading.show();
+            ConfigFty.upBookTime({value:date}).then(function(res){
+                ycui.loading.hide();
+                if(res && res.code == 200){
+                    ycui.alert({
+                        timeout:10,
+                        content:res.msg
+                    })
+                }
+            })
+        }
+    }]);

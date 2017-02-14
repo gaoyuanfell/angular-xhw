@@ -8,7 +8,7 @@ app.controller('auditCtrl', ['$scope', '$http', 'CustomerFty',
         //获取修改信息															
         var id = parseInt(getSearch("id"));
         ycui.loading.show();
-        CustomerFty.getCustomer({id: id}).success(function (response) {
+        CustomerFty.getCustomer({id: id}).then(function (response) {
             ycui.loading.hide();
             if (response && response.code == 200) {
                 delete response.items.updateTime;
@@ -25,7 +25,9 @@ app.controller('auditCtrl', ['$scope', '$http', 'CustomerFty',
         ycui.select(".yc-select");
         
         function post() {
-            CustomerFty.reviewCustomer($scope.clientModel).success(function (res) {
+            ycui.loading.show();
+            CustomerFty.reviewCustomer($scope.clientModel).then(function (res) {
+                ycui.loading.hide();
                 if(res && res.code == 200){
                     ycui.alert({
                         content: res.msg,

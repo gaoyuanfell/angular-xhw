@@ -3,7 +3,7 @@
  */
 app.controller('contractTolerantCtrl', ['$scope', '$http', 'SysContractTolerantFty', function ($scope, $http, SysContractTolerantFty) {
     ycui.loading.show();
-    SysContractTolerantFty.contractTolerantCurrent().success(function (res) {
+    SysContractTolerantFty.contractTolerantCurrent().then(function (res) {
         if(res){
             $scope.tolerantRule = res.tolerantRule;
             $scope.currentTolerant = res.tolerant;
@@ -24,12 +24,12 @@ app.controller('contractTolerantCtrl', ['$scope', '$http', 'SysContractTolerantF
 
     $scope.query = {pageSize: pageSize,pageIndex:1};
 
-    SysContractTolerantFty.contractTolerantList($scope.query).success(modView);
+    SysContractTolerantFty.contractTolerantList($scope.query).then(modView);
 
     $scope.redirect = function (num) {
         ycui.loading.show();
         $scope.query.pageIndex = num || 1
-        SysContractTolerantFty.contractTolerantList($scope.query).success(modView);
+        SysContractTolerantFty.contractTolerantList($scope.query).then(modView);
     };
 }]);
 

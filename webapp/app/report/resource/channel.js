@@ -7,12 +7,12 @@ app.controller('channelCtrl', ["$scope", "$http", "ReportResourceFty", "ResAdver
             callback:function(){
                 ycui.loading.show();
                 $scope.query.pageIndex = 1;
-                ReportResourceFty.mediaChannelConsume($scope.query).success(modViewB);
-                ReportResourceFty.collectChannelConsume($scope.query).success(summarizingB);
+                ReportResourceFty.mediaChannelConsume($scope.query).then(modViewB);
+                ReportResourceFty.collectChannelConsume($scope.query).then(summarizingB);
             }
         };
 
-        var downListForSearch = ResAdvertisingFty.downListForSearch().success(function (response) {
+        var downListForSearch = ResAdvertisingFty.downListForSearch().then(function (response) {
             $scope.mediaListSel.list = response.mediaList;
         });
 
@@ -31,22 +31,22 @@ app.controller('channelCtrl', ["$scope", "$http", "ReportResourceFty", "ResAdver
 
         $scope.query = {pageSize: pageSize,pageIndex:1}
 
-        ReportResourceFty.mediaChannelConsume($scope.query).success(modViewB);
+        ReportResourceFty.mediaChannelConsume($scope.query).then(modViewB);
 
         //汇总
         summarizingB = function (response) {
             if(!response) return;
             $scope.summarizing = response.items;
         };
-        ReportResourceFty.collectChannelConsume($scope.query).success(summarizingB);
+        ReportResourceFty.collectChannelConsume($scope.query).then(summarizingB);
 
         //搜索框
         $scope.redirect = function (num, con) {
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.param1 = $scope.query.search;
-            ReportResourceFty.mediaChannelConsume($scope.query).success(modViewB);
-            ReportResourceFty.collectChannelConsume($scope.query).success(summarizingB);
+            ReportResourceFty.mediaChannelConsume($scope.query).then(modViewB);
+            ReportResourceFty.collectChannelConsume($scope.query).then(summarizingB);
         };
 
         //日历查询
@@ -63,8 +63,8 @@ app.controller('channelCtrl', ["$scope", "$http", "ReportResourceFty", "ResAdver
                 $scope.query.pageIndex = 1;
                 $scope.query.startTime = obj.startDate;
                 $scope.query.endTime = obj.endDate;
-                ReportResourceFty.mediaChannelConsume($scope.query).success(modViewB);
-                ReportResourceFty.collectChannelConsume($scope.query).success(summarizingB);
+                ReportResourceFty.mediaChannelConsume($scope.query).then(modViewB);
+                ReportResourceFty.collectChannelConsume($scope.query).then(summarizingB);
             }
         });
 

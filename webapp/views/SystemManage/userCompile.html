@@ -107,7 +107,7 @@
                     <ul style="max-width: 800px">
                         <li class="user-rule" style="display: inline-block;margin-right: 10px;" ng-repeat="roles in roleList">
                             <label class="pointer">
-                                <input type="checkbox" ng-model="roles.check" ng-true-value="true" ng-false-vlue="false" value="{{roles.id}}">
+                                <input type="checkbox" ng-model="roles.check" ng-true-value="true" ng-false-vlue="false" ng-value="roles.id">
                                 <span ng-bind="roles.roleName"></span>
                             </label>
                         </li>

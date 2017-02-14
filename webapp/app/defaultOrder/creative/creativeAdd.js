@@ -39,7 +39,7 @@ app.controller("trueCreatelistAddCtrl", ["$scope", "$http", "DefaultOrdersFty", 
                     if($scope.uploadType == 0){
                         uploadSize(d.id);
                     }
-                    DefaultOrdersFty.getMediaByOrderId({orderId:d.id}).success(function (res) {
+                    DefaultOrdersFty.getMediaByOrderId({orderId:d.id}).then(function (res) {
                         if(res && res.code == 200){
                             $scope.mediaListSel.list = res.items;
                         }
@@ -48,7 +48,7 @@ app.controller("trueCreatelistAddCtrl", ["$scope", "$http", "DefaultOrdersFty", 
             }
         };
         
-        var defaultOrdersName = DefaultOrdersFty.defaultOrdersName().success(function (response) {
+        var defaultOrdersName = DefaultOrdersFty.defaultOrdersName().then(function (response) {
             if(response){
                 $scope.orderNameListSel.list = response.defaultOrdersList;
             }
@@ -58,7 +58,7 @@ app.controller("trueCreatelistAddCtrl", ["$scope", "$http", "DefaultOrdersFty", 
         $scope.mediaListSel = {
             callback:function(e,d){
                 $scope.periodicationSel.$destroy();
-                d && ResChannelFty.getChannelsByMedia({ mediaId: d.id }).success(function (response) {
+                d && ResChannelFty.getChannelsByMedia({ mediaId: d.id }).then(function (response) {
                     $scope.periodicationSel.list = response.channels;
                 });
             }
@@ -70,10 +70,10 @@ app.controller("trueCreatelistAddCtrl", ["$scope", "$http", "DefaultOrdersFty", 
         $scope.$on('default-create-ad',function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            DefaultOrdersFty.getADspaceByDefaultOrderId($scope.query).success(modView);
+            DefaultOrdersFty.getADspaceByDefaultOrderId($scope.query).then(modView);
         })
 
-        ScheduleFty.dLInOrder().success(function (res) {
+        ScheduleFty.dLInOrder().then(function (res) {
             if(res && res.code == 200){
                 $scope.periodicationSel.list = res.periodicationList;
                 $scope.sizeListSel.list = res.sizeList;
@@ -89,7 +89,7 @@ app.controller("trueCreatelistAddCtrl", ["$scope", "$http", "DefaultOrdersFty", 
             if($scope.uploadType == 0){
                 uploadSize(id);
             }
-            DefaultOrdersFty.getMediaByOrderId({orderId:id}).success(function (res) {
+            DefaultOrdersFty.getMediaByOrderId({orderId:id}).then(function (res) {
                 if(res && res.code == 200){
                     $scope.mediaListSel.list = res.items;
                 }
@@ -101,9 +101,9 @@ app.controller("trueCreatelistAddCtrl", ["$scope", "$http", "DefaultOrdersFty", 
                 ycui.loading.show();
                 $scope.query.pageIndex = num || 1;
                 $scope.query.param1 = $scope.query.search;
-                DefaultOrdersFty.getADspaceByDefaultOrderId($scope.query).success(modView);
+                DefaultOrdersFty.getADspaceByDefaultOrderId($scope.query).then(modView);
             };
-            DefaultOrdersFty.getADspaceByDefaultOrderId($scope.query).success(modView);
+            DefaultOrdersFty.getADspaceByDefaultOrderId($scope.query).then(modView);
 
             $scope.adSpaceModule = {
                 title:'添加广告位',
@@ -220,7 +220,7 @@ app.controller("trueCreatelistAddCtrl", ["$scope", "$http", "DefaultOrdersFty", 
             })
         })
         function uploadSize(id) {
-            DefaultOrdersFty.defaultAdCreativeSizeList({id: id}).success(function (res) {
+            DefaultOrdersFty.defaultAdCreativeSizeList({id: id}).then(function (res) {
                 if(res && res.code == 200){
                     $scope.adListInfo = [];
                     var _cache = [];
@@ -292,7 +292,7 @@ app.controller("trueCreatelistAddCtrl", ["$scope", "$http", "DefaultOrdersFty", 
             }
 
             ycui.loading.show();
-            DefaultOrdersFty.defaultAdCreativeAdd(body).success(function (res) {
+            DefaultOrdersFty.defaultAdCreativeAdd(body).then(function (res) {
                 ycui.loading.hide();
                 if (res && res.code == 200) {
                     ycui.alert({
@@ -319,7 +319,7 @@ app.controller("trueCreatelistAddCtrl", ["$scope", "$http", "DefaultOrdersFty", 
                 beforeFileQueued:function(uploader,file){
                     ycui.loading.show();
                     uploader.stop(file);
-                    UploadKeyFty.uploadKey().success(function (da) {
+                    UploadKeyFty.uploadKey().then(function (da) {
                         key = da.items;
                         uploader.upload(file);
                     });

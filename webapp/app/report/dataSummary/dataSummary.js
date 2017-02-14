@@ -6,7 +6,7 @@ app.factory("IndexFactory", ["$http", function ($http) {
         adDataOverviewBar: function (query, callback) {
             var api = "/index/AdDataOverview.htm";
             var AdDataOverview = $http.get(baseUrl + api, { params: query });
-            AdDataOverview.success(function (data) {
+            AdDataOverview.then(function (data) {
                 if (data && data.code === 200 && data.items.length > 0) {
                     var ob = data.items[0];
                     var stack = undefined;
@@ -99,7 +99,6 @@ app.controller("dataSummaryCtrl",
                         trigger: 'axis',
                         axisPointer: {
                             type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
-
                         },
                         formatter: function (data) {
                             var s = data[0].name + "<br/>";

@@ -4,7 +4,7 @@
 app.controller("mediaManageCtrl", ["$scope", "$http", "ResMediaFty",'$q',
     function ($scope, $http, ResMediaFty,$q) {
         $scope.companyListSel = {}
-        var companyList = ResMediaFty.companyList().success(function (res) {
+        var companyList = ResMediaFty.companyList().then(function (res) {
             if(res && res.code == 200){
                 $scope.companyListSel.list = res.companyList;
             }
@@ -12,7 +12,6 @@ app.controller("mediaManageCtrl", ["$scope", "$http", "ResMediaFty",'$q',
 
         $scope.mediaTypeSel = {
             list:[
-                {name:'全部'},
                 {name:'Web',id:1},
                 {name:'Wap',id:2}
             ]
@@ -21,7 +20,7 @@ app.controller("mediaManageCtrl", ["$scope", "$http", "ResMediaFty",'$q',
         $scope.$on('res-media-media',function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            ResMediaFty.mediaPageList($scope.query).success(modView);
+            ResMediaFty.mediaPageList($scope.query).then(modView);
         })
 
         $scope.query = {pageSize:10};
@@ -36,12 +35,12 @@ app.controller("mediaManageCtrl", ["$scope", "$http", "ResMediaFty",'$q',
             $scope.items = response.items;
             $scope.total_page = response.total_page;
         }
-        ResMediaFty.mediaPageList($scope.query).success(modView);
+        ResMediaFty.mediaPageList($scope.query).then(modView);
 
         $scope.redirect = function (num, con) {
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.mediaNameOrId = $scope.query.search;
-            ResMediaFty.mediaPageList($scope.query).success(modView);
+            ResMediaFty.mediaPageList($scope.query).then(modView);
         };
     }]);

@@ -4,12 +4,11 @@
 app.controller('indentCtrl', ["$scope", "$http", "ReportAdvertiseFty", "CustomerFty",'$q',
     function ($scope, $http, ReportAdvertiseFty, CustomerFty,$q) {
         $scope.customerListSel = {};
-        var getPartCustomer = CustomerFty.getPartCustomer({customerType: 3}).success(function (response) {
+        var getPartCustomer = CustomerFty.getPartCustomer({customerType: 3}).then(function (response) {
             $scope.customerListSel.list = response.items;
         });
         $scope.orderTypeSel = {
             list:[
-                {name:'全部',id:-1},
                 {name:'预定广告位',id:1},
                 {name:'正式投放',id:2},
                 {name:'试用推广',id:3},
@@ -21,8 +20,8 @@ app.controller('indentCtrl', ["$scope", "$http", "ReportAdvertiseFty", "Customer
         $scope.$on('ad-report-order',function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            ReportAdvertiseFty.orderReport($scope.query).success(modViewB);
-            ReportAdvertiseFty.collectOrder($scope.query).success(summarizingB);
+            ReportAdvertiseFty.orderReport($scope.query).then(modViewB);
+            ReportAdvertiseFty.collectOrder($scope.query).then(summarizingB);
         })
 
 
@@ -42,7 +41,7 @@ app.controller('indentCtrl', ["$scope", "$http", "ReportAdvertiseFty", "Customer
         $scope.query = {pageSize: pageSize, pageIndex: 1};
 
         //列表
-        ReportAdvertiseFty.orderReport($scope.query).success(modViewB);
+        ReportAdvertiseFty.orderReport($scope.query).then(modViewB);
 
         //汇总
         summarizingB = function (response) {
@@ -50,15 +49,15 @@ app.controller('indentCtrl', ["$scope", "$http", "ReportAdvertiseFty", "Customer
             $scope.summarizing = response.items;
         };
 
-        ReportAdvertiseFty.collectOrder($scope.query).success(summarizingB);
+        ReportAdvertiseFty.collectOrder($scope.query).then(summarizingB);
 
         //搜索框
         $scope.redirect = function (num, con) {
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.param1 = $scope.query.search;
-            ReportAdvertiseFty.orderReport($scope.query).success(modViewB);
-            ReportAdvertiseFty.collectOrder($scope.query).success(summarizingB);
+            ReportAdvertiseFty.orderReport($scope.query).then(modViewB);
+            ReportAdvertiseFty.collectOrder($scope.query).then(summarizingB);
         };
 
         //日历查询
@@ -75,8 +74,8 @@ app.controller('indentCtrl', ["$scope", "$http", "ReportAdvertiseFty", "Customer
                 $scope.query.pageIndex = 1;
                 $scope.query.startTime = obj.startDate;
                 $scope.query.endTime = obj.endDate;
-                ReportAdvertiseFty.orderReport($scope.query).success(modViewB);
-                ReportAdvertiseFty.collectOrder($scope.query).success(summarizingB);
+                ReportAdvertiseFty.orderReport($scope.query).then(modViewB);
+                ReportAdvertiseFty.collectOrder($scope.query).then(summarizingB);
             }
         });
 

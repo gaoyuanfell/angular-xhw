@@ -45,7 +45,7 @@
 
 app.controller('orderRuleCtrl', ["$scope", "$location", "SysRuleUserFty",
     function ($scope, $location, SysRuleUserFty) {
-        SysRuleUserFty.getUserRightsByParentId({rightsParentId: 4}).success(function (res) {
+        SysRuleUserFty.getUserRightsByParentId({rightsParentId: 4}).then(function (res) {
             var _object = {};
             if(res && res.code == 200){
                 var items = res.items;
@@ -59,4 +59,8 @@ app.controller('orderRuleCtrl', ["$scope", "$location", "SysRuleUserFty",
              */
             $scope.contrastReport = _object;
         })
+
+        $scope.removePageIndex = function () {
+            window.sessionStorage.removeItem('session_page_index');
+        }
     }]);

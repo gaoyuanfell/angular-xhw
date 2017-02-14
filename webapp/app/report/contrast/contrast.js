@@ -22,7 +22,7 @@ app.factory("ContrastFactory", ["$http",
                     url: baseUrl + api,
                     params: query,
                     data: query
-                }).success(function (data) {
+                }).then(function (data) {
                     if (data && data.code === 200 && data.items.length > 0) {
                         var ob = data.items[0];
                         var firstTime = query.timeType == 0 ? query.firstTime.split("-")[0] + "年" : query.timeType == 1 ? query.firstTime.split("-")[0] + "-" + query.firstTime.split("-")[1] + "月" : query.firstTime + "日";
@@ -238,7 +238,7 @@ app.controller("contrastCtrl", ["$scope", "$http", "ContrastFactory",
         $scope.mainMark = -1;
         /*默认*/
         var getAllCustomer = function (type) {
-            ContrastFactory.getAllCustomer({customerType: type}).success(function (data) {
+            ContrastFactory.getAllCustomer({customerType: type}).then(function (data) {
                 if (data.code != 200 && data.items.length < 0) return;
                 data.items.unshift({
                     id: -1,
@@ -260,7 +260,7 @@ app.controller("contrastCtrl", ["$scope", "$http", "ContrastFactory",
                     break;
                 case 2:
                     /*获取媒体列表*/
-                    ContrastFactory.getMediaList().success(function (data) {
+                    ContrastFactory.getMediaList().then(function (data) {
                         if (data.code != 200 && data.mediaList.length < 0) return;
                         data.mediaList.unshift({
                             id: -1,
@@ -268,7 +268,7 @@ app.controller("contrastCtrl", ["$scope", "$http", "ContrastFactory",
                         });
                         $scope.mediaList = data.mediaList;
                     });
-                    ContrastFactory.getChannelList().success(function (data) {
+                    ContrastFactory.getChannelList().then(function (data) {
                         if (data.code != 200 && data.channelList.length < 0) return;
                         data.channelList.unshift({
                             id: -1,
@@ -276,7 +276,7 @@ app.controller("contrastCtrl", ["$scope", "$http", "ContrastFactory",
                         });
                         $scope.channelList = data.channelList;
                     });
-                    ContrastFactory.getADSpaceType().success(function (data) {
+                    ContrastFactory.getADSpaceType().then(function (data) {
                         if (data.code != 200 && data.adSpaceTypeList.length < 0) return;
                         data.adSpaceTypeList.unshift({
                             id: -1,
@@ -284,9 +284,9 @@ app.controller("contrastCtrl", ["$scope", "$http", "ContrastFactory",
                         });
                         $scope.adSpaceTypeList = data.adSpaceTypeList
                     });
-                    ContrastFactory.getADSpace({pageSize: 1}).success(function (data) {
+                    ContrastFactory.getADSpace({pageSize: 1}).then(function (data) {
                         if (data.code != 200 && data.items.length < 0) return;
-                        ContrastFactory.getADSpace({pageSize: data.total_count}).success(function (da) {
+                        ContrastFactory.getADSpace({pageSize: data.total_count}).then(function (da) {
                             if (da.code != 200 && da.items.length < 0) return;
                             da.items.unshift({
                                 id: -1,
@@ -357,7 +357,7 @@ app.controller("contrastCtrl", ["$scope", "$http", "ContrastFactory",
             } else {
                 if (data.id == 1) {
                     /*获取所有订单*/
-                    ContrastFactory.getOrderName().success(function (data) {
+                    ContrastFactory.getOrderName().then(function (data) {
                         if (data.code != 200 && data.orderNames.length < 0) return;
                         data.orderNames.unshift({
                             id: -1,
@@ -366,7 +366,7 @@ app.controller("contrastCtrl", ["$scope", "$http", "ContrastFactory",
                         $scope.orderNames = data.orderNames;
                     });
                 } else if (data.id == 2) {
-                    ContrastFactory.getDefaultOrderName().success(function (data) {
+                    ContrastFactory.getDefaultOrderName().then(function (data) {
                         if (data.code != 200 && data.defaultOrdersList.length < 0) return;
                         data.defaultOrdersList.unshift({
                             id: -1,

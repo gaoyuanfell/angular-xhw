@@ -1,8 +1,8 @@
-app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResCreativityFty', 'ScheduleFty', 'CustomerFty', 'SysCompanyFty', 'SysUserFty', 'SysContractTolerantFty', 'ResMediaFty','UploadKeyFty','ResChannelFty',
-    function ($scope, $q, ContractFty, OrdersFty, ResCreativityFty, ScheduleFty, CustomerFty, SysCompanyFty, SysUserFty, SysContractTolerantFty, ResMediaFty,UploadKeyFty,ResChannelFty) {
+app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResCreativityFty', 'ScheduleFty', 'CustomerFty', 'SysCompanyFty', 'SysUserFty', 'SysContractTolerantFty', 'ResMediaFty','UploadKeyFty','ResChannelFty','SysDepartmentFty',
+    function ($scope, $q, ContractFty, OrdersFty, ResCreativityFty, ScheduleFty, CustomerFty, SysCompanyFty, SysUserFty, SysContractTolerantFty, ResMediaFty,UploadKeyFty,ResChannelFty,SysDepartmentFty) {
         $scope.customerListSel = {}
         //客户下拉
-        var getPartCustomer = CustomerFty.getPartCustomer({customerType: 2}).success(function (res) {
+        var getPartCustomer = CustomerFty.getPartCustomer({customerType: 2}).then(function (res) {
             if (res && res.code == 200) {
                 $scope.customerListSel.list = res.items;
             }
@@ -29,7 +29,7 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
             searchBlack:function(d){
                 if(d){
                     ycui.loading.show();
-                    ContractFty.getContractsByCode({contractCode: d}).success(function (res) {
+                    ContractFty.getContractsByCode({contractCode: d}).then(function (res) {
                         ycui.loading.hide();
                         if (res && res.code == 200 && res.items) {
                             $scope.contractCodeSel.list = [res.items];
@@ -45,18 +45,19 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
             }
         }
 
-        $scope._cache = {};//临时值
+        $scope._cache = {contract:{}};//临时值
         /**
          * 表单 默认值
          */
         $scope.order = {};
 
         $scope.showState = +getSearch('showState');
+        $scope.editManage = +getSearch('editManage');
         $scope.selectContractShow = false;
         $scope.adListInfo = [];//广告位列表集合
 
         var id = getSearch('id');
-        var orderDetail = OrdersFty.orderDetail({id: id}).success(function (res) {
+        var orderDetail = OrdersFty.orderDetail({id: id}).then(function (res) {
             if (res && res.code == 200) {
                 if (res.orders.orderType == 1) {
                     delete res.orders.present;
@@ -68,6 +69,8 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
                 }
                 $scope.order = res.orders;
                 var companyId = $scope._cache.adInCompanyId = $scope.order.adInCompanyId;
+                $scope._cache.adInDepScope = $scope.order.adInDepScope;
+                $scope._cache._relatedOrderName = $scope.order.relatedOrderName;
                 
                 //下拉值
                 // $scope.orderTypeSel.placeholder = $scope.order.orderName;
@@ -95,7 +98,7 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
                     /**
                      * 有合同号 拉取最新合同信息
                      */
-                    ContractFty.getContractsByCode({contractCode: $scope.order.contractCode}).success(function (res) {
+                    var getContractsByCode = ContractFty.getContractsByCode({contractCode: $scope.order.contractCode}).then(function (res) {
                         if (res && res.code == 200 && res.items) {
                             $scope.order.totalMoney = res.items.contractMoney;
                             $scope.order.discount = res.items.discount * 100;
@@ -323,6 +326,9 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
                 }();
 
             }
+            $q.all([getContractsByCode]).then(function(){
+                console.info($scope._cache.contract);
+            })
         });
 
 
@@ -474,9 +480,8 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
                 }
             }else{
                 var validOrderData = OrdersFty.validOrderData({orderId: $scope.order.id});
-                validOrderData.success(function (res) {
+                validOrderData.then(function (res) {
                     if (res && res.code == 404) {
-                        //TODO
                         asd(data);
                     } else {
                         ycui.alert({
@@ -492,7 +497,10 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
                 $scope.order.totalMoney = data.contractMoney;
                 $scope.order.discount = data.discount * 100;
                 $scope.order.present = data.present * 100;
-                $scope._cache.contract = data;
+                // $scope._cache.contract = data;
+
+                $scope._cache.contract && angular.extend($scope._cache.contract,data);
+                
                 $scope.selectContractShow = true;//显示 合同金额等。。。。
                 /**
                  * 正式订单 获取合同 根据是否打包合同 改变广告位类型 ×××××××××××估计不会运行××××××××××
@@ -507,7 +515,7 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
         //部门
         $scope.departmentListSel = {}
         $q.all([orderDetail]).then(function () {
-            SysUserFty.depAndUserList({companyId: $scope._cache.companyId}).success(function (res) {
+            SysUserFty.depAndUserList({companyId: $scope._cache.companyId}).then(function (res) {
                 $scope.departmentListSel.list = res.departmentList;
             })
         });
@@ -547,7 +555,7 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
                 beforeFileQueued:function(uploader,file){
                     ycui.loading.show();
                     uploader.stop(file);
-                    UploadKeyFty.uploadKey().success(function (da) {
+                    UploadKeyFty.uploadKey().then(function (da) {
                         key = da.items;
                         uploader.upload(file);
                     });
@@ -609,13 +617,13 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
         function schedulingMoneyMax(futureMoney, discount, present) {
             var _contractMoneyMax = futureMoney / (discount * 0.01);
             var _presentMoneyMax = futureMoney * (present * 0.01);
-            $scope._cache.contract = {
+            $scope._cache.contract && angular.extend($scope._cache.contract,{
                 contractBuyMoney: _contractMoneyMax,
                 presentMoney: _presentMoneyMax,
                 schedulingBuyMoney: $scope.order.buyMoney,
                 schedulingPresentedMoney: $scope.order.presentMoney,
                 scheduleMoney: _contractMoneyMax + _presentMoneyMax
-            };
+            })
         }
 
         $q.all([orderDetail]).then(function () {
@@ -678,30 +686,39 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
          * 计算总购买金额 和 总配送金额
          */
         $scope.$watch('order.futureMoney',function () {
-            if($scope.order.futureMoney != undefined && $scope.order.discount != undefined && $scope.order.present != undefined){
+            var futureMoney = $scope.order.futureMoney > 0
+            var discount = $scope.order.discount >= 0
+            var present = $scope.order.present >= 0
+            if(futureMoney && discount && present){
                 getMoney();
             }
         });
         $scope.$watch('order.discount',function () {
-            if($scope.order.futureMoney != undefined && $scope.order.discount != undefined && $scope.order.present != undefined){
+            var futureMoney = $scope.order.futureMoney > 0
+            var discount = $scope.order.discount >= 0
+            var present = $scope.order.present >= 0
+            if(futureMoney && discount && present){
                 getMoney();
             }
         });
         $scope.$watch('order.present',function () {
-            if($scope.order.futureMoney != undefined && $scope.order.discount != undefined && $scope.order.present != undefined){
+            var futureMoney = $scope.order.futureMoney > 0
+            var discount = $scope.order.discount >= 0
+            var present = $scope.order.present >= 0
+            if(futureMoney && discount && present){
                 getMoney();
             }
         });
         function getMoney() {
             var _contractMoneyMax = $scope.order.futureMoney/($scope.order.discount*0.01);
             var _presentMoneyMax = $scope.order.futureMoney*($scope.order.present*0.01);
-            $scope._cache.contract = {
+            $scope._cache.contract && angular.extend($scope._cache.contract,{
                 contractBuyMoney:_contractMoneyMax,
                 presentMoney:_presentMoneyMax,
                 schedulingBuyMoney:$scope.order.buyMoney,
                 presentedMoney:$scope.order.presentMoney,
                 scheduleMoney:_contractMoneyMax + _presentMoneyMax
-            }
+            })
         }
 
         /**
@@ -763,27 +780,60 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
         // 选择广告位
         $scope.$on('orderAddGroup',function(){
             if ($scope.query.companyId != undefined) {
-                OrdersFty.getADSpacesForAddOrder($scope.query).success(modView);
+                OrdersFty.getADSpacesForAddOrder($scope.query).then(modView);
             }
         })
 
         $q.all([orderDetail]).then(function(){
-            ResMediaFty.mediaListInCom({companyId:$scope._cache.adInCompanyId}).success(function(res){
+            ResMediaFty.mediaListInCom({companyId:$scope._cache.adInCompanyId}).then(function(res){
                 if(res && res.code == 200){
                     $scope.mediaListSel.list = res.mediaList;
                 }
             })
         })
+
+        $scope.departmentListAdSel = {
+            callback:function(e,d){
+                if(d){
+                    $scope.query.depScope = d.agencyNumber;
+                    $scope._cache.adInDepScope = d.agencyNumber;
+                }
+                ycui.loading.show();
+                $scope.query.pageIndex = 1;
+                OrdersFty.getADSpacesForAddOrder($scope.query).then(modView);
+            }
+        };
         
         $scope.companyListSel = {
             callback:function(e,d){
+                ycui.loading.show();
+                $scope.query.pageIndex = 1;
+                $scope.mediaListSel.$destroy();
                 if(d){
                     $scope._cache.adInCompanyId = d.id;
-                    ResMediaFty.mediaListInCom({companyId:d.id}).success(function(res){
+                    ResMediaFty.mediaListInCom({companyId:d.id}).then(function(res){
                         if(res && res.code == 200){
                             $scope.mediaListSel.list = res.mediaList;
                         }
                     })
+                }
+                delete $scope._cache.adInDepScope;
+                $scope.departmentListAdSel.$destroy();
+                if(d && d.id == 3){
+                    SysDepartmentFty.parentDeps({ companyId: d.id }).then(function (res) {
+                        if(res && res.code == 200){
+                            $scope.departmentListAdSel.list = res.departmentList;
+                        }
+                    });
+                }
+            },
+            sessionBack:function(d){
+                if(d && d.id == 3){
+                    SysDepartmentFty.parentDeps({ companyId: d.id }).then(function (res) {
+                        if(res && res.code == 200){
+                            $scope.departmentListAdSel.list = res.departmentList;
+                        }
+                    });
                 }
             }
         };
@@ -791,7 +841,7 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
             callback:function(e,d){
                 $scope.periodicationSel.$destroy();
                 if(!d){return};
-                ResChannelFty.getChannelsByMedia({ mediaId: d.id }).success(function (response) {
+                ResChannelFty.getChannelsByMedia({ mediaId: d.id }).then(function (response) {
                     $scope.periodicationSel.list = response.channels;
                     $scope.periodicationSel.list.unshift({'channelName':'全部'})
                 });
@@ -812,7 +862,7 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
                 $scope.query.pageIndex = num || 1;
                 $scope.query.adSpaceNameOrId = $scope.query.search;;
                 if ($scope.query.companyId != undefined) {
-                    OrdersFty.getADSpacesForAddOrder($scope.query).success(modView);
+                    OrdersFty.getADSpacesForAddOrder($scope.query).then(modView);
                 }else{
                     ycui.loading.hide();
                 }
@@ -825,7 +875,9 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
                 title:'添加广告位',
                 okClick:function(){
                     var bo = true;
-                    if($scope.order.adInCompanyId && $scope._cache.adInCompanyId && $scope._cache.adInCompanyId != $scope.order.adInCompanyId){
+                    var _bo1 = $scope._cache.adInDepScope && $scope.order.adInDepScope && $scope._cache.adInDepScope != $scope.order.adInDepScope;
+                    var _bo2 = $scope._cache.adInCompanyId && $scope.order.adInCompanyId && $scope._cache.adInCompanyId != $scope.order.adInCompanyId;
+                    if(_bo1 || _bo2){
                         bo = false;
                     }
                     if(bo){
@@ -880,6 +932,7 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
                 }
             })
             $scope.order.adInCompanyId = $scope._cache.adInCompanyId;
+            $scope.order.adInDepScope = $scope._cache.adInDepScope;
         };
 
         $scope.query = {pageSize: 5};//搜索条件
@@ -893,7 +946,7 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
             $scope.total_page = response.total_page;
         };
 
-        var dLInOrder = ScheduleFty.dLInOrder().success(function (res) {
+        var dLInOrder = ScheduleFty.dLInOrder().then(function (res) {
             if(res && res.code == 200){
                 $scope.companyListSel.list = res.companyList;
                 $scope.mediaListSel.list = res.mediaList;
@@ -913,7 +966,7 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
                     orderId: $scope.order.id,
                     adSpaceId: id,
                     scheduleType:type
-                }).success(function (res) {
+                }).then(function (res) {
                     if (res && res.code == 404) {
                         _validData();
                     } else if (res && res.code == 200) {
@@ -957,10 +1010,16 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
         $scope.adListInfoCache = [];
         $scope.putRightInfo = function (itemInfo) {
             for (var i = 0; i < $scope.adListInfoCache.length; i++) {
+                if(itemInfo.depScope != $scope.adListInfoCache[i].depScope){
+                    $scope.adListInfoCache.length = 0;
+                    break;
+                }
                 if (itemInfo.id == $scope.adListInfoCache[i].id) {
                     return
                 }
             }
+            //TODO
+            $scope._cache.adInDepScope = itemInfo.depScope;
             itemInfo.dateType = 0;
             itemInfo.weekOrDate = 0;
             $scope.adListInfoCache.push(itemInfo);
@@ -2095,10 +2154,10 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
         //获取客户名称
         $scope.customerNameSel = {
             callback:function(e,d){
-                d && OrdersFty.ordersList($scope.query2).success(modView2);
+                OrdersFty.ordersList($scope.query2).then(modView2);
             }
         };
-        CustomerFty.getAllCustomer({customerState: 1}).success(function (response) {
+        CustomerFty.getAllCustomer({customerState: 1}).then(function (response) {
             if (response.code == 200) {
                 $scope.customerNameSel.list = response.items
             }
@@ -2109,12 +2168,12 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
             /**
              * 关联订单
              */
-            OrdersFty.ordersList($scope.query2).success(modView2);
+            OrdersFty.ordersList($scope.query2).then(modView2);
             $scope.redirect2 = function (num,da) {
                 ycui.loading.show()
                 $scope.query2.pageIndex = num || 1;
                 $scope.query2.ordersNameOrID = $scope.query2.search;;
-                OrdersFty.ordersList($scope.query2).success(modView2);
+                OrdersFty.ordersList($scope.query2).then(modView2);
             };
             pointerTimely('orderCarRange');
             $scope.showOrderCarModule = {
@@ -2127,6 +2186,28 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
                 }
             }
         };
+
+        //取消订单关联
+        $scope.hideRelatedOrder = function(event){
+            event.stopPropagation();
+            delete $scope._cache._relatedOrderName;
+            delete $scope.order.orderName;
+            delete $scope.order.relatedOrderId;
+            delete $scope.scheduleTypeList;
+            $scope.order.orderShowDate = {};
+            delete $scope.order.contractType;
+            delete $scope.order.customerId;
+            delete $scope.order.customerName;
+            delete $scope.order.futureMoney;
+            delete $scope.order.historyScheduleMoney;
+            delete $scope.order.packageMoney;
+            delete $scope.order.contractCode;
+            delete $scope.order.totalMoney;
+            delete $scope.order.discount;
+            delete $scope.order.present;
+            delete $scope.order.isPackage;
+        }
+
         /**
          * 选择关联订单
          * @param name
@@ -2136,7 +2217,7 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
             delete $scope.order.futureMoney;
             delete $scope.order.discount;
             delete $scope.order.present;
-            OrdersFty.orderDetail({id: id}).success(function (res) {
+            OrdersFty.orderDetail({id: id}).then(function (res) {
                 if (res && res.code == 200) {
                     var _order = res.orders;
 
@@ -2145,9 +2226,9 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
                     $scope.order.relatedOrderId = _order.id;
                     $scope.scheduleTypeList = [{id: 1, name: '免费配送'}];
 
-                    $scope.order.orderShowDate = _order.orderShowDate;
-                    $scope.order.orderShowDate.pickerDateRange = 'pickerDateRange';
-                    pointerTimely($scope.order.orderShowDate);
+                    // $scope.order.orderShowDate = _order.orderShowDate;
+                    // $scope.order.orderShowDate.pickerDateRange = 'pickerDateRange';
+                    // pointerTimely($scope.order.orderShowDate);
 
                     $scope.order.contractType = _order.contractType;
                     $scope.order.customerId = _order.customerId;
@@ -2156,7 +2237,7 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
                     $scope.order.historyScheduleMoney = _order.historyScheduleMoney;
 
                     if (_order.contractCode) {
-                        ContractFty.getContractsByCode({contractCode: _order.contractCode}).success(function (res) {
+                        ContractFty.getContractsByCode({contractCode: _order.contractCode}).then(function (res) {
                             if (res && res.code == 200 && res.items) {
                                 $scope.order.contractCode = res.items.contractCode;
                                 $scope.order.totalMoney = res.items.contractMoney;
@@ -2180,6 +2261,9 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
                     }
                 }
             });
+            setTimeout(function(){
+                document.querySelector('[yc-module=showOrderCarModule] .ok').click()
+            },20)
         };
 
 
@@ -2272,12 +2356,12 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
                 $scope.getAreaids = ycui.createAreas(data, $scope.order.childIdList, '#areasList');
                 if ($scope.order.childIdList.length > 0) {
                     $scope.$apply(function () {
-                        $scope.areasListShow = 1
+                        $scope.areasListShow = 1;
                     })
                 }
             });
             if ($scope.order.languageList && $scope.order.languageList.length > 0) {
-                $scope.languageShow = 1;
+                $scope.languageShow = '1';
                 $scope.order.languageList.forEach(function (da) {
                     $scope.languageList.forEach(function (data) {
                         if (da.id == data.id) {
@@ -2290,15 +2374,16 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
 
         $scope.postEdit = function () {
             $scope.validShow = true;
+            var $bo = false;
             //验证
             if ($scope.order.orderType == 1 || $scope.order.orderType == 2 || $scope.order.orderType == 3) {
                 if ($scope.order.customerId == undefined) {
-                    return;
+                    $bo = true;
                 }
             }
 
             if ($scope.order.orderType == 2 && !$scope.order.contractCode && $scope.order.contractType == 1) {
-                return
+                $bo = true;
             }
 
             for (var a = 0, j = $scope.adListInfo.length; a < j; a++) {
@@ -2308,13 +2393,15 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
                         error:true,
                         content: '广告位排期超过订单总档期，请重新选择'
                     });
-                    return;
+                    $bo = true;
                 }
             }
 
             if (!$('.form').valid()) {
-                return;
+                $bo = true;
             }
+
+            if($bo)return;
 
             //获取id 和 name；
             var _getArea = $scope.getAreaids(true, true);
@@ -2534,19 +2621,19 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
                 //不能超过合同最大排期总金额
                 if ($scope.order.orderType == 2 && $scope.order.isPackage == 1) {
                     var _s = 0;//容错金额
-                    switch (res[1].data.tolerantRule) {
+                    switch (res[1].tolerantRule) {
                         case 1:
-                            if ($scope.order.futureMoney * res[1].data.tolerant > res[1].data.tolerantMoney) {
-                                _s = res[1].data.tolerantMoney
+                            if ($scope.order.futureMoney * res[1].tolerant > res[1].tolerantMoney) {
+                                _s = res[1].tolerantMoney
                             } else {
-                                _s = $scope.order.futureMoney * res[1].data.tolerant
+                                _s = $scope.order.futureMoney * res[1].tolerant
                             }
                             break;
                         case 2:
-                            if ($scope.order.futureMoney * res[1].data.tolerant > res[1].data.tolerantMoney) {
-                                _s = $scope.order.futureMoney * res[1].data.tolerant
+                            if ($scope.order.futureMoney * res[1].tolerant > res[1].tolerantMoney) {
+                                _s = $scope.order.futureMoney * res[1].tolerant
                             } else {
-                                _s = res[1].data.tolerantMoney
+                                _s = res[1].tolerantMoney
                             }
                             break;
                     }
@@ -2620,7 +2707,7 @@ app.controller('PutEditCtrl', ['$scope', '$q', 'ContractFty', 'OrdersFty', 'ResC
                     }
                     function orderEditFn() {
                         ycui.loading.show();
-                        OrdersFty.orderUpdate(body).success(function (res) {
+                        OrdersFty.orderUpdate(body).then(function (res) {
                             ycui.loading.hide();
                             if (res.code == 200) {
                                 ycui.alert({

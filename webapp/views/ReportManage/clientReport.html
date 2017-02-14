@@ -22,9 +22,9 @@
 </head>
 <body>
     <nav class="header">
-        <div class="scroll" ng-init="operationMa = 'clientCtrl.html'">
-            <a class="nav" ng-class="{'active':operationMa == 'clientCtrl.html'}" ng-click="operationMa = 'clientCtrl.html'">客户数据</a>
-            <a class="nav" ng-class="{'active':operationMa == 'client2Ctrl.html'}" ng-click="operationMa = 'client2Ctrl.html';">代理商数据</a>
+        <div class="scroll" ng-init="operationMa = 'clientCtrl.html'" ng-click="removePageIndex()">
+            <a class="nav" ng-class="{'active':operationMa == 'clientCtrl.html'}" ng-click="operationMa = 'clientCtrl.html';removePageIndex()">客户数据</a>
+            <a class="nav" ng-class="{'active':operationMa == 'client2Ctrl.html'}" ng-click="operationMa = 'client2Ctrl.html';removePageIndex()">代理商数据</a>
         </div>
     </nav>
 
@@ -39,7 +39,7 @@
                     <a href="javascript:;" class="yc-btn" onclick="window.print(1,'客户数据报表')">预览打印</a>
                 </div>
                 <div class="query-g fr">
-                    <div yc-select="clientTypeSel" width="150" query="query" value="paramInt1" key="id" placeholder="客户类型" session="client_clientType" group="clientListGroup"></div>
+                    <div yc-select="clientTypeSel" width="150" query="query" value="paramInt1" key="id" placeholder="客户类型" add="全部" session="client_clientType" group="clientListGroup"></div>
                     <div class="icon-input picker-date">
                         <label>
                             <input class="form-control time_default" readonly type="text" id="clientAff">

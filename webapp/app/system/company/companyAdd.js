@@ -12,7 +12,7 @@ app.controller("companyAddCtrl", ['$scope', '$http', 'SysCompanyFty', 'Dictionar
         $scope.companyType = 2;
     //获取地域
     ycui.loading.show();
-    DictionaryFty.provinceListForCompany().success(function (response) {
+    DictionaryFty.provinceListForCompany().then(function (response) {
         ycui.loading.hide();
         $scope.areaList = response;
     });
@@ -46,7 +46,7 @@ app.controller("companyAddCtrl", ['$scope', '$http', 'SysCompanyFty', 'Dictionar
                 companyAreaId: $scope.companyAreaId,
                 email: $scope.email,
                 telephone:$scope.telephone
-            }).success(function (response) {
+            }).then(function (response) {
                 ycui.loading.hide();
                 if (response.code && response.code == 200) {
                     ycui.alert({

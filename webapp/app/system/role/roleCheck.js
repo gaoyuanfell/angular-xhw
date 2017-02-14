@@ -10,11 +10,11 @@ app.controller("roleCheckCtrl", ['$scope', '$http','SysRuleUserFty','SysRoleFty'
         $scope.role = {};
         var id = getSearch("id");
         ycui.loading.show();
-        SysRoleFty.getRole({id:id}).success(function (response) {
+        SysRoleFty.getRole({id:id}).then(function (response) {
             ycui.loading.hide();
             if(!response) return;
             $scope.role = response;
-            SysRuleUserFty.levelsRights().success(function (res) {
+            SysRuleUserFty.levelsRights().then(function (res) {
                 if(res){
                     var array = changeRuleDate(res);
                     $scope.getAreaids = ycui.createAreas(array, $scope.role.roleCluster, '#areasList', 1);

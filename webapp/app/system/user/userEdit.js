@@ -33,7 +33,7 @@ app.controller("userEditCtrl", ['$scope', '$http', 'SysUserFty','$q',
         $scope.user = {};
 
         ycui.loading.show();
-        var getEditUserInfo = SysUserFty.getEditUserInfo({id:id}).success(function (response) {
+        var getEditUserInfo = SysUserFty.getEditUserInfo({id:id}).then(function (response) {
             ycui.loading.hide();
             $scope.userMode = response;
             $scope.user.logName = response.logName;
@@ -41,7 +41,7 @@ app.controller("userEditCtrl", ['$scope', '$http', 'SysUserFty','$q',
         });
 
         $q.all([getEditUserInfo]).then(function () {
-            var roleListByCom = SysUserFty.roleListByCom({id:$scope.userMode.companyId}).success(function (res) {
+            var roleListByCom = SysUserFty.roleListByCom({id:$scope.userMode.companyId}).then(function (res) {
                 if(res && res.code == 200){
                     res.roleList.forEach(function (data) {
                         $scope.userMode.roleList.map(function (da) {
@@ -55,7 +55,7 @@ app.controller("userEditCtrl", ['$scope', '$http', 'SysUserFty','$q',
                 }
             });
 
-            var depAndUserList = SysUserFty.depAndUserList({companyId: $scope.userMode.companyId}).success(function (response) {
+            var depAndUserList = SysUserFty.depAndUserList({companyId: $scope.userMode.companyId}).then(function (response) {
                 $scope.departmentListSel.list = response.departmentList;
                 $scope.userListSel.list = response.userList;
             })
@@ -67,7 +67,7 @@ app.controller("userEditCtrl", ['$scope', '$http', 'SysUserFty','$q',
                 content:'请确认是否初始化密码，初始化后当前密码将会失效',
                 timeout:-1,
                 okclick:function () {
-                    SysUserFty.initPwd({id:$scope.userMode.id,logName:$scope.userMode.logName}).success(function (res) {
+                    SysUserFty.initPwd({id:$scope.userMode.id,logName:$scope.userMode.logName}).then(function (res) {
                         if(res && res.code == 200){
                             ycui.alert({
                                 content:res.msg + '<br> 提示:密码为用户名+当前年份!',
@@ -129,7 +129,7 @@ app.controller("userEditCtrl", ['$scope', '$http', 'SysUserFty','$q',
                 agencyNames:body.agencyNames
             };
             ycui.loading.show();
-            SysUserFty.userEdit(query).success(function (response) {
+            SysUserFty.userEdit(query).then(function (response) {
                 ycui.loading.hide();
                 if (response && response.code == 200) {
                     ycui.alert({
@@ -176,7 +176,7 @@ app.controller("userEditCtrl", ['$scope', '$http', 'SysUserFty','$q',
             $scope.user.newPassword = '';
             $scope.user.okPassword = '';
             $scope.validation = function(){
-                $scope.user.oldPassword && SysUserFty.validPwd({id:$scope.user.id,logPwd:md5($scope.user.oldPassword)}).success(function(res){
+                $scope.user.oldPassword && SysUserFty.validPwd({id:$scope.user.id,logPwd:md5($scope.user.oldPassword)}).then(function(res){
                     if(res && res.code == 200){
                         $scope.validaMsgBo = false;
                     }else{
@@ -208,7 +208,7 @@ app.controller("userEditCtrl", ['$scope', '$http', 'SysUserFty','$q',
                                 newLogPwd: md5($scope.user.newPassword)
                             }
                             ycui.loading.show();
-                            SysUserFty.updatePwd(body).success(function(res){
+                            SysUserFty.updatePwd(body).then(function(res){
                                 ycui.loading.hide();
                                 if(res && res.code == 200){
                                     $scope.validaMsgStr = '';

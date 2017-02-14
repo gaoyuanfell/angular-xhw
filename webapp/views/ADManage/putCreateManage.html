@@ -39,10 +39,10 @@
                 <a class="yc-btn" ng-click="deleList()" ng-if="putManageRule['ManagePutOrders']">批量作废</a>
             </div>
             <div class="query-g fr">
-                <div yc-select="orderNameSel" width="150" query="query" value="orderId" key="id" placeholder="订单" name="orderName" reskey="{{query.orderId}}" session="create_order" group="createListGroup"></div>
-                <div yc-select="superviseSel" width="121" query="query" value="supState" key="id" placeholder="监管状态" session="create_supervise" group="createListGroup"></div>
-                <div yc-select="showStateSel" width="90" query="query" value="showState" key="id" placeholder="投放状态" session="create_showState" group="createListGroup"></div>
-                <div yc-select="sizeSel" width="90" query="query" value="size" key="size" name="size" placeholder="尺寸" session="create_size" group="createListGroup"></div>
+                <div yc-select="orderNameSel" width="150" query="query" value="orderId" key="id" placeholder="订单" add="全部" name="orderName" reskey="{{query.orderId}}" session="create_order" group="createListGroup"></div>
+                <div yc-select="superviseSel" width="121" query="query" value="supState" key="id" placeholder="监管状态" add="全部" session="create_supervise" group="createListGroup"></div>
+                <div yc-select="showStateSel" width="90" query="query" value="showState" key="id" placeholder="投放状态" add="全部" session="create_showState" group="createListGroup"></div>
+                <div yc-select="sizeSel" width="90" query="query" value="size" key="size" name="size" placeholder="尺寸" add="全部" session="create_size" group="createListGroup"></div>
                 <div class="icon-input picker-date">
                     <label>
                         <input class="form-control time_default" readonly type="text" id="clientAff">
@@ -68,7 +68,7 @@
                     <th class="th70-min">投放</th>
                     <th class="th120">订单名称</th>
                     <th class="th140">广告位名称 <i title="鼠标放置在广告位名称上，显示广告位详情" class="yc-icon pointer">&#xe622;</i></th>
-                    <th class="th100">监管状态 <i title="监管状态：“创意监管”简写为“创”，“素材监管”简写为“素”，“网络安全监管“简写为“网”；黄色代表待审核、绿色代表监管合格、红色代表监管不合格；鼠标放置在相应状态上，显示状态详情；" class="yc-icon pointer">&#xe622;</i></th>
+                    <th class="th100">监管状态 <i title="监管状态：“创意监管”简写为“创”，“法规监管”简写为“法”，“网络安全监管“简写为“网”；黄色代表待审核、绿色代表监管合格、红色代表监管不合格；鼠标放置在相应状态上，显示状态详情；" class="yc-icon pointer">&#xe622;</i></th>
                     <th class="th80-min">尺寸</th>
                     <th class="th90-min">曝光量</th>
                     <th class="th90-min">点击量</th>
@@ -107,19 +107,19 @@
                             <div class="hide" ng-class="{'show':item.showState == 0}">
                                 <div ng-mouseover="showIconState($event)" ng-mouseleave="hideIconState($event)">
                                     <i title="待投放" class="yc-icon toWait show-l">&#xe623;</i>
-                                    <i ng-click="changeState(item.id,item.showState)" ng-if="putManageRule['ManagePutOrders']" title="投放中" class="yc-icon toGreen hide">&#xe618;</i>
+                                    <i ng-click="changeState(item.id,item.showState)" ng-if="putManageRule['ManagePutOrders'] && item.manageShowState == 1" title="投放中" class="yc-icon toGreen hide">&#xe618;</i>
                                 </div>
                             </div>
                             <div class="hide" ng-class="{'show':item.showState == 1}">
                                 <div ng-mouseover="showIconState($event)" ng-mouseleave="hideIconState($event)">
                                     <i title="投放中" class="yc-icon toGreen show-l">&#xe618;</i>
-                                    <i ng-click="changeState(item.id,item.showState)" ng-if="putManageRule['ManagePutOrders']" title="暂停" class="yc-icon toRed hide">&#xe621;</i>
+                                    <i ng-click="changeState(item.id,item.showState)" ng-if="putManageRule['ManagePutOrders'] && item.manageShowState == 1" title="暂停" class="yc-icon toRed hide">&#xe621;</i>
                                 </div>
                             </div>
                             <div class="hide" ng-class="{'show':item.showState == 2}">
                                 <div ng-mouseover="showIconState($event)" ng-mouseleave="hideIconState($event)">
                                     <i title="已暂停" class="yc-icon toRed show-l">&#xe621;</i>
-                                    <i ng-click="changeState(item.id,item.showState)" ng-if="putManageRule['ManagePutOrders']" title="投放中" class="yc-icon toGreen hide">&#xe618;</i>
+                                    <i ng-click="changeState(item.id,item.showState)" ng-if="putManageRule['ManagePutOrders'] && item.manageShowState == 1" title="投放中" class="yc-icon toGreen hide">&#xe618;</i>
                                 </div>
                             </div>
                             <div class="hide" ng-class="{'show':item.showState == 3}">
@@ -153,9 +153,9 @@
                             <span title="{{item.superviseInfoTitle}}" class="pointer" ng-bind="li.stateName"></span> 
                         </p>-->
                         <span ng-repeat="li in item.superviseInfoList" title="{{item.superviseInfoTitle}}">
-                            <i ng-show="li.type == 2" class="yc-icon" ng-class="{'yellow-co':li.state == 0,'red-co':li.state == -1,'green-co':li.state == 1}">&#xe628;</i>   
-                            <i ng-show="li.type == 1" class="yc-icon" ng-class="{'yellow-co':li.state == 0,'red-co':li.state == -1,'green-co':li.state == 1}">&#xe627;</i>   
-                            <i ng-show="li.type == 3" class="yc-icon" ng-class="{'yellow-co':li.state == 0,'red-co':li.state == -1,'green-co':li.state == 1}">&#xe626;</i>   
+                            <i ng-show="li.type == 2" class="yc-icon" ng-class="{'yellow-co':li.state == 0,'red-co':li.state == -1,'green-co':li.state == 1}">&#xe62b;</i>
+                            <i ng-show="li.type == 1" class="yc-icon" ng-class="{'yellow-co':li.state == 0,'red-co':li.state == -1,'green-co':li.state == 1}">&#xe627;</i>
+                            <i ng-show="li.type == 3" class="yc-icon" ng-class="{'yellow-co':li.state == 0,'red-co':li.state == -1,'green-co':li.state == 1}">&#xe626;</i>
                         </span>
                     </td>
                     <td ng-bind="::item.size"></td>
@@ -164,15 +164,15 @@
                     <td ng-bind="::item.click/item.pV | toTwo"></td>
                     <td>
                         <span ng-if="putManageRule['ManagePutOrders']">
-                            <span ng-if="item.showState == 3">
+                            <span ng-if="item.showState == 3 || item.manage != 1">
                                 <a padding-right ng-if="item.showState == 3" title="查看" href="javascript:void(0)" data-route="ViewPutOrderCreateEdit?id={{item.id}}&editRuleBo=0&showState=3">查看</a>
                                 <!--<a title="审核" href="javascript:;" class="unShow">审核</a>-->
                             </span>
-                            <span ng-if="item.showState != 3">
+                            <span ng-if="item.showState != 3 && item.manage == 1">
                                 <a padding-right ng-if="item.showState != 3" title="编辑" href="javascript:void(0)" data-route="ViewPutOrderCreateEdit?id={{item.id}}&editRuleBo=1">编辑</a>
                                 <!--<a title="审核" href="javascript:;" ng-class="{'unShow': !(putManageRule[13]||putManageRule[14])}" ng-click="isPass(item)">审核</a>-->
                             </span>
-                            <span ng-show="putManageRule['StopCreative']">
+                            <span ng-show="putManageRule['StopCreative'] && item.manageTerminate == 1">
                                 <span ng-show="item.showState != 5">
                                     <a padding-right title="失效" href="javascript:;" ng-click="deleList(item.id,item.adCreativeName)">作废</a>
                                 </span>
@@ -220,7 +220,7 @@
                         </div>
                     </div>
                     <div ng-if="_showPhotoModule.$html" ng-bind-html="_showPhotoModule.$html | HtmlFtr"></div>
-                    <div id="showPhotoModule"></div>
+                    <div id="showPhotoModule" style="overflow: auto"></div>
                 </div>
                 <div class="dialog-submit">
                     <a href="javascript:void(0)" class="ok">确定</a>
@@ -315,15 +315,15 @@
                             <label class="yc-col-3 control-label"> 监管:</label>
                             <div class="yc-col-9">
                                 <label ng-repeat="su in _superviseModule.superviseList track by $index" class="radio"> 
-                                    <input type="radio" class="form-control" ng-model="_superviseModule.checkSupervise" value="{{su.verify}}"> <span ng-bind="su.rightName"></span>
+                                    <input type="radio" class="form-control" ng-model="_superviseModule.checkSupervise" ng-value="su.verify"> <span ng-bind="su.rightName"></span>
                                 </label>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="yc-col-3 control-label"> 监管意见:</label>
                             <div class="yc-col-9">
-                                <label class="radio"> <input type="radio" class="form-control" ng-model="_superviseModule.creativeSupState" value="1" ng-change="_superviseModule.change(0)"> 合格</label>
-                                <label class="radio"> <input type="radio" class="form-control" ng-model="_superviseModule.creativeSupState" value="-1" ng-change="_superviseModule.change(1)"> 不合格</label>
+                                <label class="radio"> <input type="radio" class="form-control" ng-model="_superviseModule.creativeSupState" ng-value="1" ng-change="_superviseModule.change(0)"> 合格</label>
+                                <label class="radio"> <input type="radio" class="form-control" ng-model="_superviseModule.creativeSupState" ng-value="-1" ng-change="_superviseModule.change(1)"> 不合格</label>
                             </div>
                         </div>
                         <div class="form-group" ng-show="_superviseModule.creativeSupState == -1">
@@ -336,43 +336,43 @@
                     <div  class="supervise-affche" ng-show="_superviseModule.creativeSupState == -1">
                         <p> <h1>发布公告</h1>  </p>
                         <div class="form-group">
-                            <label for="" class="yc-col-3 control-label"> <span>*</span> 公告标题：</label>
+                            <label class="yc-col-3 control-label"> <span>*</span> 公告标题：</label>
                             <div class="yc-col-9">
                                 <input ng-class="{'border-error':superviseModule.$valid && !_superviseModule.title}" class="form-control" name="myTitle" type="text" ng-placeholder="请输入公告名称" ng-model="_superviseModule.title">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="" class="yc-col-3 control-label"> <span>*</span> 公告内容：</label>
+                            <label class="yc-col-3 control-label"> <span>*</span> 公告内容：</label>
                             <div class="yc-col-9">
                                 <textarea ng-class="{'border-error':superviseModule.$valid && !_superviseModule.content}" class="form-control affcheContent" ng-model="_superviseModule.content" maxlength="1500" name="myContent" ng-placeholder="请填写公告内容"></textarea>
                                 <p class="msg">您还可以输入{{1500-(_superviseModule.content.length || 0)}}个字</p>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="" class="yc-col-3 control-label"> 公告附件：</label>
+                            <label class="yc-col-3 control-label"> 公告附件：</label>
                             <div class="yc-col-9">
                                 <div class="yc-btn-web" id="affcheAddUpload2"> 上 传 </div>
                                 <a padding-left target="_blank" ng-show="_superviseModule.noticeAttachment" ng-href="{{_superviseModule.noticeAttachment}}" title="{{_superviseModule.noticeAttachment}}">查看</a>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="" class="yc-col-3 control-label"> <span>*</span> 发布范围：</label>
+                            <label class="yc-col-3 control-label"> <span>*</span> 发布范围：</label>
                             <div class="yc-col-9">
-                                <label class="radio"><input class="form-control" type="radio" ng-model="_superviseModule.publishRange" value="0">至所有用户</label>
-                                <label class="radio"><input class="form-control" type="radio" ng-model="_superviseModule.publishRange" value="1">至所属公司的用户</label>
+                                <label class="radio"><input class="form-control" type="radio" ng-model="_superviseModule.publishRange" ng-value="0">至所有用户</label>
+                                <label class="radio"><input class="form-control" type="radio" ng-model="_superviseModule.publishRange" ng-value="1">至所属公司的用户</label>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="" class="yc-col-3 control-label"> <span>*</span> 发布人：</label>
+                            <label class="yc-col-3 control-label"> <span>*</span> 发布人：</label>
                             <div class="yc-col-9">
                                 <input class="form-control" name="publishUser" type="text" disabled="disabled" ng-value="_superviseModule.publishUser">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="" class="yc-col-3 control-label"> <span>*</span> 发布角色：</label>
+                            <label class="yc-col-3 control-label"> <span>*</span> 发布角色：</label>
                             <div class="yc-col-9">
                                 <label class="radio" ng-repeat="r in _superviseModule.roleList">
-                                    <input class="form-control" type="radio" ng-model="_superviseModule.publishRoleId" value="{{r.id}}">
+                                    <input class="form-control" type="radio" ng-model="_superviseModule.publishRoleId" ng-value="r.id">
                                     {{r.roleName}}
                                 </label>
                             </div>
@@ -398,59 +398,59 @@
                 <div class="dialog-con">
                     
                     <div class="form-group">
-                        <label for="" class="yc-col-3 control-label"> 请确认操作：</label>
+                        <label class="yc-col-3 control-label"> 请确认操作：</label>
                         <div class="yc-col-9">
                             <p class="span-lh">作废创意</p>
                         </div>
                     </div>
 
                     <div class="form-group" ng-show="_deleListModule.haveAddAffcheRule">
-                        <label for="" class="yc-col-3 control-label"> 是否需要新增公告：</label>
+                        <label class="yc-col-3 control-label"> 是否需要新增公告：</label>
                         <div class="yc-col-9">
-                            <label class="radio"> <input class="form-control" ng-model="_deleListModule.isAddaffche" type="radio" value="0" ng-change="_deleListModule.change(0)"> 否 </label>
-                            <label class="radio"> <input class="form-control" ng-model="_deleListModule.isAddaffche" type="radio" value="1" ng-change="_deleListModule.change(1)"> 是 </label>
+                            <label class="radio"> <input class="form-control" ng-model="_deleListModule.isAddaffche" type="radio" ng-value="0" ng-change="_deleListModule.change(0)"> 否 </label>
+                            <label class="radio"> <input class="form-control" ng-model="_deleListModule.isAddaffche" type="radio" ng-value="1" ng-change="_deleListModule.change(1)"> 是 </label>
                         </div>
                     </div>
 
                     <div ng-show="_deleListModule.isAddaffche == 1">
                         <div class="form-group">
-                            <label for="" class="yc-col-3 control-label"> <span>*</span> 公告标题：</label>
+                            <label class="yc-col-3 control-label"> <span>*</span> 公告标题：</label>
                             <div class="yc-col-9">
                                 <input ng-class="{'border-error':_deleListModule.$valid && !_deleListModule.title}" class="form-control" name="myTitle" type="text" ng-placeholder="请输入公告名称" ng-model="_deleListModule.title">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="" class="yc-col-3 control-label"> <span>*</span> 公告内容：</label>
+                            <label class="yc-col-3 control-label"> <span>*</span> 公告内容：</label>
                             <div class="yc-col-9">
                                 <textarea ng-class="{'border-error':_deleListModule.$valid && !_deleListModule.content}" class="form-control affcheContent" ng-model="_deleListModule.content" maxlength="1500" name="myContent" ng-placeholder="请填写公告内容"></textarea>
                                 <span class="msg">您还可以输入{{1500-(_deleListModule.content.length || 0)}}个字</span>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="" class="yc-col-3 control-label"> 公告附件：</label>
+                            <label class="yc-col-3 control-label"> 公告附件：</label>
                             <div class="yc-col-9">
                                 <div class="yc-btn-web" id="affcheAddUpload"> 上 传 </div>
                                 <a padding-left target="_blank" ng-show="_deleListModule.noticeAttachment" ng-href="{{_deleListModule.noticeAttachment}}" title="{{_deleListModule.noticeAttachment}}">查看</a>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="" class="yc-col-3 control-label"> <span>*</span> 发布范围：</label>
+                            <label class="yc-col-3 control-label"> <span>*</span> 发布范围：</label>
                             <div class="yc-col-9">
-                                <label class="radio"><input class="form-control" type="radio" ng-model="_deleListModule.publishRange" value="0">至所有用户</label>
-                                <label class="radio"><input class="form-control" type="radio" ng-model="_deleListModule.publishRange" value="1">至所属公司的用户</label>
+                                <label class="radio"><input class="form-control" type="radio" ng-model="_deleListModule.publishRange" ng-value="0">至所有用户</label>
+                                <label class="radio"><input class="form-control" type="radio" ng-model="_deleListModule.publishRange" ng-value="1">至所属公司的用户</label>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="" class="yc-col-3 control-label"> <span>*</span> 发布人：</label>
+                            <label class="yc-col-3 control-label"> <span>*</span> 发布人：</label>
                             <div class="yc-col-9">
                                 <input class="form-control" name="publishUser" type="text" disabled="disabled" ng-value="_deleListModule.publishUser">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="" class="yc-col-3 control-label"> <span>*</span> 发布角色：</label>
+                            <label class="yc-col-3 control-label"> <span>*</span> 发布角色：</label>
                             <div class="yc-col-9">
                                 <label class="radio" ng-repeat="r in _deleListModule.roleList">
-                                    <input class="form-control" type="radio" ng-model="_deleListModule.publishRoleId" value="{{r.id}}">
+                                    <input class="form-control" type="radio" ng-model="_deleListModule.publishRoleId" ng-value="r.id">
                                     {{r.roleName}}
                                 </label>
                             </div>

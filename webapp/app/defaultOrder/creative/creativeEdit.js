@@ -7,7 +7,7 @@ app.controller("trueCreatelistEditCtrl", ['$scope', '$http', '$q','DefaultOrders
         $scope.creative = {};
 
         var id = getSearch("id");
-        var orderEdit = DefaultOrdersFty.defaultAdCreativeDetail({id:id}).success(function (res) {
+        var orderEdit = DefaultOrdersFty.defaultAdCreativeDetail({id:id}).then(function (res) {
             if(res && res.code == 200){
                 $scope.creative = res.adCreative;
 
@@ -47,7 +47,9 @@ app.controller("trueCreatelistEditCtrl", ['$scope', '$http', '$q','DefaultOrders
         };
 
         $scope.postEdit = function () {
-            DefaultOrdersFty.defaultAdCreativeUpdate($scope.creative).success(function (res) {
+            ycui.loading.show();
+            DefaultOrdersFty.defaultAdCreativeUpdate($scope.creative).then(function (res) {
+                ycui.loading.hide();
                 if (res && res.code == 200) {
                     ycui.alert({
                         content: res.msg,
@@ -72,7 +74,7 @@ app.controller("trueCreatelistEditCtrl", ['$scope', '$http', '$q','DefaultOrders
                 beforeFileQueued:function(uploader,file){
                     ycui.loading.show();
                     uploader.stop(file);
-                    UploadKeyFty.uploadKey().success(function (da) {
+                    UploadKeyFty.uploadKey().then(function (da) {
                         key = da.items;
                         uploader.upload(file);
                     });
@@ -153,7 +155,7 @@ app.controller("trueCreatelistEditCtrl", ['$scope', '$http', '$q','DefaultOrders
         //     uploader.on('beforeFileQueued', function (file) {
         //         ycui.loading.show();
         //         uploader.stop(file);
-        //         UploadKeyFty.uploadKey().success(function (da) {
+        //         UploadKeyFty.uploadKey().then(function (da) {
         //             key = da.items;
         //             uploader.upload(file);
         //         });

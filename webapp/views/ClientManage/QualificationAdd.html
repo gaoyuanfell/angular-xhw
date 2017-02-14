@@ -71,7 +71,9 @@
                     </tr>
                     <tr ng-repeat="file in files" repeat-finish="filesList">
                         <td>
-                            <i class="yc-icon pointer" ng-show="$index != 0" ng-click="fileRemove(file.id)">&#xe611;</i>
+                            <p text-center>
+                                <i class="yc-icon pointer" ng-show="$index != 0" ng-click="fileRemove(file.id)">&#xe611;</i>
+                            </p>
                         </td>
                         <td>
                             <input class="form-control" type="text" ng-model="file.name" ng-placeholder="请输入资质名称">

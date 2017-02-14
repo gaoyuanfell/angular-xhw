@@ -37,7 +37,7 @@ function pickerDateRange(inputId, options) {
         calendars: 2, // 展示的月份数，最大是2
         calendarsChoose: 2,//2为开始时间和结束时间都需要选择才能确认
         dayRangeMax: 0, // 日期最大范围(以天计算)
-        monthRangeMax: 12, // 日期最大范围(以月计算)
+        monthRangeMax: 12*100, // 日期最大范围(以月计算)
         dateTable: 'dateRangeDateTable', // 日期表格的CSS类
         selectCss: 'dateRangeSelected', // 时间选择的样式
         compareCss: 'dateRangeCompare', // 比较时间选择的样式

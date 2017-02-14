@@ -20,23 +20,23 @@ app.controller('departmentManageCtrl', ['$scope', '$http', 'SysDepartmentFty', '
             callback:function(){
                 ycui.loading.show();
                 $scope.query.pageIndex = 1;
-                SysDepartmentFty.departmentPageList($scope.query).success(modView);
+                SysDepartmentFty.departmentPageList($scope.query).then(modView);
             }
         }
-        var getCompany = SysDepartmentFty.getCompany().success(function (response) {
+        var getCompany = SysDepartmentFty.getCompany().then(function (response) {
             if (response && response.code == 200) {
                 $scope.companyListSel.list = response.companyList;
             }
         });
         $scope.query = {pageSize: pageSize,pageIndex:1};
 
-        SysDepartmentFty.departmentPageList($scope.query).success(modView);
+        SysDepartmentFty.departmentPageList($scope.query).then(modView);
 
 
         $scope.redirect = function (num, con) {
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.departmentName = $scope.query.search;
-            SysDepartmentFty.departmentPageList($scope.query).success(modView);
+            SysDepartmentFty.departmentPageList($scope.query).then(modView);
         };
     }]);

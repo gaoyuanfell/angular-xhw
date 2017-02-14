@@ -20,7 +20,7 @@ app.controller("createAddCtrl", ['$scope', '$http',
             ycui.loading.show();
             $http.post(baseUrl + postApi, {
                 types: ClearBr($scope.name)
-            }).success(function (response) {
+            }).then(function (response) {
                 ycui.loading.hide();
                 if (response && response.code == 200) {
                     ycui.alert({

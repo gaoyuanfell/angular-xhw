@@ -10,8 +10,13 @@
             <div class="item-header">
                 <span>创意{{$index+1}}</span>
                 <span>尺寸限制 <span ng-bind="ad.adSpaceTypeId == 9?(ad.size + ' ' + ad.size2):ad.size"></span></span>
-                <span>大小限制 <span ng-bind="ad.fileSizeLimit + 'KB'"></span></span>
-                <span>支持格式&emsp;gif, jpg , jpeg , bmp , png</span>
+
+                <span ng-show="ad.adSpaceTypeId != 21">大小限制 <span ng-bind="ad.fileSizeLimit + 'KB'"></span></span>
+                <span ng-show="ad.adSpaceTypeId != 21">支持格式&emsp;gif, jpg , jpeg , bmp , png</span>
+
+                <span ng-show="ad.adSpaceTypeId == 21">时长限制 <span ng-bind="ad.showTimeLimit + '秒'"></span></span>
+                <span ng-show="ad.adSpaceTypeId == 21">支持格式&emsp;mp4,flv</span>
+                
                 <a class="addAd" href="javascript:;" ng-click="data.adCreative()" ng-show="$index > 0">增加</a>
                 <a class="deleteAd" href="javascript:;" ng-click="ad.closeBox($index)" ng-show="$index > 0">删除</a>
             </div>
@@ -19,7 +24,7 @@
                 <label class="yc-col-3 control-label"><span>*</span> 创意类型：</label>
                 <div class="yc-col-9">
                     <label class="radio" ng-repeat="ca in ad.catagorysList">
-                        <input type="radio" class="form-control" ng-model="$parent.ad.catagory" value="{{ca.value}}">{{ca.name}}
+                        <input type="radio" class="form-control" ng-model="ad.catagory" ng-value="ca.value">{{ca.name}}
                     </label>
                 </div>
             </div>
@@ -32,14 +37,14 @@
                             <input ng-class="{'border-error':!ad.adCreativeName && config.$valid}" class="form-control" type="text" ng-model="ad.adCreativeName" placeholder="请输入创意名称">
                         </div>
                     </div>
-                    <div class="form-group" ng-hide="ad.adCreativeType == 1 || config.edit" ng-init="ad.urlLoadType == undefined && (ad.urlLoadType = 0)">
+                    <div class="form-group" ng-hide="ad.adCreativeType == 1 || config.edit">
                         <label class="yc-col-3 control-label"><span>*</span> 上传方式：</label>
                         <div class="yc-col-9">
                             <label class="radio">
-                                <input type="radio" class="form-control" ng-model="ad.urlLoadType" value="0"> 上传图片
+                                <input type="radio" class="form-control" ng-model="ad.urlLoadType" ng-value="0"> 上传图片
                             </label>
                             <label class="radio">
-                                <input type="radio" class="form-control" ng-model="ad.urlLoadType" value="1"> 填写地址
+                                <input type="radio" class="form-control" ng-model="ad.urlLoadType" ng-value="1"> 填写地址
                             </label>
                         </div>
                     </div>
@@ -108,7 +113,7 @@
                     <div class="form-group" ng-show="ad.adSpaceTypeId == 21">
                         <label class="yc-col-3 control-label"><span>*</span> 显示时长：</label>
                         <div class="yc-col-9">
-                            <input ng-class="{'border-error':(!ad.showTimeSeconds || ad.showTimeSeconds>ad.showTimeLimit|| ad.showTimeSeconds<=0) && config.$valid}" class="form-control" type="number" min="0" max="{{ad.showTimeLimit}}" ng-model="ad.showTimeSeconds" placeholder="请输入显示时长">
+                            <input disabled ng-class="{'border-error':(!ad.showTimeSeconds || ad.showTimeSeconds>ad.showTimeLimit|| ad.showTimeSeconds<=0) && config.$valid}" class="form-control" type="number" min="0" max="{{ad.showTimeLimit}}" ng-model="ad.showTimeSeconds" placeholder="请输入显示时长">
                             <span class="msg">(最大{{ad.showTimeLimit}}秒)</span>
                         </div>
                     </div>
@@ -116,6 +121,17 @@
                 </div>
                 <div class="item-right">
                     <div class="form-group" ng-hide="config.isContent">
+                        <label class="yc-col-3 control-label"> 填写落地页：</label>
+                        <div class="yc-col-9">
+                            <label class="radio">
+                                <input type="radio" class="form-control" ng-model="ad.useLandingPage" ng-value="0"> 是
+                            </label>
+                            <label class="radio">
+                                <input type="radio" class="form-control" ng-model="ad.useLandingPage" ng-value="-1"> 否
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-hide="config.isContent || ad.useLandingPage == -1">
                         <label class="yc-col-3 control-label"><span>*</span> 落地页：</label>
                         <div class="yc-col-9">
                             <textarea ng-class="{'border-error':(!ad.landingPage && config.$valid) || (config.testUrl(ad.landingPage) && config.$valid)}" class="form-control" ng-model="ad.landingPage" placeholder="请输入落地页地址"></textarea>
@@ -124,15 +140,15 @@
                     <div class="form-group" ng-if="ad.enableMonitor == 1">
                         <label class="yc-col-3 control-label"> 第三方监测：</label>
                         <div class="yc-col-9">
-                            <label class="radio"><input type="radio" class="form-control" ng-model="ad.monitorType" value="1">js</label>
-                            <label class="radio"><input type="radio" class="form-control" ng-model="ad.monitorType" value="2">image</label>
+                            <label class="radio"><input type="radio" class="form-control" ng-model="ad.monitorType" ng-value="1">js</label>
+                            <label class="radio"><input type="radio" class="form-control" ng-model="ad.monitorType" ng-value="2">image</label>
 
                             <!--示例-->
                             <span>
-                                <span class="pointer success" ng-show="ad.monitorType == 1" ng-title="{{'JS：\n http://adxjs.adpush.cn/bc/tjv1.js?src=6&g=0&pui=17&i=299&j=101&k=10'}}">
+                                <span class="pointer success" ng-show="ad.monitorType == 1" title="{{'JS：\n http://adxjs.adpush.cn/bc/tjv1.js?src=6&g=0&pui=17&i=299&j=101&k=10'}}">
                                     示例
                                 </span>
-                                <span class="pointer success" ng-show="ad.monitorType == 2" ng-title="{{'图片 ：\n http://cmp.adpush.cn/img.gif?src=6&g=0&refer=&pui=17&i=297&j=101&k=10'}}">
+                                <span class="pointer success" ng-show="ad.monitorType == 2" title="{{'图片 ：\n http://cmp.adpush.cn/img.gif?src=6&g=0&refer=&pui=17&i=297&j=101&k=10'}}">
                                     示例
                                 </span>
                             </span>
@@ -154,19 +170,19 @@
                     <div class="form-group" ng-if="ad.enableMark == 1">
                         <label class="yc-col-3 control-label"> 角标：</label>
                         <div class="yc-col-9">
-                            <div yc-select="ad.adMarkSelectSel" width="260" add="无" query="ad" resname="{{ad.adMarkName}}" value="adMarkId" key="id" name="adMarkName" placeholder="选择角标"></div>
+                            <div yc-select="ad.adMarkSelectSel" width="260" query="ad" resname="{{ad.adMarkName}}" value="adMarkId" key="id" name="adMarkName" placeholder="选择角标"></div>
                         </div>
                     </div>
                     <div class="form-group" ng-show="ad.adMarkId && ad.enableMark == 1">
                         <label class="yc-col-3 control-label"> 角标位置：</label>
                         <div class="yc-col-9">
                             <p class="col-list-p">
-                                <label class="radio"><input type="radio" class="form-control" ng-model="ad.adMarkArea" value="1">左上角</label>
-                                <label class="radio"><input type="radio" class="form-control" ng-model="ad.adMarkArea" value="2">左下角</label>
+                                <label class="radio"><input type="radio" class="form-control" ng-model="ad.adMarkArea" ng-value="1">左上角</label>
+                                <label class="radio"><input type="radio" class="form-control" ng-model="ad.adMarkArea" ng-value="2">左下角</label>
                             </p>
                             <p class="col-list-p">
-                                <label class="radio"><input type="radio" class="form-control" ng-model="ad.adMarkArea" value="3">右上角</label>
-                                <label class="radio"><input type="radio" class="form-control" ng-model="ad.adMarkArea" value="4">右下角</label>
+                                <label class="radio"><input type="radio" class="form-control" ng-model="ad.adMarkArea" ng-value="3">右上角</label>
+                                <label class="radio"><input type="radio" class="form-control" ng-model="ad.adMarkArea" ng-value="4">右下角</label>
                             </p>
                         </div>
                     </div>
@@ -181,24 +197,24 @@
                             <input ng-class="{'border-error':!ad.adCreativeName && config.$valid}" class="form-control" type="text" ng-model="ad.adCreativeName" placeholder="请输入创意名称">
                         </div>
                     </div>
-                    <div class="form-group" ng-init="ad.urlOrContent = 1">
+                    <div class="form-group">
                         <label class="yc-col-3 control-label"><span>*</span> 选择类型：</label>
                         <div class="yc-col-9">
-                            <label class="radio"><input type="radio" class="form-control" ng-model="ad.urlOrContent" value="1">url地址</label>
-                            <label class="radio"><input type="radio" class="form-control" ng-model="ad.urlOrContent" value="2">代码内容</label>
+                            <label class="radio"><input type="radio" class="form-control" ng-model="ad.urlOrContent" ng-value="1">url地址</label>
+                            <label class="radio"><input type="radio" class="form-control" ng-model="ad.urlOrContent" ng-value="2">代码内容</label>
 
                             <!--示例-->
                             <span>
-                                <span class="pointer success" ng-show="ad.urlOrContent == 1 && ad.catagory == 2" ng-title="{{'JS 地址：\n http://www.adpush.cn/test/adjs.js'}}">
+                                <span class="pointer success" ng-show="ad.urlOrContent == 1 && ad.catagory == 2" title="{{'JS 地址：\n http://www.adpush.cn/test/adjs.js'}}">
                                     示例
                                 </span>
-                                <span class="pointer success" ng-show="ad.urlOrContent == 2 && ad.catagory == 2" ng-title="{{'JS 代码 ：\n <script type=\'text/javascript\'> \n document.writeln(\'<img src=\'http://img.zcool.cn/community/010e0155fb96556ac7251df8c204de.jpg\'/>\');\n</script>'}}">
+                                <span class="pointer success" ng-show="ad.urlOrContent == 2 && ad.catagory == 2" title="{{'JS 代码 ：\n <script type=\'text/javascript\'> \n document.writeln(\'<img src=\'http://img.zcool.cn/community/010e0155fb96556ac7251df8c204de.jpg\'/>\');\n</script>'}}">
                                     示例
                                 </span>
-                                <span class="pointer success" ng-show="ad.urlOrContent == 1 && ad.catagory == 3" ng-title="{{'H5广告地址：\n http://www.adpush.cn/test/adhtml.html'}}">
+                                <span class="pointer success" ng-show="ad.urlOrContent == 1 && ad.catagory == 3" title="{{'H5广告地址：\n http://www.adpush.cn/test/adhtml.html'}}">
                                     示例
                                 </span>
-                                <span class="pointer success" ng-show="ad.urlOrContent == 2 && ad.catagory == 3" ng-title="{{'H5广告代码：\n <!DOCTYPE html>\n<html xmlns=\'http://www.w3.org/1999/xhtml\'>\n<head><meta http-equiv=\'Content-Type\' content=\'text/html; charset=utf-8\'/><title></title></head>\n<body>\n<img src=\'http://img.zcool.cn/community/01da3155fb976d32f875a1323b21b9.jpg\' />\n</body>\n</html>'}}">
+                                <span class="pointer success" ng-show="ad.urlOrContent == 2 && ad.catagory == 3" title="{{'H5广告代码：\n <!DOCTYPE html>\n<html xmlns=\'http://www.w3.org/1999/xhtml\'>\n<head><meta http-equiv=\'Content-Type\' content=\'text/html; charset=utf-8\'/><title></title></head>\n<body>\n<img src=\'http://img.zcool.cn/community/01da3155fb976d32f875a1323b21b9.jpg\' />\n</body>\n</html>'}}">
                                     示例
                                 </span>
                             </span>
@@ -226,7 +242,18 @@
                     </div>
                 </div>
                 <div class="item-right">
-                    <div class="form-group" ng-hide="config.isContent">
+                    <div class="form-group">
+                        <label class="yc-col-3 control-label"> 填写落地页：</label>
+                        <div class="yc-col-9">
+                            <label class="radio">
+                                <input type="radio" class="form-control" ng-model="ad.useLandingPage" ng-value="0"> 是
+                            </label>
+                            <label class="radio">
+                                <input type="radio" class="form-control" ng-model="ad.useLandingPage" ng-value="-1"> 否
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-hide="config.isContent || ad.useLandingPage == -1">
                         <label class="yc-col-3 control-label"><span>*</span> 落地页：</label>
                         <div class="yc-col-9">
                             <textarea ng-class="{'border-error':(!ad.landingPage && config.$valid) || (config.testUrl(ad.landingPage) && config.$valid)}" class="form-control" ng-model="ad.landingPage" placeholder="请输入落地页地址"></textarea>
@@ -235,15 +262,15 @@
                     <div class="form-group" ng-if="ad.enableMonitor == 1">
                         <label class="yc-col-3 control-label"> 第三方监测：</label>
                         <div class="yc-col-9">
-                            <label class="radio"><input type="radio" class="form-control" ng-model="ad.monitorType" value="1">js</label>
-                            <label class="radio"><input type="radio" class="form-control" ng-model="ad.monitorType" value="2">image</label>
+                            <label class="radio"><input type="radio" class="form-control" ng-model="ad.monitorType" ng-value="1">js</label>
+                            <label class="radio"><input type="radio" class="form-control" ng-model="ad.monitorType" ng-value="2">image</label>
 
                             <!--示例-->
                             <span>
-                                <span class="pointer success" ng-show="ad.monitorType == 1" ng-title="{{'JS：\n http://adxjs.adpush.cn/bc/tjv1.js?src=6&g=0&pui=17&i=299&j=101&k=10'}}">
+                                <span class="pointer success" ng-show="ad.monitorType == 1" title="{{'JS：\n http://adxjs.adpush.cn/bc/tjv1.js?src=6&g=0&pui=17&i=299&j=101&k=10'}}">
                                     示例
                                 </span>
-                                <span class="pointer success" ng-show="ad.monitorType == 2" ng-title="{{'图片 ：\n http://cmp.adpush.cn/img.gif?src=6&g=0&refer=&pui=17&i=297&j=101&k=10'}}">
+                                <span class="pointer success" ng-show="ad.monitorType == 2" title="{{'图片：\n http://cmp.adpush.cn/img.gif?src=6&g=0&refer=&pui=17&i=297&j=101&k=10'}}">
                                     示例
                                 </span>
                             </span>
@@ -265,22 +292,24 @@
                     <div class="form-group" ng-if="ad.enableMark == 1">
                         <label class="yc-col-3 control-label"> 角标：</label>
                         <div class="yc-col-9">
-                            <div yc-select="ad.adMarkSelectSel" width="260" add="无" query="ad" value="adMarkId" key="id" name="adMarkName" placeholder="选择角标"></div>
+                            <div yc-select="ad.adMarkSelectSel" width="260" query="ad" value="adMarkId" key="id" name="adMarkName" placeholder="选择角标"></div>
                         </div>
                     </div>
+
                     <div class="form-group" ng-show="ad.adMarkId && ad.enableMark == 1">
                         <label class="yc-col-3 control-label"> 角标位置：</label>
                         <div class="yc-col-9">
                             <p class="col-list-p">
-                                <label class="radio"><input type="radio" class="form-control" ng-model="ad.adMarkArea" value="1">左上角</label>
-                                <label class="radio"><input type="radio" class="form-control" ng-model="ad.adMarkArea" value="2">左下角</label>
+                                <label class="radio"><input type="radio" class="form-control" ng-model="ad.adMarkArea" ng-value="1">左上角</label>
+                                <label class="radio"><input type="radio" class="form-control" ng-model="ad.adMarkArea" ng-value="2">左下角</label>
                             </p>
                             <p class="col-list-p">
-                                <label class="radio"><input type="radio" class="form-control" ng-model="ad.adMarkArea" value="3">右上角</label>
-                                <label class="radio"><input type="radio" class="form-control" ng-model="ad.adMarkArea" value="4">右下角</label>
+                                <label class="radio"><input type="radio" class="form-control" ng-model="ad.adMarkArea" ng-value="3">右上角</label>
+                                <label class="radio"><input type="radio" class="form-control" ng-model="ad.adMarkArea" ng-value="4">右下角</label>
                             </p>
                         </div>
                     </div>
+                    
                 </div>
 
             </div>

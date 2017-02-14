@@ -20,11 +20,20 @@
     <script type="text/javascript" src="../../static/js/resourceManage.js"></script>
 </head>
 <body ng-controller="resLimitCtrl" class="advertiseManage">
-    <nav class="header">
-        <div class="scroll">
-            <a class="nav" data-route="ViewMediaChannelADSpace3">广告位列表</a>
-        </div>
-    </nav>
+
+<nav class="header">
+    <div class="scroll" ng-init="operationMa = 'advertise.html'">
+        <a class="nav" ng-class="{'active':operationMa == 'advertise.html'}" ng-click="operationMa = 'advertise.html';removePageIndex()">广告位列表</a>
+        <a class="nav" ng-class="{'active':operationMa == 'advertiseDis.html'}" ng-click="operationMa = 'advertiseDis.html';removePageIndex()">作废广告位列表</a>
+    </div>
+</nav>
+<div ng-include="operationMa"></div>
+    <!--<nav class="header">-->
+        <!--<div class="scroll">-->
+            <!--<a class="nav" data-route="ViewMediaChannelADSpace3">广告位列表</a>-->
+        <!--</div>-->
+    <!--</nav>-->
+<script type="text/ng-template" id="advertise.html">
     <div class="container" ng-controller="advertiseManageCtrl">
         <div class="button-group clear">
             <div class="button-g fl">
@@ -33,7 +42,7 @@
             </div>
             <div class="query-g fr">
 
-                <div yc-select="hasDefaultSel" width="100" query="query" value="hasDefault" key="id" placeholder="打底广告" session="res_adCreate_hasDefault" group="res-adCreate-create"></div>
+                <div yc-select="hasDefaultSel" width="100" query="query" value="hasDefault" key="id" placeholder="打底广告" add="全部" session="res_adCreate_hasDefault" group="res-adCreate-create"></div>
                 <div yc-select="stateSel" width="100" query="query" value="state" key="id" add="全部" placeholder="状态" session="res_adCreate_state" group="res-adCreate-create"></div>
                 <div yc-select="checkStateSel" width="100" query="query" value="checkState" key="id" add="全部" placeholder="审核状态" session="res_adCreate_checkState" group="res-adCreate-create"></div>
                 <div yc-select="mediaListSel" width="110" query="query" value="mediaId" key="id" add="全部" name="mediaName" placeholder="媒体" session="res_adCreate_mediaId" group="res-adCreate-create"></div>
@@ -53,63 +62,70 @@
         <div class="table-container">
             <table class="yc-table">
                 <thead>
-                    <tr>
-                        <th class="th30-min">ID</th>
-                        <th>广告位名称</th>
-                        <th class="th150-min">广告类型</th>
-                        <th class="th80-min">尺寸</th>
-                        <th>媒体</th>
-                        <th>频道</th>
-                        <th class="th130-min">刊例价 <i class="yc-icon pointer" title="刊例价：单击具体记录的刊例价，显示刊例价修改详情">&#xe622;</i></th>
-                        <th class="th80-min">打底广告</th>
-                        <th class="th60-min">状态</th>
-                        <th class="th110-min">审核状态</th>
-                        <th class="th180">操作</th>
-                    </tr>
+                <tr>
+                    <th class="th30-min">ID</th>
+                    <th class="th150">广告位名称</th>
+                    <th class="th120">广告类型</th>
+                    <th class="th80-min">尺寸</th>
+                    <th>媒体</th>
+                    <th>频道</th>
+                    <th class="th130-min">刊例价 <i class="yc-icon pointer" title="刊例价：单击具体记录的刊例价，显示刊例价修改详情">&#xe622;</i></th>
+                    <th class="th80-min">打底广告</th>
+                    <th class="th60-min">状态</th>
+                    <th class="th110-min">审核状态</th>
+                    <th class="th210">操作</th>
+                </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="item in items">
-                        <td ng-bind="::item.id"></td>
-                        <td>
-                            <span ng-bind="::item.adSpaceName" class="th170 ellipsis"></span>
-                        </td>
-                        <td ng-bind="::item.adSpaceTypeName"></td>
-                        <td ng-bind="::item.size"></td>
-                        <td title="{{item.mediaName}}">
-                            <span ng-bind="::item.mediaName" class="th100 ellipsis"></span>
-                        </td>
-                        <td title="{{item.mediaChannelName}}">
-                            <span ng-bind="::item.mediaChannelName" class="th50 ellipsis"></span>
-                        </td>
-                        <td>
-                            <i ng-if="resourceRule['EditADPrice']" class="yc-icon pointer" style="padding-left: 5px; color: #9c9c9c;" ng-click="editPriceCycle(item.id,item)">&#xe614;</i>
-                            <span ng-show="!item.price">刊例价</span>
-                            <a ng-show="item.price" href="javascript:void (0)" ng-click="priceCycleInfo(item.id,item.adSpaceName)">
-                                <span ng-bind="::item.price+'元/'+(item.priceCycle | isDay)"></span>
-                            </a>
-                        </td>
-                        <td>
-                            <span ng-show="item.enableBaseAd == 1">
-                                <a href="javascript:void(0)" ng-click="loadDefaultShow(item)" ng-bind="item.defaultUrl1?'已上传':'未上传'"></a>
+                <tr ng-repeat="item in items">
+                    <td ng-bind="::item.id"></td>
+                    <td title="{{item.adSpaceName}}">
+                        <span ng-bind="::item.adSpaceName" class="th150 ellipsis"></span>
+                    </td>
+                    <td title="item.adSpaceTypeName">
+                        <span ng-bind="::item.adSpaceTypeName" class="th120 ellipsis"></span>
+                    </td>
+                    <td ng-bind="::item.size"></td>
+                    <td title="{{item.mediaName}}">
+                        <span ng-bind="::item.mediaName" class="th100 ellipsis"></span>
+                    </td>
+                    <td title="{{item.mediaChannelName}}">
+                        <span ng-bind="::item.mediaChannelName" class="th50 ellipsis"></span>
+                    </td>
+                    <td>
+                        <i ng-if="resourceRule['EditADPrice'] && item.managePrice == 1" class="yc-icon pointer" style="padding-left: 5px; color: #9c9c9c;" ng-click="editPriceCycle(item.id,item)">&#xe614;</i>
+                        <span ng-show="!item.price">刊例价</span>
+                        <a ng-show="item.price" href="javascript:void (0)" ng-click="priceCycleInfo(item.id,item.adSpaceName)">
+                            <span ng-bind="::item.price+'元/'+(item.priceCycle | isDay)"></span>
+                        </a>
+                    </td>
+                    <td>
+                        <span ng-show="item.enableBaseAd == 1">
+                            <span ng-show="item.defaultUrl1">
+                                <a ng-click="loadDefaultShow(item)" href="javascript:void(0)">已上传</a>
+                                <i title="撤销" ng-show="item.manage == 1" ng-click="recoveryDefaultAd(item.id,item.adSpaceName)" class="yc-icon pointer">&#xe650;</i>
                             </span>
-                            <span ng-show="item.enableBaseAd == 0">
-                                不展示
-                            </span>
-                        </td>
-                        <td>{{::item.state | isOpen}} <i ng-show="item.state == -1" class="yc-icon pointer" title="{{item.disableRemark}}">&#xe622;</i></td>
-                        <td>{{(item.state ==-1?-1:item.checkState) | markState}}&nbsp;
-                            <a href="javascript:;"><i ng-if="item.checkState == 2" class="yc-icon" title="{{item.checkRemark||'没有填写原因'}}">&#xe622;</i></a>
-                        </td>
-                        <td>
-                            <a title="编辑广告位信息" ng-if="resourceRule['ManageMediaChannelADSpace']" href="javascript:;" data-route="ViewMediaChannelADSpace3Edit?id={{item.id}}">编辑</a>
-                            <a title="查看广告位信息" ng-if="!resourceRule['ManageMediaChannelADSpace']" href="javascript:;" data-route="ViewMediaChannelADSpace3Edit?id={{item.id}}">查看</a>
-                            <a title="获取JS代码" ng-click="showJs(item)" href="javascript:;" ng-hide="item.adSpaceTypeId == 8 && !item.focusTemplate">JS代码</a>
-                            <a title="审核广告位" ng-if="resourceRule['CheckADSpace'] && item.checkState == 0 && item.state == 0" href="javascript:;" ng-click="isPass(item)">审核</a>
-                            <a title="启用广告位信息" href="javascript:;" ng-click="reStartAdvertise(item.id,item.adSpaceName)" ng-if="resourceRule['ForbidAD'] && item.state == -1">启用</a>
-                            <a title="禁用广告位信息" href="javascript:;" ng-click="removeAdvertise(item.id,item.adSpaceName)" ng-if="resourceRule['ForbidAD'] && item.state == 0">禁用</a>
-                            <a title="预览创意" target="_blank" href="../xadn.html?id={{item.id}}">预览</a>
-                        </td>
-                    </tr>
+                            <a ng-click="loadDefaultShow(item)" ng-show="!item.defaultUrl1" href="javascript:void(0)">未上传</a>
+                        </span>
+                        <span ng-show="item.enableBaseAd == 0">
+                            不展示
+                        </span>
+                    </td>
+                    <td>{{::item.state | isOpen}} <i ng-show="item.state == -1" class="yc-icon pointer" title="{{item.disableRemark}}">&#xe622;</i></td>
+                    <td>{{(item.state ==-1?-1:item.checkState) | markState}}&nbsp;
+                        <a href="javascript:;"><i ng-if="item.checkState == 2" class="yc-icon" title="{{item.checkRemark||'没有填写原因'}}">&#xe622;</i></a>
+                    </td>
+                    <td>
+                        <a title="编辑广告位信息" ng-if="resourceRule['ManageMediaChannelADSpace'] && item.state == 0 && item.manage == 1" href="javascript:;" data-route="ViewMediaChannelADSpace3Edit?id={{item.id}}&state={{item.state}}&editManage={{item.manage}}">编辑</a>
+                        <a title="查看广告位信息" ng-if="!resourceRule['ManageMediaChannelADSpace'] || item.state == -1 || item.manage != 1" href="javascript:;" data-route="ViewMediaChannelADSpace3Edit?id={{item.id}}&state={{item.state}}&editManage={{item.manage}}">查看</a>
+                        <a title="获取JS代码" ng-click="showJs(item)" href="javascript:;" ng-hide="item.adSpaceTypeId == 8 && !item.focusTemplate">JS代码</a>
+                        <a title="审核广告位" ng-if="resourceRule['CheckADSpace'] && item.state == 0 && item.manageCheck == 1" href="javascript:;" ng-click="isPass(item)">审核</a>
+                        <a title="启用广告位" href="javascript:;" ng-click="reStartAdvertise(item.id,item.adSpaceName)" ng-if="resourceRule['ForbidAD'] && item.state == -1 && item.manageRestart == 1">启用</a>
+                        <a title="禁用广告位" href="javascript:;" ng-click="removeAdvertise(item.id,item.adSpaceName)" ng-if="resourceRule['ForbidAD'] && item.state == 0 && item.manageRestart == 1">禁用</a>
+                        <a title="作废广告位" href="javascript:;" ng-if="resourceRule['VoidAD'] && item.manageTerminate == 1" ng-click="invalidAD(item.id,item.adSpaceName)">作废</a>
+                        <a title="预览创意" target="_blank" href="../xadn.html?id={{item.id}}">预览</a>
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </div>
@@ -120,10 +136,10 @@
         <div class="dialog-bg hide jsCodeModule" yc-module="jsCodeModule" width="750">
             <div class="dialog-wraper">
                 <div class="dialog-title">
-					<span class="title">title</span>
-					<i class="dialog-close yc-icon">&#xe619;</i>
-				</div>
-				<div class="dialog-con">
+                    <span class="title">title</span>
+                    <i class="dialog-close yc-icon">&#xe619;</i>
+                </div>
+                <div class="dialog-con">
                     <div class="form-group" ng-show="_jsCodeModule.adSpaceTypeId == 8">
                         <label class="yc-col-3 control-label"> 焦点图模板代码：</label>
                         <div class="yc-col-8">
@@ -243,24 +259,24 @@
                             <span class="success" ng-show="_jsCodeModule.advertiseJsCode2">复制成功</span>
                         </div>
                     </div>-->
-                    
+
                 </div>
                 <div class="dialog-submit">
-					<a href="javascript:void(0)" class="ok">确定</a>
-					<a href="javascript:void(0)" class="no">取消</a>
-				</div>
+                    <a href="javascript:void(0)" class="ok">确定</a>
+                    <a href="javascript:void(0)" class="no">取消</a>
+                </div>
             </div>
         </div>
 
         <!--isPass 广告位审核-->
-        <div class="dialog-bg hide" yc-module="isPassModule" width="500">
+        <div class="dialog-bg hide" yc-module="isPassModule" width="750">
             <div class="dialog-wraper">
                 <div class="dialog-title">
-					<span class="title">title</span>
-					<i class="dialog-close yc-icon">&#xe619;</i>
-				</div>
-				<div class="dialog-con">
-                    <div class="form-group" ng-show="_isPassModule.adSpaceTypeId != 8">
+                    <span class="title">title</span>
+                    <i class="dialog-close yc-icon">&#xe619;</i>
+                </div>
+                <div class="dialog-con">
+                    <!--<div class="form-group" ng-show="_isPassModule.adSpaceTypeId != 8">
                         <label class="yc-col-4 control-label"> JS代码：</label>
                         <div class="yc-col-8">
                             <textarea style="height: 70px;" id="advertiseJsCode" placeholder ng-model="_isPassModule.jsCode" class="form-control"></textarea>
@@ -270,32 +286,32 @@
                             <div class="yc-btn-out" ng-click="_isPassModule.copyBtn()">复制</div>
                             <span class="success" ng-show="_isPassModule.copyBtnSuccess">复制成功</span>
                         </div>
-                    </div>
+                    </div>-->
                     <div class="form-group">
                         <label class="yc-col-4 control-label"> 支持创意类型：</label>
                         <div class="yc-col-8">
-                            <label ng-repeat="c in _isPassModule.catagorysList" class="checkbox"> <input disabled type="checkbox" class="form-control" ng-model="c.$check" value="{{c.id}}"> {{c.name}} </label>
+                            <label ng-repeat="c in _isPassModule.catagorysList" class="checkbox"> <input disabled type="checkbox" class="form-control" ng-model="c.$check" ng-value="c.id"> {{c.name}} </label>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="yc-col-4 control-label"> 是否支持角标：</label>
                         <div class="yc-col-8">
-                            <label class="radio"> <input type="radio" class="form-control" disabled ng-model="_isPassModule.enableMark" value="1"> 支持 </label>
-                            <label class="radio"> <input type="radio" class="form-control" disabled ng-model="_isPassModule.enableMark" value="0"> 不支持 </label>
+                            <label class="radio"> <input type="radio" class="form-control" disabled ng-model="_isPassModule.enableMark" ng-value="1"> 支持 </label>
+                            <label class="radio"> <input type="radio" class="form-control" disabled ng-model="_isPassModule.enableMark" ng-value="0"> 不支持 </label>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="yc-col-4 control-label"> 是否展示打底广告：</label>
                         <div class="yc-col-8">
-                            <label class="radio"> <input type="radio" class="form-control" disabled ng-model="_isPassModule.enableBaseAd" value="1"> 是 </label>
-                            <label class="radio"> <input type="radio" class="form-control" disabled ng-model="_isPassModule.enableBaseAd" value="0"> 否 </label>
+                            <label class="radio"> <input type="radio" class="form-control" disabled ng-model="_isPassModule.enableBaseAd" ng-value="1"> 是 </label>
+                            <label class="radio"> <input type="radio" class="form-control" disabled ng-model="_isPassModule.enableBaseAd" ng-value="0"> 否 </label>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="yc-col-4 control-label"> 是否支持第三方监测：</label>
                         <div class="yc-col-8">
-                            <label class="radio"> <input type="radio" class="form-control" disabled ng-model="_isPassModule.enableMonitor" value="1"> 支持 </label>
-                            <label class="radio"> <input type="radio" class="form-control" disabled ng-model="_isPassModule.enableMonitor" value="0"> 不支持 </label>
+                            <label class="radio"> <input type="radio" class="form-control" disabled ng-model="_isPassModule.enableMonitor" ng-value="1"> 支持 </label>
+                            <label class="radio"> <input type="radio" class="form-control" disabled ng-model="_isPassModule.enableMonitor" ng-value="0"> 不支持 </label>
                         </div>
                     </div>
                     <div class="form-group" ng-show="_isPassModule.adSpaceTypeId == 21">
@@ -308,16 +324,51 @@
                     <div class="form-group">
                         <label class="yc-col-4 control-label"> 审核意见：</label>
                         <div class="yc-col-8">
-                            <label class="radio"> <input type="radio" class="form-control" ng-model="_isPassModule.checkState" value="1"> 审核通过 </label>
-                            <label class="radio"> <input type="radio" class="form-control" ng-model="_isPassModule.checkState" value="2"> 审核不通过 </label>
+                            <label class="radio"> <input type="radio" class="form-control" ng-model="_isPassModule.checkState" ng-value="1"> 审核通过 </label>
+                            <label class="radio"> <input type="radio" class="form-control" ng-model="_isPassModule.checkState" ng-value="2"> 审核不通过 </label>
                         </div>
                     </div>
+
+                    <div class="form-group" ng-show="_isPassModule.$adSpaceType1 && _isPassModule.checkState == 1">
+                        <label class="yc-col-4 control-label"> 居上留白距离：</label>
+                        <div class="yc-col-8">
+                            <input type="text" min="0" class="form-control small" ng-model="_isPassModule.freeDistance" reg-input-ftr="[^0-9]">
+                            <span class="msg">像素（正整数）</span>
+                            <span class="tag-span" ng-click="_isPassModule.freeDistance = 5">5像素</span>
+                            <span class="tag-span" ng-click="_isPassModule.freeDistance = 10">10像素</span>
+                            <span class="tag-span" ng-click="_isPassModule.freeDistance = 20">20像素</span>
+                            <span class="tag-span" ng-click="_isPassModule.freeDistance = 0">无</span>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="_isPassModule.$adSpaceType1 && _isPassModule.checkState == 1">
+                        <label class="yc-col-4 control-label"> 居下留白距离：</label>
+                        <div class="yc-col-8">
+                            <input type="text" min="0" class="form-control small" ng-model="_isPassModule.freeDistanceBot" reg-input-ftr="[^0-9]">
+                            <span class="msg">像素（正整数）</span>
+                            <span class="tag-span" ng-click="_isPassModule.freeDistanceBot = 5">5像素</span>
+                            <span class="tag-span" ng-click="_isPassModule.freeDistanceBot = 10">10像素</span>
+                            <span class="tag-span" ng-click="_isPassModule.freeDistanceBot = 20">20像素</span>
+                            <span class="tag-span" ng-click="_isPassModule.freeDistanceBot = 0">无</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group" ng-show="_isPassModule.$adSpaceType2 && _isPassModule.checkState == 1">
+                        <label class="yc-col-4 control-label"> 文字链样式：</label>
+                        <div class="yc-col-8">
+                            <label class="radio"> <input type="radio" class="form-control" ng-model="_isPassModule.textLinkStyle" ng-value="1"> 标准样式 </label>
+                            <label class="radio"> <input type="radio" class="form-control" ng-model="_isPassModule.textLinkStyle" ng-value="2"> 新华网美编样式
+                                <!--<i title="新华网美编样式：由新华网美编控制文字链样式" class="yc-icon pointer">&#xe622;</i> -->
+                                <span class="error">(由新华网美编控制文字链样式)</span>
+                            </label>
+                        </div>
+                    </div>
+
                     <div class="form-group" ng-show="_isPassModule.adSpaceTypeId == 8 && _isPassModule.checkState == 1">
                         <label class="yc-col-4 control-label"> JS模板：</label>
                         <div class="yc-col-8">
-                            <textarea style="height: 70px;" placeholder ng-model="_isPassModule.focusTemplate" class="form-control"></textarea>
+                            <textarea style="height: 70px;width: 350px" placeholder ng-model="_isPassModule.focusTemplate" class="form-control"></textarea>
                             <p>
-                                <pre>宏变量说明：【图片地址: <%src%>】【 落地页地址: <%link%>】【广告标题: <%title%>】</pre>
+                            <pre>宏变量说明：【图片地址: <%src%>】【 落地页地址: <%link%>】【广告标题: <%title%>】</pre>
                             </p>
                         </div>
                     </div>
@@ -330,43 +381,85 @@
 
                 </div>
                 <div class="dialog-submit">
-					<a href="javascript:void(0)" class="ok">确定</a>
-					<a href="javascript:void(0)" class="no">取消</a>
-				</div>
+                    <a href="javascript:void(0)" class="ok">确定</a>
+                    <a href="javascript:void(0)" class="no">取消</a>
+                </div>
             </div>
         </div>
 
 
         <!--禁用广告位-->
-        <div class="dialog-bg hide" yc-module="disableModule">
+        <div class="dialog-bg hide" yc-module="disableModule" width="600">
             <div class="dialog-wraper">
                 <div class="dialog-title">
-					<span class="title">title</span>
-					<i class="dialog-close yc-icon">&#xe619;</i>
-				</div>
-				<div class="dialog-con">
+                    <span class="title">title</span>
+                    <i class="dialog-close yc-icon">&#xe619;</i>
+                </div>
+                <div class="dialog-con">
                     <div class="form-group">
-                        <label class="yc-col-2 control-label"> 备注：</label>
-                        <div class="yc-col-10">
-                            <textarea ng-class="{'border-error':!_disableModule.remark && _disableModule.$valid}"  ng-model="_disableModule.remark" class="form-control" placeholder="请输入备注"></textarea>
+                        <label class="yc-col-3 control-label"> <span>*</span> 禁用备注：</label>
+                        <div class="yc-col-9">
+                            <textarea style="height: 80px;" ng-class="{'border-error':!_disableModule.remark && _disableModule.$valid}"  ng-model="_disableModule.remark" class="form-control" placeholder="请输入备注"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="yc-col-3 control-label"> <span>*</span> 公告标题：</label>
+                        <div class="yc-col-9">
+                            <input ng-class="{'border-error':_disableModule.$valid && !_disableModule.title}" class="form-control" name="myTitle" type="text" ng-placeholder="请输入公告名称" ng-model="_disableModule.title">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="yc-col-3 control-label"> <span>*</span> 公告内容：</label>
+                        <div class="yc-col-9">
+                            <textarea style="height: 80px;" ng-class="{'border-error':_disableModule.$valid && !_disableModule.content}" class="form-control affcheContent" ng-model="_disableModule.content" maxlength="1500" name="myContent" ng-placeholder="请填写公告内容"></textarea>
+                            <span class="msg">您还可以输入{{1500-(_disableModule.content.length || 0)}}个字</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="yc-col-3 control-label"> 公告附件：</label>
+                        <div class="yc-col-9">
+                            <div class="yc-btn-web" id="affcheAddUpload"> 上 传 </div>
+                            <a padding-left target="_blank" ng-show="_disableModule.noticeAttachment" ng-href="{{_disableModule.noticeAttachment}}" title="{{_disableModule.noticeAttachment}}">查看</a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="yc-col-3 control-label"> <span>*</span> 发布范围：</label>
+                        <div class="yc-col-9">
+                            <label class="radio"><input class="form-control" type="radio" ng-model="_disableModule.publishRange" ng-value="0">至所有用户</label>
+                            <label class="radio"><input class="form-control" type="radio" ng-model="_disableModule.publishRange" ng-value="1">至所属公司的用户</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="yc-col-3 control-label"> <span>*</span> 发布人：</label>
+                        <div class="yc-col-9">
+                            <input class="form-control" name="publishUser" type="text" disabled="disabled" ng-value="_disableModule.publishUser">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="yc-col-3 control-label"> <span>*</span> 发布角色：</label>
+                        <div class="yc-col-9">
+                            <label class="radio" ng-repeat="r in _disableModule.roleList">
+                                <input class="form-control" type="radio" ng-model="_disableModule.publishRoleId" ng-value="r.id">
+                                {{r.roleName}}
+                            </label>
                         </div>
                     </div>
                 </div>
                 <div class="dialog-submit">
-					<a href="javascript:void(0)" class="ok">确定</a>
-					<a href="javascript:void(0)" class="no">取消</a>
-				</div>
+                    <a href="javascript:void(0)" class="ok">确定</a>
+                    <a href="javascript:void(0)" class="no">取消</a>
+                </div>
             </div>
         </div>
 
         <!--修改刊例价-->
         <div class="dialog-bg hide" yc-module="advertiseModule" width="470">
-			<div class="dialog-wraper">
-				<div class="dialog-title">
-					<span class="title">title</span>
-					<i class="dialog-close yc-icon">&#xe619;</i>
-				</div>
-				<div class="dialog-con">
+            <div class="dialog-wraper">
+                <div class="dialog-title">
+                    <span class="title">title</span>
+                    <i class="dialog-close yc-icon">&#xe619;</i>
+                </div>
+                <div class="dialog-con">
                     <div class="form-group">
                         <label class="yc-col-3 control-label"> 广告位名称：</label>
                         <div class="yc-col-9">
@@ -383,9 +476,9 @@
                     <div class="form-group">
                         <label class="yc-col-3 control-label"> 刊例单位：</label>
                         <div class="yc-col-9">
-                            <label class="radio"> <input type="radio" ng-model="_advertiseModule.priceCycle" class="form-control" value="1"> 天 </label>
-                            <label class="radio"> <input type="radio" ng-model="_advertiseModule.priceCycle" class="form-control" value="2"> 月 </label>
-                            <label class="radio"> <input type="radio" ng-model="_advertiseModule.priceCycle" class="form-control" value="3"> 小时 </label>
+                            <label class="radio"> <input type="radio" ng-model="_advertiseModule.priceCycle" class="form-control" ng-value="1"> 天 </label>
+                            <label class="radio"> <input type="radio" ng-model="_advertiseModule.priceCycle" class="form-control" ng-value="2"> 月 </label>
+                            <label class="radio"> <input type="radio" ng-model="_advertiseModule.priceCycle" class="form-control" ng-value="3"> 小时 </label>
                         </div>
                     </div>
                     <div class="form-group">
@@ -396,13 +489,13 @@
                         </div>
                     </div>
 
-				</div>
-				<div class="dialog-submit">
-					<a href="javascript:void(0)" class="ok">确定</a>
-					<a href="javascript:void(0)" class="no">取消</a>
-				</div>
-			</div>
-		</div>
+                </div>
+                <div class="dialog-submit">
+                    <a href="javascript:void(0)" class="ok">确定</a>
+                    <a href="javascript:void(0)" class="no">取消</a>
+                </div>
+            </div>
+        </div>
 
 
         <!--刊例导出-->
@@ -439,8 +532,8 @@
                     <div class="form-group">
                         <label class="yc-col-4 control-label"> 是否展示打底广告：</label>
                         <div class="yc-col-8">
-                            <label class="radio"> <input type="radio" class="form-control" disabled ng-model="_moduleDefaultShow.enableBaseAd" value="1"> 是 </label>
-                            <label class="radio"> <input type="radio" class="form-control" disabled ng-model="_moduleDefaultShow.enableBaseAd" value="0"> 否 </label>
+                            <label class="radio"> <input type="radio" class="form-control" disabled ng-model="_moduleDefaultShow.enableBaseAd" ng-value="1"> 是 </label>
+                            <label class="radio"> <input type="radio" class="form-control" disabled ng-model="_moduleDefaultShow.enableBaseAd" ng-value="0"> 否 </label>
                         </div>
                     </div>
 
@@ -448,16 +541,16 @@
                         <div class="form-group">
                             <label class="yc-col-4 control-label"> 上传方式：</label>
                             <div class="yc-col-8">
-                                <label class="radio"> <input type="radio" class="form-control" ng-model="_moduleDefaultShow.urlLoadType" value="0"> 上传图片 </label>
-                                <label class="radio"> <input type="radio" class="form-control" ng-model="_moduleDefaultShow.urlLoadType" value="1"> 填写地址 </label>
+                                <label class="radio"> <input type="radio" class="form-control" ng-model="_moduleDefaultShow.urlLoadType" ng-value="0"> 上传图片 </label>
+                                <label class="radio"> <input type="radio" class="form-control" ng-model="_moduleDefaultShow.urlLoadType" ng-value="1"> 填写地址 </label>
                             </div>
                         </div>
 
                         <div class="form-group" ng-show="_moduleDefaultShow.urlLoadType == 1">
                             <label class="yc-col-4 control-label"> </label>
                             <div class="yc-col-8">
-                                <input type="text" class="form-control" ng-class="{'border-error':!_moduleDefaultShow.defaultUrl1 && config.$valid}" 
-                                ng-model="_moduleDefaultShow.defaultUrl1" placeholder="请填写打底广告地址" ng-change="_moduleDefaultShow.loadImg(_moduleDefaultShow,_moduleDefaultShow.defaultUrl1,'left')">
+                                <input type="text" class="form-control" ng-class="{'border-error':!_moduleDefaultShow.defaultUrl1 && config.$valid}"
+                                       ng-model="_moduleDefaultShow.defaultUrl1" placeholder="请填写打底广告地址" ng-change="_moduleDefaultShow.loadImg(_moduleDefaultShow,_moduleDefaultShow.defaultUrl1,'left')">
                                 <span class="error" ng-show="_moduleDefaultShow.$sizesError1" ng-bind="_moduleDefaultShow.$sizesError1"></span>
                             </div>
                         </div>
@@ -465,8 +558,8 @@
                         <div class="form-group" ng-show="_moduleDefaultShow.urlLoadType == 1 && _moduleDefaultShow.size2">
                             <label class="yc-col-4 control-label"> </label>
                             <div class="yc-col-8">
-                                <input type="text" class="form-control" ng-class="{'border-error':!_moduleDefaultShow.defaultUrl2 && config.$valid}" 
-                                ng-model="_moduleDefaultShow.defaultUrl2" placeholder="请填写打底广告地址" ng-change="_moduleDefaultShow.loadImg(_moduleDefaultShow,_moduleDefaultShow.defaultUrl2,'right')">
+                                <input type="text" class="form-control" ng-class="{'border-error':!_moduleDefaultShow.defaultUrl2 && config.$valid}"
+                                       ng-model="_moduleDefaultShow.defaultUrl2" placeholder="请填写打底广告地址" ng-change="_moduleDefaultShow.loadImg(_moduleDefaultShow,_moduleDefaultShow.defaultUrl2,'right')">
                                 <span class="error" ng-show="_moduleDefaultShow.$sizesError2" ng-bind="_moduleDefaultShow.$sizesError2"></span>
                             </div>
                         </div>
@@ -483,21 +576,21 @@
                                 <p class="error" ng-show="_moduleDefaultShow.sizeError" ng-bind="_moduleDefaultShow.sizeErrorStr"></p>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" ng-show="_moduleDefaultShow.html1 || _moduleDefaultShow.html2">
                             <label class="yc-col-4 control-label"> </label>
                             <div class="yc-col-8">
                                 <div class="showPhoto" ng-bind-html="_moduleDefaultShow.html1 | HtmlFtr"></div>
                                 <div class="showPhoto" ng-bind-html="_moduleDefaultShow.html2 | HtmlFtr"></div>
-                                <p ng-show="(_moduleDefaultShow.$$is2 && !_moduleDefaultShow.html2 && _moduleDefaultShow.$valid) || !_moduleDefaultShow.html1 && _moduleDefaultShow.$valid">
-                                    请上传图片
+                                <p ng-show="_moduleDefaultShow.urlLoadType == 0 && (!_moduleDefaultShow.defaultUrl1 || (_moduleDefaultShow.size2 && !_moduleDefaultShow.defaultUrl2)) && !_moduleDefaultShow.sizeError && _moduleDefaultShow.$valid">
+                                    <span class="error">请上传图片</span>
+                                </p>
+                                <p ng-show="_moduleDefaultShow.urlLoadType == 1 && ((!_moduleDefaultShow.defaultUrl1 && !_moduleDefaultShow.$sizesError1) || (_moduleDefaultShow.size2 && !_moduleDefaultShow.defaultUrl2 && !_moduleDefaultShow.$sizesError2)) && _moduleDefaultShow.$valid">
+                                    <span class="error">请上传图片</span>
                                 </p>
                             </div>
                         </div>
-
                     </div>
 
-                        
-                        
                     <div class="form-group">
                         <label class="yc-col-4 control-label"> 落地页：</label>
                         <div class="yc-col-8">
@@ -507,15 +600,14 @@
                     </div>
                 </div>
                 <div class="dialog-submit">
-                    <a ng-show="resourceRule['ManageMediaChannelADSpace']" href="javascript:void(0)" class="ok">确定</a>
+                    <a ng-show="resourceRule['ManageMediaChannelADSpace'] && _moduleDefaultShow.manage == 1" href="javascript:void(0)" class="ok">确定</a>
                     <a href="javascript:void(0)" class="no">取消</a>
                 </div>
             </div>
         </div>
 
-
-
-        <!--<div class="dialog-bg hide moduleDefault" yc-module="moduleDefault" width="450">
+        <!--作废广告位-->
+        <div class="dialog-bg hide" yc-module="invalidADModule">
             <div class="dialog-wraper">
                 <div class="dialog-title">
                     <span class="title">title</span>
@@ -523,48 +615,188 @@
                 </div>
                 <div class="dialog-con">
                     <div class="form-group">
-                        <label class="yc-col-4 control-label"> 是否展示打底广告：</label>
-                        <div class="yc-col-8">
-                            <label class="radio"> <input type="radio" class="form-control" disabled ng-model="_moduleDefaultShow.enableBaseAd" value="1"> 是 </label>
-                            <label class="radio"> <input type="radio" class="form-control" disabled ng-model="_moduleDefaultShow.enableBaseAd" value="0"> 否 </label>
-                        </div>
-                    </div>
-                    <div class="form-group" ng-show="_moduleDefaultShow.enableBaseAd == 1">
-                        <label class="yc-col-4 control-label"> 打底广告上传：</label>
-                        <div class="yc-col-8">
-                            <div class="yc-btn-web" id="enableBaseAd">上 传</div>
-                            <span class="msg" ng-bind="_moduleDefaultShow.size"></span>
-                            <div ng-show="_moduleDefaultShow.$$is2" class="yc-btn-web" id="enableBaseAd2">上 传</div>
-                            <span class="msg" ng-bind="_moduleDefaultShow.size2"></span>
-                            <p class="error" ng-show="_moduleDefaultShow.sizeError" ng-bind="_moduleDefaultShow.sizeErrorStr"></p>
-                        </div>
-                    </div>
-                    <div class="form-group" ng-show="_moduleDefaultShow.enableBaseAd == 1">
-                        <label class="yc-col-4 control-label"> </label>
-                        <div class="yc-col-8">
-                            <div class="showPhoto" ng-bind-html="_moduleDefaultShow.html1 | HtmlFtr"></div>
-                            <div class="showPhoto" ng-bind-html="_moduleDefaultShow.html2 | HtmlFtr"></div>
-                            <p ng-show="(_moduleDefaultShow.$$is2 && !_moduleDefaultShow.html2 && _moduleDefaultShow.$valid) || !_moduleDefaultShow.html1 && _moduleDefaultShow.$valid">
-                                请上传图片
-                            </p>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="yc-col-4 control-label"> 落地页：</label>
-                        <div class="yc-col-8">
-                            <input type="text" class="form-control" ng-model="_moduleDefaultShow.defaultLandingPage">
-                            <span class="error" ng-show="_moduleDefaultShow.$valid && !_moduleDefaultShow.defaultLandingPage">请填写落地页</span>
+                        <label class="yc-col-3 control-label"> 备注：</label>
+                        <div class="yc-col-9">
+                            <textarea class="form-control" ng-class="{'border-error':!invalidADModule.remark && invalidADModule.$valid}" ng-model="invalidADModule.remark" maxlength="150" placeholder="请输入备注"></textarea>
+                            <span class="msg">{{150-invalidADModule.remark.length}}/150</span>
+                            <br>
+                            <span style="padding-left: 0px" class="error">说明：作废广告位不可还原，请谨慎操作！</span>
                         </div>
                     </div>
                 </div>
                 <div class="dialog-submit">
-                    <a ng-show="resourceRule['ManageMediaChannelADSpace']" href="javascript:void(0)" class="ok">确定</a>
+                    <a href="javascript:void(0)" class="ok">确定</a>
                     <a href="javascript:void(0)" class="no">取消</a>
                 </div>
             </div>
-        </div>-->
-
-
+        </div>
     </div>
+</script>
+
+<script type="text/ng-template" id="advertiseDis.html">
+    <div class="container" ng-controller="advertiseManageDisCtrl">
+        <div class="button-group clear">
+            <div class="button-g fl">
+                <div yc-select="hasDefaultSel" width="100" query="query" value="hasDefault" key="id" placeholder="打底广告" add="全部" session="res_adCreate_hasDefault_dis" group="res-adCreate-create"></div>
+                <!--<div yc-select="stateSel" width="100" query="query" value="state" key="id" add="全部" placeholder="状态" session="res_adCreate_state_dis" group="res-adCreate-create"></div>-->
+                <div yc-select="checkStateSel" width="100" query="query" value="checkState" key="id" add="全部" placeholder="审核状态" session="res_adCreate_checkState_dis" group="res-adCreate-create"></div>
+                <div yc-select="mediaListSel" width="110" query="query" value="mediaId" key="id" add="全部" name="mediaName" placeholder="媒体" session="res_adCreate_mediaId_dis" group="res-adCreate-create"></div>
+                <div yc-select="channelListSel" width="100" query="query" value="mediaChannelId" key="id" add="全部" name="channelName" placeholder="频道" session="res_adCreate_mediaChannelId_dis" group="res-adCreate-create"></div>
+                <div yc-select="typeListSel" width="150" query="query" value="adSpaceTypeId" key="id" add="全部" placeholder="广告类型" session="res_adCreate_adSpaceTypeId_dis" group="res-adCreate-create"></div>
+                <div yc-select="sizeListSel" width="150" query="query" value="size" key="size" placeholder="尺寸" add="全部" session="res_adCreate_size_dis" group="res-adCreate-create" name="size"></div>
+            </div>
+            <div class="query-g fr">
+                <div class="icon-input">
+                    <input class="form-control" type="text" ng-placeholder="请输入广告位名称或ID" ng-model="query.search">
+                    <span class="icon">
+                        <i class="yc-icon calendars" ng-click="redirect(1,search)">&#xe60b;</i>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="yc-table">
+                <thead>
+                <tr>
+                    <th class="th30-min">ID</th>
+                    <th class="th150">广告位名称</th>
+                    <th class="th120">广告类型</th>
+                    <th class="th80-min">尺寸</th>
+                    <th>媒体</th>
+                    <th>频道</th>
+                    <th class="th130-min">刊例价 <i class="yc-icon pointer" title="刊例价：单击具体记录的刊例价，显示刊例价修改详情">&#xe622;</i></th>
+                    <th class="th80-min">打底广告</th>
+                    <th class="th60-min">状态</th>
+                    <th class="th110-min">审核状态</th>
+                    <th class="th80">作废备注</th>
+                    <th class="th210">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="item in items">
+                    <td ng-bind="::item.id"></td>
+                    <td title="{{item.adSpaceName}}">
+                        <span ng-bind="::item.adSpaceName" class="th150 ellipsis"></span>
+                    </td>
+                    <td title="item.adSpaceTypeName">
+                        <span ng-bind="::item.adSpaceTypeName" class="th120 ellipsis"></span>
+                    </td>
+                    <td ng-bind="::item.size"></td>
+                    <td title="{{item.mediaName}}">
+                        <span ng-bind="::item.mediaName" class="th100 ellipsis"></span>
+                    </td>
+                    <td title="{{item.mediaChannelName}}">
+                        <span ng-bind="::item.mediaChannelName" class="th50 ellipsis"></span>
+                    </td>
+                    <td>
+                        <span ng-show="!item.price">刊例价</span>
+                        <a ng-show="item.price" href="javascript:void (0)" ng-click="priceCycleInfo(item.id,item.adSpaceName)">
+                            <span ng-bind="::item.price+'元/'+(item.priceCycle | isDay)"></span>
+                        </a>
+                    </td>
+                    <td>
+                        <span ng-show="item.enableBaseAd == 1">
+                            <span ng-bind="item.defaultUrl1?'已上传':'未上传'"></span>
+                        </span>
+                        <span ng-show="item.enableBaseAd == 0">
+                            不展示
+                        </span>
+                    </td>
+                    <td>{{::item.state | isOpen}} <i ng-show="item.state == -1" class="yc-icon pointer" title="{{item.disableRemark}}">&#xe622;</i></td>
+                    <td>{{(item.state ==-1?-1:item.checkState) | markState}}&nbsp;
+                        <a href="javascript:;"><i ng-if="item.checkState == 2" class="yc-icon" title="{{item.checkRemark||'没有填写原因'}}">&#xe622;</i></a>
+                    </td>
+                    <td title="{{item.remark}}">
+                        <span ng-bind="::item.remark" class="th80 ellipsis"></span>
+                    </td>
+                    <td>
+                        <a title="查看广告位信息" href="javascript:;" data-route="ViewMediaChannelADSpace3Edit?id={{item.id}}&state=-1">查看</a>
+                        <a title="获取JS代码" ng-click="showJs(item)" href="javascript:;" ng-hide="item.adSpaceTypeId == 8 && !item.focusTemplate">JS代码</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="client-judge" ng-if="total_page<1">您好，暂时没有符合条件的任何数据</div>
+        <div ng-show="total_page>0" yc-page page="page" redirect="redirect(page.page,search)" query="query"></div>
+
+        <!--JS代码copy-->
+        <div class="dialog-bg hide jsCodeModule" yc-module="jsCodeModule" width="750">
+            <div class="dialog-wraper">
+                <div class="dialog-title">
+                    <span class="title">title</span>
+                    <i class="dialog-close yc-icon">&#xe619;</i>
+                </div>
+                <div class="dialog-con">
+                    <div class="form-group" ng-show="_jsCodeModule.adSpaceTypeId == 8">
+                        <label class="yc-col-3 control-label"> 焦点图模板代码：</label>
+                        <div class="yc-col-8">
+                            <textarea style="height: 80px;width: 500px;" placeholder readonly ng-model="_jsCodeModule.focusTemplate" class="form-control"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="yc-col-3 control-label" style="font-weight: 700;"> 加载方式1：</label>
+                        <div class="yc-col-9">
+                            <p style="padding-top: 7px;">延迟加载</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="yc-col-3 control-label"> 广告位代码：</label>
+                        <div class="yc-col-8">
+                            <textarea style="height: 35px;width: 500px;" id="advertiseJsCode6" placeholder readonly ng-model="_jsCodeModule.JSdelayed" class="form-control"></textarea>
+                            <p>将此广告位代码放到对应容器(div)即可,并且在页面底部添加广告基础代码</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="yc-col-3 control-label"> </label>
+                        <div class="yc-col-8">
+                            <div class="yc-btn-out" ng-click="_jsCodeModule.copyBtn('advertiseJsCode6')">复制</div>
+                            <span class="success" ng-show="_jsCodeModule.advertiseJsCode3">复制成功</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="yc-col-3 control-label"> 广告基础代码：</label>
+                        <div class="yc-col-8">
+                            <textarea style="height: 56px;width: 500px;" id="advertiseJsCode7" placeholder readonly ng-model="_jsCodeModule.JSbasics" class="form-control"></textarea>
+                            <p>将此广告位代码放置页面底部</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="yc-col-3 control-label"> </label>
+                        <div class="yc-col-8">
+                            <div class="yc-btn-out" ng-click="_jsCodeModule.copyBtn('advertiseJsCode7')">复制</div>
+                            <span class="success" ng-show="_jsCodeModule.advertiseJsCode4">复制成功</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="yc-col-3 control-label" style="font-weight: 700;"> 加载方式2：</label>
+                        <div class="yc-col-8">
+                            <p style="padding-top: 7px;">同步加载</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="yc-col-3 control-label" >  </label>
+                        <div class="yc-col-8">
+                            <textarea style="height: 56px;width: 500px;" id="advertiseJsCode5" placeholder readonly ng-model="_jsCodeModule.jsCode" class="form-control"></textarea>
+                            <p>将此广告位代码放到对应容器(div)即可</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="yc-col-3 control-label"> </label>
+                        <div class="yc-col-8">
+                            <div class="yc-btn-out" ng-click="_jsCodeModule.copyBtn('advertiseJsCode5')">复制</div>
+                            <span class="success" ng-show="_jsCodeModule.advertiseJsCode2">复制成功</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="dialog-submit">
+                    <a href="javascript:void(0)" class="ok">确定</a>
+                    <a href="javascript:void(0)" class="no">取消</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
 </body>
-</html>

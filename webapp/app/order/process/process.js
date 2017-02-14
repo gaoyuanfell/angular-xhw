@@ -7,11 +7,11 @@ app.controller('processListCtrl', ['$scope', '$http','FlowFty', function ($scope
         callback:function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            FlowFty.flowList($scope.query).success(modViewA);
+            FlowFty.flowList($scope.query).then(modViewA);
         }
     }
 
-    FlowFty.flowTemplates().success(function (res) {
+    FlowFty.flowTemplates().then(function (res) {
         if(res && res.code == 200){
             $scope.processListSel.list = res.templates;
         }
@@ -30,13 +30,13 @@ app.controller('processListCtrl', ['$scope', '$http','FlowFty', function ($scope
     };
     $scope.query = {pageSize: 10, pageIndex: 1};
 
-    FlowFty.flowList($scope.query).success(modViewA);
+    FlowFty.flowList($scope.query).then(modViewA);
 
     $scope.redirect = function (num,co) {
         ycui.loading.show();
         $scope.query.pageIndex = num || 1;
         $scope.query.param1 = $scope.query.search;;
-        FlowFty.flowList($scope.query).success(modViewA);
+        FlowFty.flowList($scope.query).then(modViewA);
     };
 
 }]);
@@ -53,16 +53,16 @@ app.controller('processEditCtrl', ['$scope', '$q','SysUserFty','FlowFty', functi
 
     function flowTemplateBack(e,d,list,index){
         console.info(d);
-        FlowFty.flows({checkResourceType:d.checkResourceType}).success(flowsFun)
+        FlowFty.flows({checkResourceType:d.checkResourceType}).then(flowsFun)
     }
 
-    FlowFty.flowTemplates().success(function (res) {
+    FlowFty.flowTemplates().then(function (res) {
         if(res && res.code == 200){
             $scope.flowTemplateSel.list = res.templates;
         }
     });
 
-    var roleListAll = SysUserFty.roleListAll().success(function (res) {
+    var roleListAll = SysUserFty.roleListAll().then(function (res) {
         if(res && res.code == 200){
             $scope.roleList = res.roleList
         }
@@ -73,12 +73,12 @@ app.controller('processEditCtrl', ['$scope', '$q','SysUserFty','FlowFty', functi
             $scope.name = name;
             $scope.id = id;
             $scope.query.checkResourceType = id;
-            FlowFty.flows({checkResourceType:id}).success(flowsFun)
+            FlowFty.flows({checkResourceType:id}).then(flowsFun)
         }
     })
 
     // $scope.$on('loginUserInfo',function (e,d) {
-    //     var roleListByCom = SysUserFty.roleListByCom({id:d.companyId}).success(function (res) {
+    //     var roleListByCom = SysUserFty.roleListByCom({id:d.companyId}).then(function (res) {
     //         if(res && res.code == 200){
     //             $scope.roleList = res.roleList;
     //         }
@@ -114,6 +114,39 @@ app.controller('processEditCtrl', ['$scope', '$q','SysUserFty','FlowFty', functi
                 return da;
             });
             $scope.processList = s;
+        }else if(res.code == 404){
+            var list = [
+                {
+                    backToStep:0,
+                    checkResourceType:$scope.query.checkResourceType,
+                    checkStep:1,
+                    checkStepState:1,
+                    isLastOne:1,
+                    checkRoles:[]
+                }
+            ],
+            list = list.map(function(da){
+                var roleList = angular.copy($scope.roleList);
+                var checkRoles = da.checkRoles;
+                for(var i = 0;i<checkRoles.length;i++){
+                    for(var j = 0;j<roleList.length;j++){
+                        if(checkRoles[i].id == roleList[j].id){
+                            roleList.splice(j,1);
+                            j--;
+                        }
+                    }
+                }
+                da.processListSel = {
+                    list: roleList,
+                    callback:function(e,d,list,index){
+                        if(!d){return};
+                        list.splice(index,1);
+                        da.checkRoles.push(d);
+                    }
+                };
+                return da;
+            });
+            $scope.processList = list;
         }
     }
 
@@ -121,14 +154,14 @@ app.controller('processEditCtrl', ['$scope', '$q','SysUserFty','FlowFty', functi
     //     console.info(d);
     // });
     //
-    // var roleListByCom = SysUserFty.roleListByCom({id:3}).success(function (res) {
+    // var roleListByCom = SysUserFty.roleListByCom({id:3}).then(function (res) {
     //     if(res && res.code == 200){
     //         $scope.roleList = res.roleList;
     //     }
     // });
     //
     // $q.all([roleListByCom]).then(function(){
-    //     FlowFty.flowTemplates().success(function (res) {
+    //     FlowFty.flowTemplates().then(function (res) {
     //         if(res && res.code == 200){
     //             $scope.flowTemplateSel.list = res.templates;
     //         }
@@ -197,7 +230,7 @@ app.controller('processEditCtrl', ['$scope', '$q','SysUserFty','FlowFty', functi
         body.checkFlows = rep;
         if(bo)return;
         ycui.loading.show();
-        FlowFty.flowsEdit(body).success(function (res) {
+        FlowFty.flowsEdit(body).then(function (res) {
             ycui.loading.hide();
             if(res && res.code == 200){
                 ycui.alert({

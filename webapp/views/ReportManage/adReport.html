@@ -20,18 +20,18 @@
     <script type="text/javascript" src="../../static/js/application.js"></script>
     <script type="text/javascript" src="../../static/js/reportManage.js"></script>
 </head>
-<body>
+<body ng-controller="orderRuleCtrl">
     <nav class="header">
-        <div class="scroll" ng-init="operationMa = 'dateCtrl.html'">
-            <a class="nav" ng-class="{'active':operationMa == 'dateCtrl.html'}" ng-click="operationMa = 'dateCtrl.html'">日期</a>
-            <a class="nav" ng-class="{'active':operationMa == 'hourCtrl.html'}" ng-click="operationMa = 'hourCtrl.html'">时段</a>
-            <a class="nav" ng-class="{'active':operationMa == 'indentCtrl.html'}" ng-click="operationMa = 'indentCtrl.html'">订单</a>
-            <a class="nav" ng-class="{'active':operationMa == 'adAdvertisementCtrl.html'}" ng-click="operationMa = 'adAdvertisementCtrl.html'">广告位</a>
-            <a class="nav" ng-class="{'active':operationMa == 'adOriginalityCtrl.html'}" ng-click="operationMa = 'adOriginalityCtrl.html'">创意</a>
-            <a class="nav" ng-class="{'active':operationMa == 'territoryCtrl.html'}" ng-click="operationMa = 'territoryCtrl.html'">地域</a>
-            <a class="nav" ng-class="{'active':operationMa == 'operationCtrl.html'}" ng-click="operationMa = 'operationCtrl.html'">操作系统</a>
-            <a class="nav" ng-class="{'active':operationMa == 'browserCtrl.html'}" ng-click="operationMa = 'browserCtrl.html'">浏览器</a>
-            <a class="nav" ng-class="{'active':operationMa == 'keyWordCtrl.html'}" ng-click="operationMa = 'keyWordCtrl.html'">关键字</a>
+        <div class="scroll" ng-init="operationMa = 'dateCtrl.html';" ng-click="removePageIndex()">
+            <a class="nav" ng-class="{'active':operationMa == 'dateCtrl.html'}" ng-click="operationMa = 'dateCtrl.html';removePageIndex()">日期</a>
+            <a class="nav" ng-class="{'active':operationMa == 'hourCtrl.html'}" ng-click="operationMa = 'hourCtrl.html';removePageIndex()">时段</a>
+            <a class="nav" ng-class="{'active':operationMa == 'indentCtrl.html'}" ng-click="operationMa = 'indentCtrl.html';removePageIndex()">订单</a>
+            <a class="nav" ng-class="{'active':operationMa == 'adAdvertisementCtrl.html'}" ng-click="operationMa = 'adAdvertisementCtrl.html';removePageIndex()">广告位</a>
+            <a class="nav" ng-class="{'active':operationMa == 'adOriginalityCtrl.html'}" ng-click="operationMa = 'adOriginalityCtrl.html';removePageIndex()">创意</a>
+            <a class="nav" ng-class="{'active':operationMa == 'territoryCtrl.html'}" ng-click="operationMa = 'territoryCtrl.html';removePageIndex()">地域</a>
+            <a class="nav" ng-class="{'active':operationMa == 'operationCtrl.html'}" ng-click="operationMa = 'operationCtrl.html';removePageIndex()">操作系统</a>
+            <a class="nav" ng-class="{'active':operationMa == 'browserCtrl.html'}" ng-click="operationMa = 'browserCtrl.html';removePageIndex()">浏览器</a>
+            <a class="nav" ng-class="{'active':operationMa == 'keyWordCtrl.html'}" ng-click="operationMa = 'keyWordCtrl.html';removePageIndex()">关键字</a>
         </div>
     </nav>
     <div ng-include="operationMa"></div>
@@ -136,7 +136,7 @@
                 </div>
                 <div class="query-g fr">
                     <div yc-select="customerListSel" width="150" placeholder="客户" query="query" value="paramInt1" add="全部" key="id" name="customerName" session="adReport_order_customer" group="ad-report-order"></div>
-                    <div yc-select="orderTypeSel" width="150" query="query" value="paramInt2" key="id" placeholder="订单类型" session="adReport_order_orderType" group="ad-report-order"></div>
+                    <div yc-select="orderTypeSel" width="150" query="query" value="paramInt2" key="id" placeholder="订单类型" add="全部" session="adReport_order_orderType" group="ad-report-order"></div>
                     <div class="icon-input">
                         <input class="form-control" type="text" ng-placeholder="请输入订单名称或ID" ng-model="query.search">
                         <span class="icon">
@@ -640,7 +640,7 @@
                         <td ng-show="clientCustom.adSpaceName">--</td>
                         <td ng-show="clientCustom.adSpaceTypeName">--</td>
                         <td ng-show="clientCustom.channelName">--</td>
-                        <!--<td ng-show="clientCustom.pageType" >&#45;&#45;</td>-->
+                        <!--<td ng-show="clientCustom.pageType" >--</td>-->
                         <td ng-show="clientCustom.mediaName">--</td>
                         <td ng-show="clientCustom.customerTotal" ng-bind="item.customerCount">--</td>
                         <td ng-show="clientCustom.orderIdTotal" ng-bind="item.orderCount">--</td>
@@ -656,7 +656,7 @@
                         <td ng-show="clientCustom.adSpaceName" ng-bind="item.adSpaceName?(item.adSpaceName):'--'"></td>
                         <td ng-show="clientCustom.adSpaceTypeName" ng-bind="item.adSpaceTypeName?(item.adSpaceTypeName):'--'"></td>
                         <td ng-show="clientCustom.channelName" ng-bind="item.channelName?(item.channelName):'--'"></td>
-                        <!--<td ng-show="clientCustom.pageType" ng-bind='item.pageType?(item.pageType<=2? (item.pageType != 2 ? "首页" : "频道首页") : "内容页"):"&#45;&#45;"'></td>-->
+                        <!--<td ng-show="clientCustom.pageType" ng-bind='item.pageType?(item.pageType<=2? (item.pageType != 2 ? "首页" : "频道首页") : "内容页"):"--"'></td>-->
                         <td ng-show="clientCustom.mediaName" ng-bind="item.mediaName?(item.mediaName):'--'"></td>
                         <td ng-show="clientCustom.customerTotal" ng-bind="item.customerTotal?(item.customerTotal | number):'0'"></td>
                         <td ng-show="clientCustom.orderIdTotal" ng-bind="item.orderIdTotal?(item.orderIdTotal | number):'0'"></td>

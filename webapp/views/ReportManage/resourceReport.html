@@ -22,12 +22,12 @@
 </head>
 <body>
     <nav class="header">
-        <div class="scroll" ng-init="operationMa = 'resourceCtrl.html'">
-            <a class="nav"  ng-class="{'active':operationMa == 'resourceCtrl.html'}" ng-click="operationMa = 'resourceCtrl.html';">媒体报表</a>
-            <a class="nav"  ng-class="{'active':operationMa == 'channelCtrl.html'}" ng-click="operationMa = 'channelCtrl.html';">频道报表</a>
-            <a class="nav"  ng-class="{'active':operationMa == 'impression.html'}" ng-click="operationMa = 'impression.html';">频道印象数</a>
-            <a class="nav"  ng-class="{'active':operationMa == 'originalityCtrl.html'}" ng-click="operationMa = 'originalityCtrl.html';">广告类型报表</a>
-            <a class="nav"  ng-class="{'active':operationMa == 'advertisementCtrl.html'}" ng-click="operationMa = 'advertisementCtrl.html';">广告位报表</a>
+        <div class="scroll" ng-init="operationMa = 'resourceCtrl.html'" ng-click="">
+            <a class="nav"  ng-class="{'active':operationMa == 'resourceCtrl.html'}" ng-click="operationMa = 'resourceCtrl.html';removePageIndex()">媒体报表</a>
+            <a class="nav"  ng-class="{'active':operationMa == 'channelCtrl.html'}" ng-click="operationMa = 'channelCtrl.html';removePageIndex()">频道报表</a>
+            <a class="nav"  ng-class="{'active':operationMa == 'impression.html'}" ng-click="operationMa = 'impression.html';removePageIndex()">频道印象数</a>
+            <a class="nav"  ng-class="{'active':operationMa == 'originalityCtrl.html'}" ng-click="operationMa = 'originalityCtrl.html';removePageIndex()">广告类型报表</a>
+            <a class="nav"  ng-class="{'active':operationMa == 'advertisementCtrl.html'}" ng-click="operationMa = 'advertisementCtrl.html';removePageIndex()">广告位报表</a>
         </div>
     </nav>
 

@@ -16,7 +16,7 @@ app.controller("sizeAddCtrl", ['$scope', 'ResSizeFty',
                 sizes: ClearBr($scope.size)
             }
             ycui.loading.show();
-            ResSizeFty.addSize(body).success(function(res){
+            ResSizeFty.addSize(body).then(function(res){
                 ycui.loading.hide();
                 if(res && res.code == 200){
                     ycui.alert({

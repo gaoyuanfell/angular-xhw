@@ -29,8 +29,8 @@ app.controller('contractConsumeCtrl', ['$scope', 'ReportAdvertiseFty',
         var _end = stringToDate(_tayEnd).calendar(6,-1);
         $scope.query = {pageSize: 10,pageIndex:1, startTime: _start.dateFormat('yyyy-MM-dd HH:mm:ss'), endTime: _end.dateFormat('yyyy-MM-dd HH:mm:ss')};
 
-        ReportAdvertiseFty.contractCostReport($scope.query).success(modViewG);
-        ReportAdvertiseFty.collectContractCostReport($scope.query).success(collectG);
+        ReportAdvertiseFty.contractCostReport($scope.query).then(modViewG);
+        ReportAdvertiseFty.collectContractCostReport($scope.query).then(collectG);
 
         new pickerDateRange('dateRangeOperate', {
             defaultText: ' / ',
@@ -44,8 +44,8 @@ app.controller('contractConsumeCtrl', ['$scope', 'ReportAdvertiseFty',
                 $scope.query.pageIndex = 1;
                 $scope.query.startTime = obj.startDate + ' 00:00:00';
                 $scope.query.endTime = obj.endDate + ' 23:59:59';
-                ReportAdvertiseFty.contractCostReport($scope.query).success(modViewG);
-                ReportAdvertiseFty.collectContractCostReport($scope.query).success(collectG);
+                ReportAdvertiseFty.contractCostReport($scope.query).then(modViewG);
+                ReportAdvertiseFty.collectContractCostReport($scope.query).then(collectG);
             }
         });
 
@@ -54,8 +54,8 @@ app.controller('contractConsumeCtrl', ['$scope', 'ReportAdvertiseFty',
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.param1 = $scope.query.search;
-            ReportAdvertiseFty.contractCostReport($scope.query).success(modViewG);
-            ReportAdvertiseFty.collectContractCostReport($scope.query).success(collectG);
+            ReportAdvertiseFty.contractCostReport($scope.query).then(modViewG);
+            ReportAdvertiseFty.collectContractCostReport($scope.query).then(collectG);
         };
 
         //导出

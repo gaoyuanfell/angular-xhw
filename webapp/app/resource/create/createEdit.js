@@ -13,7 +13,7 @@ app.controller("createEditCtrl", ['$scope', 'ResCreativityFty',
         var id = getSearch("id");
 
         ycui.loading.show();
-        ResCreativityFty.getADType({id:id}).success(function (response) {
+        ResCreativityFty.getADType({id:id}).then(function (response) {
             ycui.loading.hide();
             if(!response) return;
             $scope.createType = response;
@@ -56,7 +56,7 @@ app.controller("createEditCtrl", ['$scope', 'ResCreativityFty',
             delete body.updateTime
             delete body.createTime
             body.catagorys = catagorys.join(',');
-            ResCreativityFty.update(body).success(function(res){
+            ResCreativityFty.update(body).then(function(res){
                 if (res && res.code == 200) {
                     ycui.alert({
                         content: res.msg,

@@ -7,7 +7,7 @@ app.controller('adAdvertisementCtrl', ["$scope", "$http", "ReportAdvertiseFty", 
         $scope.mediaListSel = {
             callback:function(e,d){
                 $scope.channelListSel.$destroy();
-                d && ResChannelFty.getChannelsByMedia({mediaId: d.id}).success(function (response) {
+                d && ResChannelFty.getChannelsByMedia({mediaId: d.id}).then(function (response) {
                     $scope.channelListSel.list = response.channels;
                 })
             }
@@ -17,16 +17,16 @@ app.controller('adAdvertisementCtrl', ["$scope", "$http", "ReportAdvertiseFty", 
         $scope.channelListSel = {};
 
         //订单下拉框
-        var allNDefaultOrderNames = ReportAdvertiseFty.allNDefaultOrderNames().success(function (response) {
+        var allNDefaultOrderNames = ReportAdvertiseFty.allNDefaultOrderNames().then(function (response) {
             $scope.orderListSel.list = response.items;
         });
         //客户下拉
-        var getPartCustomer = CustomerFty.getPartCustomer({customerType: 2}).success(function (response) {
+        var getPartCustomer = CustomerFty.getPartCustomer({customerType: 2}).then(function (response) {
             $scope.customerListSel.list = response.items;
         });
 
         //媒体 频道  创意
-        var downListForSearch = ResAdvertisingFty.downListForSearch().success(function (response) {
+        var downListForSearch = ResAdvertisingFty.downListForSearch().then(function (response) {
             if(response){
                 $scope.mediaListSel.list = response.mediaList;
                 $scope.typeListSel.list = response.typeList;
@@ -37,8 +37,8 @@ app.controller('adAdvertisementCtrl', ["$scope", "$http", "ReportAdvertiseFty", 
         $scope.$on('ad-report-create',function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            ReportAdvertiseFty.totalADSpace($scope.query).success(modViewG);
-            ReportAdvertiseFty.collectADSpace($scope.query).success(summarizingG);
+            ReportAdvertiseFty.totalADSpace($scope.query).then(modViewG);
+            ReportAdvertiseFty.collectADSpace($scope.query).then(summarizingG);
         })
 
         ycui.loading.show();
@@ -57,7 +57,7 @@ app.controller('adAdvertisementCtrl', ["$scope", "$http", "ReportAdvertiseFty", 
         $scope.query = {pageSize: pageSize,pageIndex: 1}
         
         //列表
-        ReportAdvertiseFty.totalADSpace($scope.query).success(modViewG);
+        ReportAdvertiseFty.totalADSpace($scope.query).then(modViewG);
 
         //汇总
         var summarizingG = function (response) {
@@ -65,15 +65,15 @@ app.controller('adAdvertisementCtrl', ["$scope", "$http", "ReportAdvertiseFty", 
                 $scope.summarizing = response.items;
             }
         };
-        ReportAdvertiseFty.collectADSpace($scope.query).success(summarizingG);
+        ReportAdvertiseFty.collectADSpace($scope.query).then(summarizingG);
 
         //搜索框
         $scope.redirect = function (num, con) {
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.param1 = $scope.query.search;
-            ReportAdvertiseFty.totalADSpace($scope.query).success(modViewG);
-            ReportAdvertiseFty.collectADSpace($scope.query).success(summarizingG);
+            ReportAdvertiseFty.totalADSpace($scope.query).then(modViewG);
+            ReportAdvertiseFty.collectADSpace($scope.query).then(summarizingG);
         };
 
         //日历查询
@@ -90,8 +90,8 @@ app.controller('adAdvertisementCtrl', ["$scope", "$http", "ReportAdvertiseFty", 
                 $scope.query.pageIndex = 1;
                 $scope.query.startTime = obj.startDate;
                 $scope.query.endTime = obj.endDate;
-                ReportAdvertiseFty.totalADSpace($scope.query).success(modViewG);
-                ReportAdvertiseFty.collectADSpace($scope.query).success(summarizingG);
+                ReportAdvertiseFty.totalADSpace($scope.query).then(modViewG);
+                ReportAdvertiseFty.collectADSpace($scope.query).then(summarizingG);
             }
         });
 

@@ -7,21 +7,21 @@ app.controller('originalityCtrl', ["$scope", "$http", "ReportResourceFty", "ResA
         $scope.mediaListSel = {
             callback:function(e,d){
                 $scope.channelListSel.$destroy();
-                d && ResChannelFty.getChannelsByMedia({mediaId: d.id}).success(function (response) {
+                d && ResChannelFty.getChannelsByMedia({mediaId: d.id}).then(function (response) {
                     $scope.channelListSel.list = response.channels;
                 })
             }
         };
 
-        var downListForSearch = ResAdvertisingFty.downListForSearch().success(function (response) {
+        var downListForSearch = ResAdvertisingFty.downListForSearch().then(function (response) {
             $scope.mediaListSel.list = response.mediaList;
         });
 
         $scope.$on('reportLeiXingListGroup',function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            ReportResourceFty.adCreativeConsume($scope.query).success(modViewC);
-            ReportResourceFty.collectAdCreativeConsume($scope.query).success(summarizingC);
+            ReportResourceFty.adCreativeConsume($scope.query).then(modViewC);
+            ReportResourceFty.collectAdCreativeConsume($scope.query).then(summarizingC);
         })
 
         ycui.loading.show();
@@ -39,22 +39,22 @@ app.controller('originalityCtrl', ["$scope", "$http", "ReportResourceFty", "ResA
 
         $scope.query = {pageSize: pageSize,pageIndex:1}
 
-        ReportResourceFty.adCreativeConsume($scope.query).success(modViewC);
+        ReportResourceFty.adCreativeConsume($scope.query).then(modViewC);
 
         //汇总
         summarizingC = function (response) {
             if (!response) return;
             $scope.summarizing = response.items;
         };
-        ReportResourceFty.collectAdCreativeConsume($scope.query).success(summarizingC);
+        ReportResourceFty.collectAdCreativeConsume($scope.query).then(summarizingC);
 
         //搜索框
         $scope.redirect = function (num, con) {
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.param1 = $scope.query.search;
-            ReportResourceFty.adCreativeConsume($scope.query).success(modViewC);
-            ReportResourceFty.collectAdCreativeConsume($scope.query).success(summarizingC);
+            ReportResourceFty.adCreativeConsume($scope.query).then(modViewC);
+            ReportResourceFty.collectAdCreativeConsume($scope.query).then(summarizingC);
         };
 
         //日历查询
@@ -71,8 +71,8 @@ app.controller('originalityCtrl', ["$scope", "$http", "ReportResourceFty", "ResA
                 $scope.query.pageIndex = 1;
                 $scope.query.startTime = obj.startDate;
                 $scope.query.endTime = obj.endDate;
-                ReportResourceFty.adCreativeConsume($scope.query).success(modViewC);
-                ReportResourceFty.collectAdCreativeConsume($scope.query).success(summarizingC);
+                ReportResourceFty.adCreativeConsume($scope.query).then(modViewC);
+                ReportResourceFty.collectAdCreativeConsume($scope.query).then(summarizingC);
             }
         });
 

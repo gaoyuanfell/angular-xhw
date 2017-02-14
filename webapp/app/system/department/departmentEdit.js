@@ -10,7 +10,7 @@ app.controller('departmentEditCtrl', ['$scope', '$http', 'SysDepartmentFty','$q'
             // callback:function(e,d){
             //     if(d){
             //         $scope.parentDepSel.$destroy()
-            //         SysDepartmentFty.parentDeps({companyId:d.id}).success(function(res){
+            //         SysDepartmentFty.parentDeps({companyId:d.id}).then(function(res){
             //             if(res && res.code == 200){
             //                 $scope.parentDepSel.list = res.departmentList
             //             }
@@ -18,11 +18,11 @@ app.controller('departmentEditCtrl', ['$scope', '$http', 'SysDepartmentFty','$q'
             //     }
             // }
         };
-        // var departmentListForDep = SysDepartmentFty.departmentListForDep().success(function (response) {
+        // var departmentListForDep = SysDepartmentFty.departmentListForDep().then(function (response) {
         //     if (!response) return;
         //     $scope.deListSel.list = response.companyList;
         // });
-        SysDepartmentFty.departmentEditInfo({id: id}).success(function (response) {
+        SysDepartmentFty.departmentEditInfo({id: id}).then(function (response) {
             ycui.loading.hide();
             if (!response) return;
             $scope.id = response.id;
@@ -41,13 +41,15 @@ app.controller('departmentEditCtrl', ['$scope', '$http', 'SysDepartmentFty','$q'
                 pass = false
             }
             if(!pass)return;
+            ycui.loading.show();
             SysDepartmentFty.departmentEdit({
                 id: $scope.id,
                 departmentName: $scope.departmentName,
                 companyId: $scope.deListId,
                 companyType:$scope.companyType,
                 parentDepId:$scope.parentDepId
-            }).success(function (response) {
+            }).then(function (response) {
+                ycui.loading.hide();
                 if (response && response.code == 200) {
                     ycui.alert({
                         content: response.msg,

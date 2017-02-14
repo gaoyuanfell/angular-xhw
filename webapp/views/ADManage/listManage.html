@@ -31,15 +31,17 @@
     <div class="container" ng-controller="listManageCtrl">
         <div class="button-group clear">
             <div class="button-g fl">
-                <div yc-select="mediaNameSel" width="150" query="query" value="mediaId" key="id" placeholder="媒体" session="media_scheduling" group="schedulingGroup" name="mediaName"></div>
-                <div yc-select="channelsSel" width="150" query="query" value="channelId" key="id" placeholder="频道" session="channel_scheduling" group="schedulingGroup" name="channelName"></div>
-                <div yc-select="sizeListSel" width="150" query="query" value="size" key="size" placeholder="尺寸" session="size_scheduling" group="schedulingGroup" name="size"></div>
-                <div yc-select="languageSel" width="150" query="query" value="languageId" key="id" placeholder="语言" session="language_scheduling" group="schedulingGroup" name="language"></div>
+                <div yc-select="companyListSel" width="150" query="query" value="depScope" name="companyName" key="agencyNumber" add="全部" placeholder="所属范围" session="res_channe_company" group="schedulingGroup"></div>
+                <div ng-show="departmentListSel && (departmentListSel.list.length > 1 || departmentListSel.$list.length > 1)" yc-select="departmentListSel" width="130" query="query" value="depScope1" name="departmentName" key="agencyNumber" add="全部" recursion="nextDepts" placeholder="部门范围" ></div>
+                <div yc-select="mediaNameSel" width="150" query="query" value="mediaId" key="id" add="全部" placeholder="媒体" session="media_scheduling" group="schedulingGroup" name="mediaName"></div>
+                <div yc-select="channelsSel" width="140" query="query" value="channelId" key="id" add="全部" placeholder="频道" session="channel_scheduling" group="schedulingGroup" name="channelName"></div>
+                <div yc-select="sizeListSel" width="140" query="query" value="size" key="size" add="全部" placeholder="尺寸" session="size_scheduling" group="schedulingGroup" name="size"></div>
+                <div yc-select="languageSel" width="140" query="query" value="languageId" key="id" add="全部" placeholder="语言" session="language_scheduling" group="schedulingGroup" name="language"></div>
                 <a class="yc-btn" ng-click="areaShow($event)">{{provincesName || '全国'}}</a>
             </div>
             <div class="query-g fr">
                 <div class="icon-input">
-                    <input class="form-control" type="text" ng-placeholder="请输入广告位名称或ID" ng-model="query.search">
+                    <input style="width: 190px" class="form-control" type="text" ng-placeholder="请输入广告位名称或ID" ng-model="query.search">
                     <span class="icon">
                         <i class="yc-icon calendars" ng-click="redirect(1,search)">&#xe60b;</i>
                     </span>
@@ -65,10 +67,12 @@
             <div class="query-g fr">
                 <div class="mark-color">
                     <span class="free-colo"></span><em>空闲</em>
-                    <span class="holiday-color"></span><em> <a href="javscript:void(0)" class="font" data-route="Holiday">节假日</a> </em>
+                    <!--<span class="holiday-color"></span><em> <a href="javscript:void(0)" class="font" data-route="Holiday">节假日</a> </em>-->
+                    <span class="holiday-color"></span><em> <a href="javscript:void(0)" class="font" data-route="QueryScheduling">节假日</a> </em>
                     <span class="order-color"></span><em>有订单</em>
                     <span class="orient-color"></span><em>有定向</em>
                     <span class="full-color"></span><em>到达上限</em>
+                    <span class="full-y-color"></span><em>到达上限（预）</em>
                 </div>
             </div>
         </div>
@@ -81,6 +85,7 @@
                         <th rowspan="2">尺寸</th>
                         <th rowspan="2">频道</th>
                         <th rowspan="2">所属媒体</th>
+                        <th rowspan="2">刊例价</th>
                         <th rowspan="2" class="center th40" ng-show="putManageRule['ManagePutOrders']">操作</th>
                         <th class="isNumber center" ng-repeat="week in weekList track by $index">{{week}}</th>
                     </tr>
@@ -93,7 +98,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="item in items">
+                    <tr ng-repeat="item in items" ng-class="{'noClick':item.state == -1}">
                         <td>
                             <span ng-bind="::item.id" class="ellipsis th30"></span>
                         </td>
@@ -109,13 +114,21 @@
                         <td>
                             <span title="{{item.mediaName}}" ng-bind="::item.mediaName" class="ellipsis th70"></span>
                         </td>
-                        <td class="center" ng-click="addList(item)" ng-show="putManageRule['ManagePutOrders']">
-                            <a ng-style="!putManageRule['ManagePutOrders'] && {'color':'#CCCCCC','cursor':'default'}" title="添至订单" ng-class="getclass(item.id)" href="javascript:;" class="yc-icon">&#xe625;</a>
+                        <td>
+                            <span title="{{item.price+'元/'+(item.priceCycle | isDay)}}" ng-bind="::item.price+'元/'+(item.priceCycle | isDay)" class="ellipsis th70"></span>
                         </td>
-                        <td class="isNumber t-center"
+                        <td class="center" ng-show="putManageRule['ManagePutOrders']">
+                            <a ng-style="!putManageRule['ManagePutOrders'] && {'color':'#CCCCCC','cursor':'default'}" ng-click="addList(item)" ng-class="{'noClick':getclass(item.id) || item.state == -1}" title="添至订单" href="javascript:;" class="yc-icon">&#xe625;</a>
+                        </td>
+                        <!--<td class="isNumber t-center"
                             ng-click="scheduleInfo($event,da.id,da.date,da.num,da.name,item.viewOrdersDetail)"
                             ng-repeat="da in dateArray[$index]"
                             ng-class="{'full-color':(da.num >= item.multiLimit && da.area == 0),'free-color':da.num == 0 && da.area == 0,'order-color':(da.num != 0 && da.num < item.multiLimit &&  da.area == 0),'orient-color':da.area>0}" ng-bind="da.num">
+                        </td>-->
+                        <td class="isNumber t-center"
+                            ng-repeat="da in dateArray[$index]"
+                            ng-click="scheduleInfo($event,da.id,da.date,da.num,da.name,item.viewOrdersDetail)"
+                            ng-class="{'full-color':(da.num >= item.multiLimit && da.area == 0 && !da.isBookOrder),'full-y-color':(da.num >= item.multiLimit && da.area == 0 && da.isBookOrder),'free-color':da.num == 0 && da.area == 0,'order-color':(da.num != 0 && da.num < item.multiLimit &&  da.area == 0),'orient-color':da.area>0}" ng-bind="da.num">
                         </td>
                     </tr>
                 </tbody>
@@ -138,20 +151,22 @@
                     <caption>已添加广告位</caption>
                     <thead>
                     <tr>
-                        <td>
+                        <td class="th70">
                             <label ng-click="selectAllCar($event)"><input class="form-control" type="checkbox">ID</label>
                         </td>
                         <td>广告位名称</td>
                         <td>尺寸</td>
-                        <td><a href="javascript:void(0)" class="denuded" ng-click="moveAll()">清空</a></td>
+                        <td class="th50"><a href="javascript:void(0)" class="denuded" ng-click="moveAll()">清空</a></td>
                     </tr>
                     </thead>
                     <tbody>
                         <tr ng-repeat="ad in adList track by $index">
-                            <td >
+                            <td>
                                 <label><input class="form-control" type="checkbox" ng-model="ad.$check"><span ng-bind="ad.id"></span></label>
                             </td>
-                            <td ng-bind="ad.adSpaceName"></td>
+                            <td>
+                                <span class="ellipsis th160" ng-bind="ad.adSpaceName"></span>
+                            </td>
                             <td ng-bind="ad.size"></td>
                             <td><a href="javascript:void(0)" ng-click="deleteList($index)">删除</a></td>
                         </tr>

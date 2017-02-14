@@ -31,7 +31,7 @@
                 <a class="yc-btn" data-route="ViewContentAdd" ng-if="putManageRule['ManageContent']">新增内容</a>
             </div>
             <div class="query-g fr">
-                <div yc-select="stateSel" width="150" query="query" value="checkState" key="id" placeholder="审核状态" session="content_checkState" group="contentListGroup"></div>
+                <div yc-select="stateSel" width="150" query="query" value="checkState" key="id" placeholder="审核状态" add="全部" session="content_checkState" group="contentListGroup"></div>
                 <div yc-select="mediaListSel" width="150" query="query" value="mediaId" name="mediaName" key="id" placeholder="媒体" add="全部" session="content_mediaId" group="contentListGroup"></div>
                 <div yc-select="channelListSel" width="150" query="query" value="channelId" name="channelName" key="id" placeholder="频道" add="全部" session="content_channelId" group="contentListGroup"></div>
                 <div yc-select="orderNameSel" width="150" query="query" value="orderId" key="id" add="全部" placeholder="订单" name="orderName" session="content_order" group="contentListGroup"></div>
@@ -105,8 +105,8 @@
                     <div class="form-group">
                         <label class="yc-col-3 control-label"> 审核意见：</label>
                         <div class="yc-col-9">
-                            <label class="radio"><input class="form-control" type="radio" ng-model="_contentCheckModule.checkState" value="1" > 审核通过</label>
-                            <label class="radio"><input class="form-control" type="radio" ng-model="_contentCheckModule.checkState" value="-1" > 审核不通过</label>
+                            <label class="radio"><input class="form-control" type="radio" ng-model="_contentCheckModule.checkState" ng-value="1" > 审核通过</label>
+                            <label class="radio"><input class="form-control" type="radio" ng-model="_contentCheckModule.checkState" ng-value="-1" > 审核不通过</label>
                         </div>
                     </div>
                     <div class="form-group" ng-show="_contentCheckModule.checkState == 1">

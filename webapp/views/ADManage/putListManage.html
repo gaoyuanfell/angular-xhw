@@ -32,33 +32,39 @@
             <div class="button-g fl">
                 <a class="yc-btn" data-route="ViewPutOrderAdd" ng-show="putManageRule['ManagePutOrders']">新增订单</a>
                 <a class="yc-btn" href="javascript:void(0)" ng-click="export()" ng-if="putManageRule['ManagePutOrders']">导出订单</a>
+
+                <div class="orderValidDate" ng-show="putManageRule['ViewPutOrder']" ng-init="orderValidDateReadonly = true">
+                    <label>
+                        预定广告位订单有效期
+                        <i class="yc-icon" title="预定广告位订单有效期：在有效期内，若业务员未撤销或者未修改订单类型为正式投放等类型，则有效期天数后系统自动撤销预订单；">&#xe622;</i>
+                        ： 
+                        <input id="orderValidDate" ng-class="{'input-border':!orderValidDateReadonly}" ng-disabled="orderValidDateReadonly" ng-model="orderValidDate" ng-blur="modifyOrderDate()" type="text"/>
+                    </label>
+                    &ensp;天
+                    <i ng-show="putManageRule['ManagePreorderValidity']" ng-click="modifyOrderEdit($event)" title="数据搜索" class="icon yc-icon pointer">&#xe700;</i>
+                </div>
+                
             </div>
             <div class="query-g fr">
                 <label padding-right> <input type="checkbox" class="form-control" ng-model="query.inCheck" ng-false-value="0" ng-true-value="1" ng-click="redirect(1)"> 待审核订单 </label>
-                <div yc-select="customerSel" width="150" query="query" value="customerId" resname="{{queryValue.customerName}}" key="id" placeholder="客户名称" name="customerName" session="order_customer" group="putListGroup"></div>
-                <div yc-select="showStateSel" width="100" query="query" value="showState" key="id" placeholder="投放状态" session="order_showState" group="putListGroup"></div>
-                <div yc-select="checkNamesSel" width="125" query="query" value="checkName" key="id" placeholder="审核状态" session="order_check" group="putListGroup"></div>
-                <div yc-select="orderTypeSel" width="100" query="query" value="orderType" key="id" placeholder="订单类型" session="order_orderType" group="putListGroup"></div>
+                <div yc-select="customerSel" width="150" query="query" value="customerId" resname="{{queryValue.customerName}}" add="全部" key="id" placeholder="客户名称" name="customerName" session="order_customer" group="putListGroup"></div>
+                <div yc-select="showStateSel" width="100" query="query" value="showState" key="id" placeholder="投放状态" add="全部" session="order_showState" group="putListGroup"></div>
+                <div yc-select="checkNamesSel" width="125" query="query" value="checkName" key="id" placeholder="审核状态" add="全部" session="order_check" group="putListGroup"></div>
+                <div yc-select="orderTypeSel" width="100" query="query" value="orderType" key="id" placeholder="订单类型" add="全部" session="order_orderType" group="putListGroup"></div>
                 <div class="icon-input picker-date">
                     <label>
                         <input class="form-control time_default" readonly type="text" id="clientAff4">
                         <i title="数据搜索" class="icon yc-icon calendars">&#xe60e;</i>
                     </label>
                 </div>
-                <!--<div class="yc-calendar-wraper" >
-                    <label>
-                        <input readonly type="text" id="clientAff4" class="time_default"> <i class="yc-icon">&#xe62e;</i>
-                    </label>
-                </div>-->
+
                 <div class="icon-input">
                     <input class="form-control" style="width: 274px" type="text" ng-placeholder="请输入订单名称或排期单号、合同号" ng-model="query.search">
                     <span class="icon">
                         <i class="yc-icon calendars" ng-click="redirect(1,search)">&#xe60b;</i>
                     </span>
                 </div>
-                <!--<div class="yc-search-wraper">
-                    <input style="width: 200px" type="text" ng-placeholder="请输入订单名称或排期单号、合同号" ng-model="search" ng-value="query.ordersNameOrID"> <i class="yc-icon" ng-click="redirect(1)">&#xe623;</i>
-                </div>-->
+                
             </div>
         </div>
         <div class="table-container">
@@ -124,19 +130,19 @@
                             <div class="hide" ng-class="{'show':item.showState == 0}">
                                 <div ng-mouseover="showIconState($event)" ng-mouseleave="hideIconState($event)">
                                     <i title="待投放" class="yc-icon toWait show-l">&#xe623;</i>
-                                    <i ng-click="changeState(item.id,item.showState)" ng-if="putManageRule['UpdatePutOrdersState']" title="投放中" class="yc-icon toGreen hide">&#xe618;</i>
+                                    <i ng-click="changeState(item.id,item.showState)" ng-if="putManageRule['UpdatePutOrdersState'] && item.manageShowState == 1" title="投放中" class="yc-icon toGreen hide">&#xe618;</i>
                                 </div>
                             </div>
                             <div class="hide" ng-class="{'show':item.showState == 1}" >
                                 <div ng-mouseover="showIconState($event)" ng-mouseleave="hideIconState($event)">
                                     <i title="投放中" class="yc-icon toGreen show-l">&#xe618;</i>
-                                    <i ng-click="changeState(item.id,item.showState)" ng-if="putManageRule['UpdatePutOrdersState']" title="暂停" class="yc-icon toRed hide">&#xe621;</i>
+                                    <i ng-click="changeState(item.id,item.showState)" ng-if="putManageRule['UpdatePutOrdersState'] && item.manageShowState == 1" title="暂停" class="yc-icon toRed hide">&#xe621;</i>
                                 </div>
                             </div>
                             <div class="hide" ng-class="{'show':item.showState == 2}" >
                                 <div ng-mouseover="showIconState($event)" ng-mouseleave="hideIconState($event)">
                                     <i title="已暂停" class="yc-icon toRed show-l">&#xe621;</i>
-                                    <i ng-click="changeState(item.id,item.showState)" ng-if="putManageRule['UpdatePutOrdersState']" title="投放中" class="yc-icon toGreen hide">&#xe618;</i>
+                                    <i ng-click="changeState(item.id,item.showState)" ng-if="putManageRule['UpdatePutOrdersState'] && item.manageShowState == 1" title="投放中" class="yc-icon toGreen hide">&#xe618;</i>
                                 </div>
                             </div>
                             <div class="hide" ng-class="{'show':item.showState == 3}" >
@@ -187,8 +193,8 @@
                     <td text-left class="yc-roleMa-edit">
                         <!--编辑 查看-->
                         <span ng-if="putManageRule['ManagePutOrders']">
-                            <a padding-right href="javascript:void(0)" data-route="ViewPutOrderEdit?id={{item.id}}" ng-show="!(item.showState == 4 || (item.showState == 5 && item.contractCode))">编辑</a>
-                            <a padding-right href="javascript:void(0)" data-route="ViewPutOrderEdit?id={{item.id}}&showState={{item.showState}}" ng-show="(item.showState == 4 || (item.showState == 5 && item.contractCode))">查看</a>
+                            <a padding-right href="javascript:void(0)" data-route="ViewPutOrderEdit?id={{item.id}}&editManage={{item.manage}}" ng-show="!(item.showState == 4 || (item.showState == 5 && item.contractCode) || item.manage != 1)">编辑</a>
+                            <a padding-right href="javascript:void(0)" data-route="ViewPutOrderEdit?id={{item.id}}&showState={{item.showState}}&editManage={{item.manage}}" ng-show="(item.showState == 4 || (item.showState == 5 && item.contractCode) || item.manage != 1)">查看</a>
                         </span>
                         <!--查看-->
                         <span ng-if="!putManageRule['ManagePutOrders']">
@@ -197,12 +203,12 @@
 
                         <!--订单类型 “预定广告位” 撤销（订单） 订单类型 非“预定广告位” 终止（订单和创意）-->
 
-                        <span ng-if="putManageRule['RecallPutOrdersState'] && item.orderType == 1">
+                        <span ng-if="putManageRule['RecallPutOrdersState'] && item.orderType == 1 && item.manageCancel == 1">
                             <span ng-show="item.showState != 4">
                                 <a padding-right href="javascript:void (0)" ng-click="orderCancel(item.id,item.orderType,item.orderName)"> 撤销 </a>
                             </span>
                         </span>
-                        <span ng-if="putManageRule['StopOrders'] && item.orderType != 1">
+                        <span ng-if="putManageRule['StopOrders'] && item.orderType != 1 && item.manageTerminate == 1">
                             <span ng-show="item.showState != 5">
                                 <a padding-right href="javascript:void (0)" ng-click="orderCancel(item.id,item.orderType,item.orderName)"> 作废 </a>
                             </span>
@@ -337,8 +343,8 @@
                     <div class="form-group">
                         <label class="yc-col-2 control-label"> 审核意见：</label>
                         <div class="yc-col-10">
-                            <label class="radio"> <input type="radio" value="1" ng-model="checkModule.data.checkState"> 审核通过 </label>
-                            <label class="radio"> <input type="radio" value="-1" ng-model="checkModule.data.checkState"> 审核不通过 </label>
+                            <label class="radio"> <input type="radio" ng-value="1" ng-model="checkModule.data.checkState"> 审核通过 </label>
+                            <label class="radio"> <input type="radio" ng-value="-1" ng-model="checkModule.data.checkState"> 审核不通过 </label>
 
                             <a href="javascript:void(0)" ng-click="checkModule.data.goRoute()"> 审核详情 </a>
                         </div>

@@ -22,7 +22,7 @@ app.controller('clientEditCtrl', ['$scope', '$http', 'CustomerFty', 'SysUserFty'
         //获取修改信息															
         var id = parseInt(getSearch("id"));
         ycui.loading.show();
-        CustomerFty.getCustomer({id: id}).success(function (response) {
+        CustomerFty.getCustomer({id: id}).then(function (response) {
             ycui.loading.hide();
             if (response && response.code == 200) {
                 delete response.items.updateTime;
@@ -39,7 +39,7 @@ app.controller('clientEditCtrl', ['$scope', '$http', 'CustomerFty', 'SysUserFty'
                 // customerType = $scope.clientModel.customerType;
                 // parentId = $scope.clientModel.parentId;
 
-                CustomerFty.getAllCustomer({customerType:2}).success(function (response) {
+                CustomerFty.getAllCustomer({customerType:2}).then(function (response) {
                     var _childList = [];
                     if(response.items){
                         response.items.forEach(function (data) {
@@ -92,8 +92,9 @@ app.controller('clientEditCtrl', ['$scope', '$http', 'CustomerFty', 'SysUserFty'
                 query.customerContacts.forEach(function (data, index) {
                     data.contactSort = index + 1;
                 });
-                
-                CustomerFty.updateCustomer(query).success(function (response) {
+                ycui.loading.show();
+                CustomerFty.updateCustomer(query).then(function (response) {
+                    ycui.loading.hide();
                     if (response && response.code == 200) {
                         ycui.alert({
                             content: response.msg,
@@ -145,14 +146,14 @@ app.controller('clientEditCtrl', ['$scope', '$http', 'CustomerFty', 'SysUserFty'
         $scope.companyListSel = {
             callback:function(e,d){
                 $scope.departmentListSel.$destroy();
-                d && SysUserFty.depAndUserList({companyId:d.id}).success(function (res) {
+                d && SysUserFty.depAndUserList({companyId:d.id}).then(function (res) {
                     if(res && res.code == 200){
                         $scope.departmentListSel.list = res.departmentList;
                     }
                 });
             }
         };
-        SysCompanyFty.companyList().success(function (res) {
+        SysCompanyFty.companyList().then(function (res) {
             if(res){
                 $scope.companyListSel.list = res;
             }
@@ -172,15 +173,15 @@ app.controller('clientEditCtrl', ['$scope', '$http', 'CustomerFty', 'SysUserFty'
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.logNameOrTrueName = $scope.query.search;
-            CustomerFty.getCustomerFlowUser($scope.query).success(modView);
+            CustomerFty.getCustomerFlowUser($scope.query).then(modView);
         };
 
         $scope.$on('client-add',function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            CustomerFty.getCustomerFlowUser($scope.query).success(modView);
+            CustomerFty.getCustomerFlowUser($scope.query).then(modView);
         })
-        CustomerFty.getCustomerFlowUser($scope.query).success(modView);
+        CustomerFty.getCustomerFlowUser($scope.query).then(modView);
 
         /**
          * 业务员

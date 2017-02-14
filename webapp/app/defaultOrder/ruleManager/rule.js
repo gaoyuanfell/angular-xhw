@@ -4,14 +4,14 @@
 app.controller("orderRuleCtrl", ["$scope", "SysRuleUserFty","SysLoginUserFty",
     function ($scope, SysRuleUserFty,SysLoginUserFty) {
 
-        var loginUserInfo = SysLoginUserFty.loginUserInfo().success(function (res) {
+        var loginUserInfo = SysLoginUserFty.loginUserInfo().then(function (res) {
             if (res && res.code == 200) {
                 $scope.user = res;
-                $scope.$broadcast('loginUserInfo');
+                $scope.$broadcast('loginUserInfo',res);
             }
         });
 
-        SysRuleUserFty.getUserRightsByParentId({rightsParentId: 1}).success(function (res) {
+        SysRuleUserFty.getUserRightsByParentId({rightsParentId: 1}).then(function (res) {
             var _object = {};
             if(res && res.code == 200){
                 var items = res.items;

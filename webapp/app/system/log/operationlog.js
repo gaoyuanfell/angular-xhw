@@ -36,13 +36,13 @@ app.controller('operationLogCtrl', ['$scope', '$http', 'SysLogFty', function ($s
 
     $scope.query = {pageSize:pageSize,pageIndex:1,startTime:startTime,endTime:endTime};
 
-    SysLogFty.operationLogList($scope.query).success(modView);
+    SysLogFty.operationLogList($scope.query).then(modView);
 
     $scope.redirect = function (num, con) {
         ycui.loading.show();
         $scope.query.pageIndex = num || 1;
         $scope.query.param1 = $scope.query.search;
-        SysLogFty.operationLogList($scope.query).success(modView);
+        SysLogFty.operationLogList($scope.query).then(modView);
     };
     
     $scope.typeShow = function(type){
@@ -67,7 +67,7 @@ app.controller('operationLogCtrl', ['$scope', '$http', 'SysLogFty', function ($s
             $scope.query.pageIndex = 1;
             $scope.query.startTime = obj.startDate;
             $scope.query.endTime = obj.endDate;
-            $scope.redirect(1);
+            SysLogFty.operationLogList($scope.query).then(modView);
         }
     });
 }]);

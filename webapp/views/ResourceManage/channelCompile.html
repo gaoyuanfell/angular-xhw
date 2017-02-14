@@ -37,6 +37,15 @@
                     <input type="text" ng-value="mediaName" disabled class="form-control short">
                 </div>
             </div>
+
+            <div class="form-group" ng-show="departmentListSel && (departmentListSel.list.length > 1 || departmentListSel.$list.length > 1)">
+                <label class="yc-col-2 control-label"> <span>*</span> 范围：</label>
+                <div class="yc-col-10">
+                     <div yc-select="departmentListSel" width="200" value="depScope" key="agencyNumber" name="departmentName" recursion="nextDepts" reskey="{{depScope}}" placeholder="范围"></div>
+                     <span class="error-message" ng-show="validate && !depScope">请选择范围</span>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label class="yc-col-2 control-label"> <span>*</span> 频道名称：</label>
                 <div class="yc-col-10">
@@ -61,7 +70,7 @@
             <div class="form-group-btn">
                 <label class="yc-col-2 control-label"></label>
                 <div class="yc-col-10">
-                    <a href="javascript:void(0)" class="yc-btn" ng-click="postEdit()" ng-if="resourceRule['ManageMediaChannelADSpace']">提 交</a>
+                    <a href="javascript:void(0)" class="yc-btn" ng-click="postEdit()" ng-if="resourceRule['ManageMediaChannelADSpace'] && editManage == 1">提 交</a>
                     <a href="javascript:void(0)" data-route="ViewMediaChannelADSpace2" class="yc-btn-out">取 消</a>
                 </div>
             </div>

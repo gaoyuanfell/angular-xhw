@@ -29,12 +29,12 @@ app.controller("userAddCtrl", ['$scope', '$http', 'SysUserFty','$q',
                 $scope.userListSel.$destroy()
                 var numId = d.id;
                 ycui.loading.show();
-                var roleListByCom = SysUserFty.roleListByCom({id:numId}).success(function (res) {
+                var roleListByCom = SysUserFty.roleListByCom({id:numId}).then(function (res) {
                     if(res && res.code == 200){
                         $scope.roleList = res.roleList;
                     }
                 });
-                var depAndUserList = SysUserFty.depAndUserList({companyId: numId}).success(function (response) {
+                var depAndUserList = SysUserFty.depAndUserList({companyId: numId}).then(function (response) {
                     $scope.departmentList = angular.copy(response.departmentList);
                     $scope.departmentListSel.list = response.departmentList;
                     $scope.userListSel.list = response.userList;
@@ -47,7 +47,7 @@ app.controller("userAddCtrl", ['$scope', '$http', 'SysUserFty','$q',
                 delete $scope.userMode.leaderId;
             }
         };
-        var paramList = SysUserFty.paramList().success(function (response) {
+        var paramList = SysUserFty.paramList().then(function (response) {
             if (response && response.code == 200) {
                 $scope.companyListSel.list = response.companyList;
             }
@@ -96,7 +96,7 @@ app.controller("userAddCtrl", ['$scope', '$http', 'SysUserFty','$q',
             delete body.logPwd2;
             body.logPwd = md5(body.logPwd);
             ycui.loading.show();
-            SysUserFty.userAdd(body).success(function (response) {
+            SysUserFty.userAdd(body).then(function (response) {
                 ycui.loading.hide();
                 if (response && response.code == 200) {
                     ycui.alert({

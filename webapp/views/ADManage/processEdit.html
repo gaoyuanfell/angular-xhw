@@ -74,7 +74,7 @@
                                 <a href="javascript:void(0)"><i ng-click="switchingPosition($index,1)" class="yc-icon">&#xe61e;</i></a>
                                 <a href="javascript:void(0)"><i ng-click="switchingPosition($index,-1)" class="yc-icon">&#xe61d;</i></a>
                                 <a href="javascript:void(0)" ng-click="addContact($index)"><i class="yc-icon">&#xe61c;</i></a>
-                                <a href="javascript:void(0)" ng-click="removeContact($index)"><i class="yc-icon">&#xe611;</i></a>
+                                <a ng-show="$index != 0" href="javascript:void(0)" ng-click="removeContact($index)"><i class="yc-icon">&#xe611;</i></a>
                             </td>
                         </tr>
                     </tbody>

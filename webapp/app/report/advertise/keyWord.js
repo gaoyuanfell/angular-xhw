@@ -7,12 +7,12 @@ app.controller('keyWordCtrl', ["$scope", "ReportAdvertiseFty", "CustomerFty",'$q
         $scope.customerListSel = {};
 
         //订单下拉框
-        var allNDefaultOrderNames = ReportAdvertiseFty.allNDefaultOrderNames().success(function (response) {
+        var allNDefaultOrderNames = ReportAdvertiseFty.allNDefaultOrderNames().then(function (response) {
             if(!response) return;
             $scope.orderListSel.list = response.items;
         });
         //客户下拉框
-        var getPartCustomer = CustomerFty.getPartCustomer({customerType: 2}).success(function (response) {
+        var getPartCustomer = CustomerFty.getPartCustomer({customerType: 2}).then(function (response) {
             if(!response) return;
             $scope.customerListSel.list = response.items;
         });
@@ -23,9 +23,9 @@ app.controller('keyWordCtrl', ["$scope", "ReportAdvertiseFty", "CustomerFty",'$q
             ycui.loading.show();
             $scope.query.pageIndex = 1;
             //列表
-            ReportAdvertiseFty.keywordReport($scope.query).success(modViewG);
+            ReportAdvertiseFty.keywordReport($scope.query).then(modViewG);
             //汇总
-            ReportAdvertiseFty.collectKeywordReport($scope.query).success(summarizingG);
+            ReportAdvertiseFty.collectKeywordReport($scope.query).then(summarizingG);
         })
 
         ycui.loading.show();
@@ -47,9 +47,9 @@ app.controller('keyWordCtrl', ["$scope", "ReportAdvertiseFty", "CustomerFty",'$q
         };
 
         //列表
-        ReportAdvertiseFty.keywordReport($scope.query).success(modViewG);
+        ReportAdvertiseFty.keywordReport($scope.query).then(modViewG);
         //汇总
-        ReportAdvertiseFty.collectKeywordReport($scope.query).success(summarizingG);
+        ReportAdvertiseFty.collectKeywordReport($scope.query).then(summarizingG);
 
         //搜索框
         $scope.redirect = function (num,co) {
@@ -57,9 +57,9 @@ app.controller('keyWordCtrl', ["$scope", "ReportAdvertiseFty", "CustomerFty",'$q
             $scope.query.param1 = $scope.query.search;;
             $scope.query.pageIndex = num || 1;
             //列表
-            ReportAdvertiseFty.keywordReport($scope.query).success(modViewG);
+            ReportAdvertiseFty.keywordReport($scope.query).then(modViewG);
             //汇总
-            ReportAdvertiseFty.collectKeywordReport($scope.query).success(summarizingG);
+            ReportAdvertiseFty.collectKeywordReport($scope.query).then(summarizingG);
         };
 
         //日历查询
@@ -77,8 +77,8 @@ app.controller('keyWordCtrl', ["$scope", "ReportAdvertiseFty", "CustomerFty",'$q
                 $scope.query.startTime = obj.startDate;
                 $scope.query.endTime = obj.endDate;
 
-                ReportAdvertiseFty.keywordReport($scope.query).success(modViewG);
-                ReportAdvertiseFty.collectKeywordReport($scope.query).success(summarizingG);
+                ReportAdvertiseFty.keywordReport($scope.query).then(modViewG);
+                ReportAdvertiseFty.collectKeywordReport($scope.query).then(summarizingG);
             }
         });
 

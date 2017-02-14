@@ -5,7 +5,6 @@ app.controller('clientCtrl', ["$scope", "$http", "ReportCustomerFty",
     function ($scope, $http, ReportCustomerFty) {
         $scope.clientTypeSel = {
             list:[
-                {name:'全部',id:-1},
                 {name:'直客',id:1},
                 {name:'代理子客户',id:3}
             ]
@@ -25,20 +24,20 @@ app.controller('clientCtrl', ["$scope", "$http", "ReportCustomerFty",
             $scope.items = response.items;
             $scope.total_page = response.total_page;
         };
-        ReportCustomerFty.customerReport($scope.query).success(modViewA);
+        ReportCustomerFty.customerReport($scope.query).then(modViewA);
 
         //汇总
         var summarizingA = function (response) {
             if(!response) return;
             $scope.summarizing = response.items;
         };
-        ReportCustomerFty.collectCustomerReport($scope.query).success(summarizingA);
+        ReportCustomerFty.collectCustomerReport($scope.query).then(summarizingA);
 
         $scope.$on('clientListGroup',function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            ReportCustomerFty.customerReport($scope.query).success(modViewA);
-            ReportCustomerFty.collectCustomerReport($scope.query).success(summarizingA);
+            ReportCustomerFty.customerReport($scope.query).then(modViewA);
+            ReportCustomerFty.collectCustomerReport($scope.query).then(summarizingA);
         })
 
         //搜索框
@@ -46,8 +45,8 @@ app.controller('clientCtrl', ["$scope", "$http", "ReportCustomerFty",
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.param1 = $scope.query.search;
-            ReportCustomerFty.customerReport($scope.query).success(modViewA);
-            ReportCustomerFty.collectCustomerReport($scope.query).success(summarizingA);
+            ReportCustomerFty.customerReport($scope.query).then(modViewA);
+            ReportCustomerFty.collectCustomerReport($scope.query).then(summarizingA);
         };
 
         //日历查询
@@ -64,8 +63,8 @@ app.controller('clientCtrl', ["$scope", "$http", "ReportCustomerFty",
                 ycui.loading.show();
                 $scope.query.startTime = obj.startDate;
                 $scope.query.endTime = obj.endDate;
-                ReportCustomerFty.customerReport($scope.query).success(modViewA);
-                ReportCustomerFty.collectCustomerReport($scope.query).success(summarizingA);
+                ReportCustomerFty.customerReport($scope.query).then(modViewA);
+                ReportCustomerFty.collectCustomerReport($scope.query).then(summarizingA);
             }
         });
 

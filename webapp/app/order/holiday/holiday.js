@@ -78,7 +78,7 @@ app.controller('holidayCtrl',['$scope','$http',function ($scope,$http) {
         }
     };
 
-    $http.post(baseUrl + '/holiday/getMonthHolidays.htm',{months:year},configJson).success(getMonthHolidays);
+    $http.post(baseUrl + '/holiday/getMonthHolidays.htm',{months:year},configJson).then(getMonthHolidays);
 
     
     $scope.postEdit = function (type,value) {
@@ -103,14 +103,14 @@ app.controller('holidayCtrl',['$scope','$http',function ($scope,$http) {
             type:type
         };
         ycui.loading.show();
-        $http.post(baseUrl + '/holiday/editHolidays.htm',form,configJson).success(function (res) {
+        $http.post(baseUrl + '/holiday/editHolidays.htm',form,configJson).then(function (res) {
             ycui.loading.hide();
             if(res && res.code == 200){
                 ycui.alert({
                     content:res.msg,
                     timeout:10,
                     okclick:function () {
-                        $http.post(baseUrl + '/holiday/getMonthHolidays.htm',{months:year},configJson).success(getMonthHolidays);
+                        $http.post(baseUrl + '/holiday/getMonthHolidays.htm',{months:year},configJson).then(getMonthHolidays);
                     }
                 })
             }

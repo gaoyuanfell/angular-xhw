@@ -65,8 +65,8 @@
         <div class="form-group">
             <label class="yc-col-2 control-label"> <span>*</span> 审核意见：</label>
             <div class="yc-col-10">
-                <label class="radio"> <input class="form-control" ng-model="order.checkState" type="radio" value="1"> 审核通过 </label>
-                <label class="radio"> <input class="form-control" ng-model="order.checkState" type="radio" value="-1"> 审核未通过 </label>
+                <label class="radio"> <input class="form-control" ng-model="order.checkState" type="radio" ng-value="1"> 审核通过 </label>
+                <label class="radio"> <input class="form-control" ng-model="order.checkState" type="radio" ng-value="-1"> 审核未通过 </label>
             </div>
         </div>
 
@@ -100,8 +100,8 @@
         <div class="form-group" ng-show="order.orderType == 1">
             <label class="yc-col-2 control-label"> <span>*</span> 打包合同：</label>
             <div class="yc-col-10">
-                <label class="radio"><input class="form-control" type="radio" disabled ng-model="order.isPackage" value="1" ng-change="isPackageChange(1)"> 否</label>
-                <label class="radio"><input class="form-control" type="radio" disabled ng-model="order.isPackage" value="2" ng-change="isPackageChange(2)"> 是</label>
+                <label class="radio"><input class="form-control" type="radio" disabled ng-model="order.isPackage" ng-value="1" ng-change="isPackageChange(1)"> 否</label>
+                <label class="radio"><input class="form-control" type="radio" disabled ng-model="order.isPackage" ng-value="2" ng-change="isPackageChange(2)"> 是</label>
             </div>
         </div>
 
@@ -110,8 +110,8 @@
             <div class="form-group">
                 <label class="yc-col-2 control-label"> <span>*</span> 合同签订情况：</label>
                 <div class="yc-col-10">
-                    <label class="radio"><input class="form-control" type="radio" disabled ng-model="order.contractType" value="1" ng-change="contractTypeChange(1)"> 已签合同</label>
-                    <label class="radio"><input class="form-control" type="radio" disabled ng-model="order.contractType" value="2" ng-change="contractTypeChange(2)"> 暂无合同</label>
+                    <label class="radio"><input class="form-control" type="radio" disabled ng-model="order.contractType" ng-value="1" ng-change="contractTypeChange(1)"> 已签合同</label>
+                    <label class="radio"><input class="form-control" type="radio" disabled ng-model="order.contractType" ng-value="2" ng-change="contractTypeChange(2)"> 暂无合同</label>
                 </div>
             </div>
 
@@ -205,8 +205,8 @@
             <div class="form-group" ng-show="selectContractShow || order.contractType == 2">
                 <label class="yc-col-2 control-label"> <span>*</span> 打包合同：</label>
                 <div class="yc-col-10">
-                    <label class="radio"><input class="form-control" type="radio" ng-model="order.isPackage" disabled value="1" ng-change="selectContractShow(1)"> 否</label>
-                    <label class="radio"><input class="form-control" type="radio" ng-model="order.isPackage" disabled value="2" ng-change="selectContractShow(2)"> 是</label>
+                    <label class="radio"><input class="form-control" type="radio" ng-model="order.isPackage" disabled ng-value="1" ng-change="selectContractShow(1)"> 否</label>
+                    <label class="radio"><input class="form-control" type="radio" ng-model="order.isPackage" disabled ng-value="2" ng-change="selectContractShow(2)"> 是</label>
                 </div>
             </div>
 
@@ -256,8 +256,8 @@
             <div class="form-group">
                 <label class="yc-col-2 control-label"> <span>*</span> 合同签订情况：</label>
                 <div class="yc-col-10">
-                    <label class="radio"><input class="form-control" type="radio" disabled="disabled" ng-model="order.contractType" value="1"> 已签合同</label>
-                    <label class="radio"><input class="form-control" type="radio" disabled="disabled" ng-model="order.contractType" value="2"> 暂无合同</label>
+                    <label class="radio"><input class="form-control" type="radio" disabled="disabled" ng-model="order.contractType" ng-value="1"> 已签合同</label>
+                    <label class="radio"><input class="form-control" type="radio" disabled="disabled" ng-model="order.contractType" ng-value="2"> 暂无合同</label>
                 </div>
             </div>
 
@@ -311,8 +311,8 @@
             <div class="form-group">
                 <label class="yc-col-2 control-label"> <span>*</span> 打包合同：</label>
                 <div class="yc-col-10">
-                    <label class="radio"><input class="form-control" type="radio" ng-model="order.isPackage" disabled="disabled" value="1" name="contractType"> 否</label>
-                    <label class="radio"><input class="form-control" type="radio" ng-model="order.isPackage" disabled="disabled" value="2" name="contractType"> 是</label>
+                    <label class="radio"><input class="form-control" type="radio" ng-model="order.isPackage" disabled="disabled" ng-value="1" name="contractType"> 否</label>
+                    <label class="radio"><input class="form-control" type="radio" ng-model="order.isPackage" disabled="disabled" ng-value="2" name="contractType"> 是</label>
                 </div>
             </div>
 
@@ -445,7 +445,7 @@
                         <td>
                             <!--排期类型：0正常购买 1免费配送 2自用 3 打包-->
                             <label class="radio" ng-click="scheduleTypeChange(ad,type.id)" ng-repeat="type in scheduleTypeList">
-                                <input ng-disabled="!_checkEndState && ad.adSpaceId != undefined" class="form-control" ng-model="ad.scheduleType" type="radio" value="{{type.id}}">{{type.name}}
+                                <input ng-disabled="!_checkEndState && ad.adSpaceId != undefined" class="form-control" ng-model="ad.scheduleType" type="radio" ng-value="type.id">{{type.name}}
                             </label>
                         </td>
                         <td><span>{{(ad.price | currency:'') + '/'}}{{ad.priceCycle | isDay}}</span></td>
@@ -539,8 +539,8 @@
         <div class="form-group" ng-init="areasListShow = 0">
             <label class="yc-col-2 control-label"> 地域定向：</label>
             <div class="yc-col-10">
-                <label class="radio"><input class="form-control" type="radio" ng-model="areasListShow" value="0" disabled> 不限</label>
-                <label class="radio"><input class="form-control" type="radio" ng-model="areasListShow" value="1" disabled> 选择省份</label>
+                <label class="radio"><input class="form-control" type="radio" ng-model="areasListShow" ng-value="0" disabled> 不限</label>
+                <label class="radio"><input class="form-control" type="radio" ng-model="areasListShow" ng-value="1" disabled> 选择省份</label>
             </div>
         </div>
 
@@ -554,8 +554,8 @@
         <div class="form-group" ng-init="languageShow = 0">
             <label class="yc-col-2 control-label"> 语言定向：</label>
             <div class="yc-col-10">
-                <label class="radio"><input class="form-control" type="radio" ng-model="languageShow" value="0" ng-disabled="!_checkEndState  && !_checkEndStateTrue"> 不限</label>
-                <label class="radio"><input class="form-control" type="radio" ng-model="languageShow" value="1" ng-disabled="!_checkEndState  && !_checkEndStateTrue"> 选择语言</label>
+                <label class="radio"><input class="form-control" type="radio" ng-model="languageShow" ng-value="0" ng-disabled="!_checkEndState  && !_checkEndStateTrue"> 不限</label>
+                <label class="radio"><input class="form-control" type="radio" ng-model="languageShow" ng-value="1" ng-disabled="!_checkEndState  && !_checkEndStateTrue"> 选择语言</label>
             </div>
         </div>
 
@@ -564,7 +564,7 @@
             <div class="yc-col-10">
                 <span ng-repeat="la in languageList">
                     <label class="item">
-                        <input class="form-control" type="checkbox" ng-true-value="{{la.id}}" ng-false-value="0" ng-model="la.value">
+                        <input class="form-control" type="checkbox" ng-true-value="{{la.id}}" ng-false-value="'0'" ng-model="la.value">
                         {{la.name}}
                     </label>
                     <br ng-show="($index+1)%7 == 0">

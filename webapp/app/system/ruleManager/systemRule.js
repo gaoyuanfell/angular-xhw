@@ -3,14 +3,14 @@
  */
 app.controller("limitCtrl", ['$scope', 'SysRuleUserFty','SysLoginUserFty',
     function ($scope,SysRuleUserFty,SysLoginUserFty) {
-        var loginUserInfo = SysLoginUserFty.loginUserInfo().success(function (res) {
+        var loginUserInfo = SysLoginUserFty.loginUserInfo().then(function (res) {
             if (res && res.code == 200) {
                 $scope.user = res;
                 $scope.$broadcast('loginUserInfo');
             }
         });
 
-        SysRuleUserFty.getUserRightsByParentId({rightsParentId: 5}).success(function (res) {
+        SysRuleUserFty.getUserRightsByParentId({rightsParentId: 5}).then(function (res) {
             var _object = {};
             if(res && res.code == 200){
                 var items = res.items;

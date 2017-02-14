@@ -3,7 +3,7 @@
  */
 app.controller("clientLimitCtrl", ['$scope', 'SysRuleUserFty',
     function ($scope, SysRuleUserFty) {
-        SysRuleUserFty.getUserRightsByParentId({rightsParentId: 3}).success(function (res) {
+        SysRuleUserFty.getUserRightsByParentId({rightsParentId: 3}).then(function (res) {
             var _object = {};
             if(res && res.code == 200){
                 var items = res.items;

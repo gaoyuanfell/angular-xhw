@@ -60,6 +60,14 @@
             </div>
         </div>
 
+        <div class="form-group" ng-show="adSpaceTypeId == 11">
+            <label class="yc-col-2 control-label"> <span>*</span> 距离顶部的距离：</label>
+            <div class="yc-col-10">
+                <input class="form-control" type="text" name="distanceValue" ng-placeholder="距离顶部的距离" ng-model="distanceValue">
+                <span class="msg">像素</span>
+            </div>
+        </div>
+
         <div class="form-group" ng-show="isLimitValue == 1">
             <label class="yc-col-2 control-label"> <span>*</span> 文字链显示个数上限：</label>
             <div class="yc-col-10">
@@ -127,7 +135,6 @@
                 <input class="form-control" type="text" name="kbNum" ng-placeholder="40" ng-model="fileSize">
             </div>
         </div>
-
         <div class="form-group" ng-show="adSpaceTypeId == 21">
             <label class="yc-col-2 control-label"> <span>*</span>最大显示时长：</label>
             <div class="yc-col-10">
@@ -139,8 +146,8 @@
         <div class="form-group">
             <label class="yc-col-2 control-label"> 是否支持轮播：</label>
             <div class="yc-col-10">
-                <label class="radio"><input class="form-control" type="radio" ng-model="isMultiLimit" value="0"> 否</label>
-                <label class="radio"><input class="form-control" type="radio" ng-model="isMultiLimit" value="1"> 是</label>
+                <label class="radio"><input class="form-control" type="radio" ng-model="isMultiLimit" ng-value="0"> 否</label>
+                <label class="radio"><input class="form-control" type="radio" ng-model="isMultiLimit" ng-value="1"> 是</label>
             </div>
         </div>
 
@@ -179,24 +186,24 @@
         <div class="form-group">
             <label class="yc-col-2 control-label"> 是否支持角标：</label>
             <div class="yc-col-10">
-                <label class="radio"><input class="form-control" disabled type="radio" ng-model="enableMark" value="0"> 不支持</label>
-                <label class="radio"><input class="form-control" disabled type="radio" ng-model="enableMark" value="1"> 支持</label>
+                <label class="radio"><input class="form-control" disabled type="radio" ng-model="enableMark" ng-value="0"> 不支持</label>
+                <label class="radio"><input class="form-control" disabled type="radio" ng-model="enableMark" ng-value="1"> 支持</label>
             </div>
         </div>
 
         <div class="form-group">
             <label class="yc-col-2 control-label"> 是否支持第三方监测：</label>
             <div class="yc-col-10">
-                <label class="radio"><input class="form-control" disabled type="radio" ng-model="enableMonitor" value="0"> 不支持</label>
-                <label class="radio"><input class="form-control" disabled type="radio" ng-model="enableMonitor" value="1"> 支持</label>
+                <label class="radio"><input class="form-control" disabled type="radio" ng-model="enableMonitor" ng-value="0"> 不支持</label>
+                <label class="radio"><input class="form-control" disabled type="radio" ng-model="enableMonitor" ng-value="1"> 支持</label>
             </div>
         </div>
 
         <div class="form-group">
             <label class="yc-col-2 control-label"> 是否展示打底广告：</label>
             <div class="yc-col-10">
-                <label class="radio"><input class="form-control" disabled type="radio" ng-model="enableBaseAd" value="0"> 否</label>
-                <label class="radio"><input class="form-control" disabled type="radio" ng-model="enableBaseAd" value="1"> 是</label>
+                <label class="radio"><input class="form-control" disabled type="radio" ng-model="enableBaseAd" ng-value="0"> 否</label>
+                <label class="radio"><input class="form-control" disabled type="radio" ng-model="enableBaseAd" ng-value="1"> 是</label>
             </div>
         </div>
 

@@ -5,7 +5,7 @@ app.controller("tureAdCtrl", ["$scope", "$http", "DefaultOrdersFty",
     function ($scope, $http, DefaultOrdersFty) {
         $scope.checkStateSel = {
             list:[
-                {name:'全部',id:-2},
+                {name:'全部'},
                 {name:'审核中',id:0},
                 {name:'审核通过',id:1},
                 {name:'审核不通过',id:-1},
@@ -13,7 +13,7 @@ app.controller("tureAdCtrl", ["$scope", "$http", "DefaultOrdersFty",
         }
         $scope.priorityOrderSel = {
             list:[
-                {name:'全部',id:-2},
+                {name:'全部'},
                 {name:'默认广告',id:0},
                 {name:'紧急广告',id:99},
                 {name:'审核不通过',id:-1},
@@ -43,8 +43,8 @@ app.controller("tureAdCtrl", ["$scope", "$http", "DefaultOrdersFty",
         $scope.$on('deOrderListGroup',function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            DefaultOrdersFty.defaultOrdersList($scope.query).success(modView);
-            DefaultOrdersFty.defaultOrderDataCount($scope.query).success(getAllDate);
+            DefaultOrdersFty.defaultOrdersList($scope.query).then(modView);
+            DefaultOrdersFty.defaultOrderDataCount($scope.query).then(getAllDate);
         })
 
         //判断审核能不能跳转
@@ -94,11 +94,11 @@ app.controller("tureAdCtrl", ["$scope", "$http", "DefaultOrdersFty",
         var orderId = getSearch("creativeToOrderId");
         if (orderId) {
             var a = {pageSize: 10, creativeToOrderId: orderId};
-            DefaultOrdersFty.defaultOrdersList(a).success(modView);
-            DefaultOrdersFty.defaultOrderDataCount(a).success(getAllDate);
+            DefaultOrdersFty.defaultOrdersList(a).then(modView);
+            DefaultOrdersFty.defaultOrderDataCount(a).then(getAllDate);
         } else {
-            DefaultOrdersFty.defaultOrdersList($scope.query).success(modView);
-            DefaultOrdersFty.defaultOrderDataCount($scope.query).success(getAllDate);
+            DefaultOrdersFty.defaultOrdersList($scope.query).then(modView);
+            DefaultOrdersFty.defaultOrderDataCount($scope.query).then(getAllDate);
         }
 
         //搜索框
@@ -106,8 +106,8 @@ app.controller("tureAdCtrl", ["$scope", "$http", "DefaultOrdersFty",
             ycui.loading.show();
             $scope.query.defaultOrderNameOrID = $scope.query.search;
             $scope.query.pageIndex = num || 1;
-            DefaultOrdersFty.defaultOrdersList($scope.query).success(modView);
-            DefaultOrdersFty.defaultOrderDataCount($scope.query).success(getAllDate);
+            DefaultOrdersFty.defaultOrdersList($scope.query).then(modView);
+            DefaultOrdersFty.defaultOrderDataCount($scope.query).then(getAllDate);
         };
 
         $scope.goDefaultCreate = function(id,name){
@@ -135,8 +135,8 @@ app.controller("tureAdCtrl", ["$scope", "$http", "DefaultOrdersFty",
                 ycui.loading.show();
                 $scope.query.startDate = obj.startDate;
                 $scope.query.endDate = obj.endDate;
-                DefaultOrdersFty.defaultOrdersList($scope.query).success(modView);
-                DefaultOrdersFty.defaultOrderDataCount($scope.query).success(getAllDate);
+                DefaultOrdersFty.defaultOrdersList($scope.query).then(modView);
+                DefaultOrdersFty.defaultOrderDataCount($scope.query).then(getAllDate);
             }
         });
 
@@ -147,8 +147,8 @@ app.controller("tureAdCtrl", ["$scope", "$http", "DefaultOrdersFty",
                         content:res.msg,
                         timeout:10,
                         okclick:function(){
-                            DefaultOrdersFty.defaultOrdersList($scope.query).success(modView);
-                            DefaultOrdersFty.defaultOrderDataCount($scope.query).success(getAllDate);
+                            DefaultOrdersFty.defaultOrdersList($scope.query).then(modView);
+                            DefaultOrdersFty.defaultOrderDataCount($scope.query).then(getAllDate);
                         }
                     })
                 }
@@ -157,11 +157,11 @@ app.controller("tureAdCtrl", ["$scope", "$http", "DefaultOrdersFty",
                 ycui.confirm({
                     content: "<div>订单禁用后不可投放！</div>若重新开启，须重新进入审批流程<div> <div>请确认是否禁用该订单?</div>",
                     okclick: function () {
-                        DefaultOrdersFty.enableOrder({state:~state,id:id}).success(_changeState)
+                        DefaultOrdersFty.enableOrder({state:~state,id:id}).then(_changeState)
                     }
                 })
             }else{
-                DefaultOrdersFty.enableOrder({state:~state,id:id}).success(_changeState)
+                DefaultOrdersFty.enableOrder({state:~state,id:id}).then(_changeState)
             }
         }
 

@@ -37,37 +37,45 @@
         </div>
 
         <div class="form-group">
-            <label for="" class="yc-col-2 control-label"> <span>*</span> 所属媒体：</label>
+            <label class="yc-col-2 control-label"> <span>*</span> 所属媒体：</label>
             <div class="yc-col-10">
                 <div yc-select="mediaListSel" width="260" value="mediaId" key="id" name="mediaName" resname="{{mediaName}}" placeholder="请选择媒体" disabled="{{isAdvertiseShow}}"></div>
             </div>
         </div>
 
         <div class="form-group">
-            <label for="" class="yc-col-2 control-label"> <span>*</span> 所属频道：</label>
+            <label class="yc-col-2 control-label"> <span>*</span> 所属频道：</label>
             <div class="yc-col-10">
                 <div yc-select="channelListSel" width="260" value="mediaChannelId,channelName"  key="id,channelName" name="channelName" resname="{{mediaChannelName}}" placeholder="请选择频道" disabled="{{isAdvertiseShow}}"></div>
             </div>
         </div>
 
         <div class="form-group">
-            <label for="" class="yc-col-2 control-label"> <span>*</span> 广告类型：</label>
+            <label class="yc-col-2 control-label"> <span>*</span> 广告类型：</label>
             <div class="yc-col-10">
                 <div yc-select="typeListSel" width="260" value="adSpaceTypeId,isMulti,isCoupletAd,isLimitValue" key="id,isMulti,isCoupletAd,isLimit" resname="{{adSpaceTypeName}}" placeholder="广告类型" disabled="{{isAdvertiseShow}}"></div>
             </div>
         </div>
 
+        <div class="form-group" ng-show="adSpaceTypeId == 11">
+            <label class="yc-col-2 control-label"> <span>*</span> 距离顶部的距离：</label>
+            <div class="yc-col-10">
+                <input class="form-control" type="text" name="distanceValue" ng-disabled="isAdvertiseShow" ng-placeholder="距离顶部的距离" ng-model="distanceValue">
+                <span class="msg">像素</span>
+            </div>
+        </div>
+
         <div class="form-group" ng-show="isLimitValue == 1">
-            <label for="" class="yc-col-2 control-label"> <span>*</span> 文字链显示个数上限：</label>
+            <label class="yc-col-2 control-label"> <span>*</span> 文字链显示个数上限：</label>
             <div class="yc-col-10">
                 <input class="form-control" type="text" name="maxAdCount" ng-disabled="isAdvertiseShow" ng-placeholder="请输入文字链显示个数上限" ng-model="maxAdCount">
             </div>
         </div>
 
         <div class="form-group">
-            <label for="" class="yc-col-2 control-label"> <span>*</span> 广告位名称：</label>
+            <label class="yc-col-2 control-label"> <span>*</span> 广告位名称：</label>
             <div class="yc-col-10">
-                <input class="form-control" type="text" name="adName" ng-disabled="isAdvertiseShow" ng-placeholder="请输入广告位名称" ng-model="adSpaceName">
+                <input class="form-control" type="text" name="adName" ng-placeholder="请输入广告位名称" ng-model="adSpaceName">
             </div>
         </div>
 
@@ -120,7 +128,7 @@
         </div>
 
         <!--<div class="form-group" ng-class="{'hide':isMulti == 1 && isCoupletAd != 1}">
-            <label for="" class="yc-col-2 control-label"> <span>*</span> 选择尺寸：</label>
+            <label class="yc-col-2 control-label"> <span>*</span> 选择尺寸：</label>
             <div class="yc-col-10">
                 <div yc-select="sizeListSel" width="260" value="size" key="size" name="size" resname="{{size}}" placeholder="请选择尺寸" disabled="{{isAdvertiseShow}}"></div>
                 <span class="yc-error-span" ng-class="{'show-l':!size && validShow}">请选择尺寸</span>
@@ -128,7 +136,7 @@
         </div>
 
         <div class="form-group hide" ng-class="{'show':isMulti == 1 && isCoupletAd != 1}">
-            <label for="" class="yc-col-2 control-label"> <span>*</span> 主图尺寸：</label>
+            <label class="yc-col-2 control-label"> <span>*</span> 主图尺寸：</label>
             <div class="yc-col-10">
                 <div yc-select="sizeListSel" width="260" value="size" key="size" name="size" resname="{{size}}" placeholder="请选择主图尺寸" disabled="{{isAdvertiseShow}}"></div>
                 <span class="yc-error-span" ng-class="{'show-l':!size && validShow}">请选择尺寸</span>
@@ -136,7 +144,7 @@
         </div>
 
         <div class="form-group hide" ng-class="{'show':isMulti == 1 && isCoupletAd != 1}">
-            <label for="" class="yc-col-2 control-label"> <span>*</span> 附图尺寸：</label>
+            <label class="yc-col-2 control-label"> <span>*</span> 附图尺寸：</label>
             <div class="yc-col-10">
                 <div yc-select="sizeListSel2" width="260" value="size2" key="size" name="size" resname="{{size2}}" placeholder="请选择附图尺寸" disabled="{{isAdvertiseShow}}"></div>
                 <span class="yc-error-span" ng-class="{'show-l':!size2 && validShow}">请选择尺寸</span>
@@ -144,7 +152,7 @@
         </div>-->
 
         <div class="form-group">
-            <label for="" class="yc-col-2 control-label"> <span>*</span> 创意K数限制：</label>
+            <label class="yc-col-2 control-label"> <span>*</span> 创意K数限制：</label>
             <div class="yc-col-10">
                 <input class="form-control" type="text" name="kbNum" ng-disabled="isAdvertiseShow" ng-placeholder="40" ng-model="fileSize">
             </div>
@@ -157,9 +165,9 @@
                     <input ng-width="115" class="form-control" type="text" disabled name="kanliPrice" ng-model="price" ng-placeholder="请输入刊例价">
                     <span class="input-group-addon">元</span>
                     <span class="msg">
-                        <label class="radio"> <input disabled type="radio" name="priceCycle" ng-model="priceCycle" value="1"> 天</label>
-                        <label class="radio"> <input disabled type="radio" name="priceCycle" ng-model="priceCycle" value="2"> 月</label>
-                        <label class="radio"> <input disabled type="radio" name="priceCycle" ng-model="priceCycle" value="3"> 时</label>
+                        <label class="radio"> <input disabled type="radio" name="priceCycle" ng-model="priceCycle" ng-value="1"> 天</label>
+                        <label class="radio"> <input disabled type="radio" name="priceCycle" ng-model="priceCycle" ng-value="2"> 月</label>
+                        <label class="radio"> <input disabled type="radio" name="priceCycle" ng-model="priceCycle" ng-value="3"> 时</label>
                     </span>
                 </div>
             </div>
@@ -174,22 +182,22 @@
         </div>
 
         <div class="form-group">
-            <label for="" class="yc-col-2 control-label"> 是否支持轮播：</label>
+            <label class="yc-col-2 control-label"> 是否支持轮播：</label>
             <div class="yc-col-10">
-                <label class="radio"><input class="form-control" ng-disabled="isAdvertiseShow" type="radio" ng-model="isMultiLimit" value="0"> 否</label>
-                <label class="radio"><input class="form-control" ng-disabled="isAdvertiseShow" type="radio" ng-model="isMultiLimit" value="1"> 是</label>
+                <label class="radio"><input class="form-control" ng-disabled="isAdvertiseShow" type="radio" ng-model="isMultiLimit" ng-value="0"> 否</label>
+                <label class="radio"><input class="form-control" ng-disabled="isAdvertiseShow" type="radio" ng-model="isMultiLimit" ng-value="1"> 是</label>
             </div>
         </div>
 
         <div class="form-group" ng-show="isMultiLimit == 1">
-            <label for="" class="yc-col-2 control-label"> <span>*</span>轮播上限：</label>
+            <label class="yc-col-2 control-label"> <span>*</span>轮播上限：</label>
             <div class="yc-col-10">
                 <input class="form-control" type="text" name="multiLimit" ng-disabled="isAdvertiseShow" ng-placeholder="轮播上限" ng-model="multiLimit">
             </div>
         </div>
 
         <!--<div class="form-group">
-            <label for="" class="yc-col-2 control-label"> 选择特效：</label>
+            <label class="yc-col-2 control-label"> 选择特效：</label>
             <div class="yc-col-10">
                 <span ng-repeat="e in effectList">
                     <label class="checkbox">
@@ -202,7 +210,7 @@
         </div>-->
 
         <div class="form-group">
-            <label for="" class="yc-col-2 control-label"> <span>*</span>支持创意类型：</label>
+            <label class="yc-col-2 control-label"> <span>*</span>支持创意类型：</label>
             <div class="yc-col-10">
                 <label class="checkbox" ng-repeat="c in catagorysList">
                     <input class="form-control" type="checkbox" disabled ng-model="c.check" ng-true-value="true" ng-false-value="false">
@@ -212,31 +220,31 @@
         </div>
 
         <div class="form-group">
-            <label for="" class="yc-col-2 control-label"> 是否支持角标：</label>
+            <label class="yc-col-2 control-label"> 是否支持角标：</label>
             <div class="yc-col-10">
-                <label class="radio"><input class="form-control" disabled type="radio" ng-model="enableMark" value="0"> 不支持</label>
-                <label class="radio"><input class="form-control" disabled type="radio" ng-model="enableMark" value="1"> 支持</label>
+                <label class="radio"><input class="form-control" disabled type="radio" ng-model="enableMark" ng-value="0"> 不支持</label>
+                <label class="radio"><input class="form-control" disabled type="radio" ng-model="enableMark" ng-value="1"> 支持</label>
             </div>
         </div>
 
         <div class="form-group">
-            <label for="" class="yc-col-2 control-label"> 是否支持第三方监测：</label>
+            <label class="yc-col-2 control-label"> 是否支持第三方监测：</label>
             <div class="yc-col-10">
-                <label class="radio"><input class="form-control" disabled type="radio" ng-model="enableMonitor" value="0"> 不支持</label>
-                <label class="radio"><input class="form-control" disabled type="radio" ng-model="enableMonitor" value="1"> 支持</label>
+                <label class="radio"><input class="form-control" disabled type="radio" ng-model="enableMonitor" ng-value="0"> 不支持</label>
+                <label class="radio"><input class="form-control" disabled type="radio" ng-model="enableMonitor" ng-value="1"> 支持</label>
             </div>
         </div>
 
         <div class="form-group">
-            <label for="" class="yc-col-2 control-label"> 是否展示打底广告：</label>
+            <label class="yc-col-2 control-label"> 是否展示打底广告：</label>
             <div class="yc-col-10">
-                <label class="radio"><input class="form-control" type="radio" disabled ng-model="enableBaseAd" ng-change="showPhotoFun(0)" value="0"> 否</label>
-                <label class="radio"><input class="form-control" type="radio" disabled ng-model="enableBaseAd" ng-change="showPhotoFun(1)" value="1"> 是</label>
+                <label class="radio"><input class="form-control" type="radio" disabled ng-model="enableBaseAd" ng-change="showPhotoFun(0)" ng-value="0"> 否</label>
+                <label class="radio"><input class="form-control" type="radio" disabled ng-model="enableBaseAd" ng-change="showPhotoFun(1)" ng-value="1"> 是</label>
             </div>
         </div>
 
         <div class="form-group" ng-show="enableBaseAd == 1">
-            <label for="" class="yc-col-2 control-label"></label>
+            <label class="yc-col-2 control-label"></label>
             <div class="yc-col-10">
                 <!--<div class="upload">
                     <div id="isShowDefault" class="yc-btn-web item">上&emsp;&emsp;传</div>
@@ -256,7 +264,7 @@
         </div>
 
         <div class="form-group">
-            <label for="" class="yc-col-2 control-label"> 备注：</label>
+            <label class="yc-col-2 control-label"> 备注：</label>
             <div class="yc-col-10">
                 <textarea name="myText" class="form-control" ng-disabled="isAdvertiseShow" ng-placeholder="请输入备注" ng-model="remark"></textarea>
             </div>
@@ -265,7 +273,7 @@
         <div class="form-group-btn">
             <label class="yc-col-2 control-label"></label>
             <div class="yc-col-10">
-                <a href="javascript:void(0)" class="yc-btn" ng-click="postEdit()" ng-if="resourceRule['ManageMediaChannelADSpace']">提 交</a>
+                <a href="javascript:void(0)" class="yc-btn" ng-click="postEdit()" ng-if="resourceRule['ManageMediaChannelADSpace'] && editManage == 1">提 交</a>
                 <a href="javascript:void(0)" data-route="ViewMediaChannelADSpace3" class="yc-btn-out">取 消</a>
             </div>
         </div>

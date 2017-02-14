@@ -7,7 +7,7 @@ app.controller('QualificationCtrl', ["$scope", "$http", "QualificationFty", "Cus
          * 获取子客户
          */
         $scope.childListSel = {}
-        var getAllCustomer = CustomerFty.getAllCustomer().success(function (response) {
+        var getAllCustomer = CustomerFty.getAllCustomer().then(function (response) {
             if(response){
                 $scope.childListSel.list = response.items;//param1
             }
@@ -21,7 +21,7 @@ app.controller('QualificationCtrl', ["$scope", "$http", "QualificationFty", "Cus
                 if(d){
                     query.customerType = d.id
                 }
-                CustomerFty.getAllCustomer(query).success(function (response) {
+                CustomerFty.getAllCustomer(query).then(function (response) {
                     if (response) {
                         $scope.childListSel.list = response.items;
                     }
@@ -52,28 +52,28 @@ app.controller('QualificationCtrl', ["$scope", "$http", "QualificationFty", "Cus
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.param2 = $scope.query.search;
-            QualificationFty.listQualifications($scope.query).success(modView);
+            QualificationFty.listQualifications($scope.query).then(modView);
         };
 
         $scope.$on('qualification-list',function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            QualificationFty.listQualifications($scope.query).success(modView);
+            QualificationFty.listQualifications($scope.query).then(modView);
         })
 
         // if (id) {
-        //     QualificationFty.findCustomerQualifications($scope.query).success(modView);
+        //     QualificationFty.findCustomerQualifications($scope.query).then(modView);
         // } else {
             
         // }
 
-        QualificationFty.listQualifications($scope.query).success(modView);
+        QualificationFty.listQualifications($scope.query).then(modView);
 
         $scope.delete = function (id) {
             ycui.confirm({
                 content: "请确认，您将执行删除操作",
                 okclick: function () {
-                    QualificationFty.deleteQualifications({id: id}).success(function (response) {
+                    QualificationFty.deleteQualifications({id: id}).then(function (response) {
                         ycui.alert({
                             content: response.msg,
                             okclick: function () {
@@ -272,7 +272,7 @@ app.controller('QualificationCtrl', ["$scope", "$http", "QualificationFty", "Cus
                 ycui.loading.show();
                 $scope.query.pageIndex = 1;
                 $scope.query.param3 = d;
-                QualificationFty.listQualifications($scope.query).success(modView);
+                QualificationFty.listQualifications($scope.query).then(modView);
                 if(!d)return;
                 var i = list.length;
                 while (i--) {

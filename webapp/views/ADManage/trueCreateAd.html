@@ -145,8 +145,8 @@
                     <div class="yc-row">
                         <div class="yc-col-3" text-right padding-right>审核意见:</div>
                         <div class="yc-col-9" text-left>
-                            <label style="display: inline-block;padding-right: 10px;"> <input type="radio" ng-model="_okCheckedModule.$emergencyCheckState" value="1"> <span>通过</span> </label>
-                            <label style="display: inline-block;padding-right: 10px;"> <input type="radio" ng-model="_okCheckedModule.$emergencyCheckState" value="-1"> <span>不通过</span> </label>
+                            <label style="display: inline-block;padding-right: 10px;"> <input type="radio" ng-model="_okCheckedModule.$emergencyCheckState" ng-value="1"> <span>通过</span> </label>
+                            <label style="display: inline-block;padding-right: 10px;"> <input type="radio" ng-model="_okCheckedModule.$emergencyCheckState" ng-value="-1"> <span>不通过</span> </label>
                         </div>
                     </div>
                     <div class="yc-row" ng-show="_okCheckedModule.$emergencyCheckState == -1">

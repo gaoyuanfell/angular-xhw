@@ -10,9 +10,10 @@ app.controller("putListEditCtrl", ["$scope", "$http", "$location", "AdCreativeFt
         $scope.orderListSel = {};
 
         var adMarkSelect = []
-        SysMarkFty.adMarkSelect({adMarkType:1}).success(function (res) {
+        SysMarkFty.adMarkSelect({adMarkType:1}).then(function (res) {
             if(res && res.length > 0){
                 adMarkSelect = res;
+                adMarkSelect.unshift({adMarkName:'无',id:0})
             }
         });
 
@@ -21,7 +22,7 @@ app.controller("putListEditCtrl", ["$scope", "$http", "$location", "AdCreativeFt
             edit:true
         }
         ycui.loading.show();
-        AdCreativeFty.adCreativeInfo({id: $scope.id}).success(function (res) {
+        AdCreativeFty.adCreativeInfo({id: $scope.id}).then(function (res) {
             ycui.loading.hide();
             if (!res || res.code != 200) return;
 
@@ -62,10 +63,11 @@ app.controller("putListEditCtrl", ["$scope", "$http", "$location", "AdCreativeFt
                     size: data.size.split('*'),
                     style: true,
                     width: data.width,
-                    height: data.height
+                    height: data.height,
+                    fileType:data.fileType
                 };
-                var html = photoAndSwfPreview(config);
-                angular.element(object).append("<div class='channel-object'>" + html + "</div>");
+                var html = showMaterials(config);
+                object.innerHTML = "<div class='channel-object'>" + html + "</div>";
             }
             var leftId = getId();
             var rightId = getId();
@@ -82,15 +84,16 @@ app.controller("putListEditCtrl", ["$scope", "$http", "$location", "AdCreativeFt
                     break;
             }
             var lr = $scope.$on('advertising-upload',function () {
+                if(adCreative.catagory == 2 || adCreative.catagory == 3)return;//等于1 类型 才会有图片显示
                 switch (adCreative.adCreativeType){
                     case 2:
-                        adCreative.adSpaceId && showPhoto({src:adCreative.fileHttpUrl,size:adCreative.size,width:130,height:180,uploadId:adCreative.leftId});
-                        adCreative.adSpaceId && showPhoto({src:adCreative.fileHttpUrl2,size:adCreative.size2,width:130,height:180,uploadId:adCreative.rightId});
+                        showPhoto({src:adCreative.fileHttpUrl,size:adCreative.size,width:130,height:180,uploadId:adCreative.leftId,fileType:adCreative.fileType});
+                        showPhoto({src:adCreative.fileHttpUrl2,size:adCreative.size2,width:130,height:180,uploadId:adCreative.rightId,fileType:adCreative.fileType});
                         break;
                     case 3:
                     case 4:
                     case 5:
-                        adCreative.adSpaceId && showPhoto({src:adCreative.fileHttpUrl,size:adCreative.size,width:260,height:180,uploadId:adCreative.uploadId});
+                        showPhoto({src:adCreative.fileHttpUrl,size:adCreative.size,width:260,height:180,uploadId:adCreative.uploadId,fileType:adCreative.fileType});
                         break;
                 }
                 lr();
@@ -114,7 +117,7 @@ app.controller("putListEditCtrl", ["$scope", "$http", "$location", "AdCreativeFt
 
 
         // ycui.loading.show();
-        // AdCreativeFty.adCreativeInfo({id: $scope.id}).success(function (data) {
+        // AdCreativeFty.adCreativeInfo({id: $scope.id}).then(function (data) {
         //     ycui.loading.hide();
         //     if (!data || data.code != 200) return;
         //     var adCreative = data.adCreative;
@@ -268,7 +271,7 @@ app.controller("putListEditCtrl", ["$scope", "$http", "$location", "AdCreativeFt
                     if (!li.fileHttpUrl2 && li.adCreativeType == 2) {
                         li.fileHttpUrl2 = li.fileHttpUrl
                     }
-                    if(!regUrl.test(li.landingPage)){
+                    if(!regUrl.test(li.landingPage) && li.useLandingPage == 0){
                         bo = true;
                     }
                     //创意名称 验证
@@ -295,9 +298,12 @@ app.controller("putListEditCtrl", ["$scope", "$http", "$location", "AdCreativeFt
                     if(!li.jsCode){
                         bo = true;
                     }
-                    if(!li.landingPage){
+                    if(!regUrl.test(li.landingPage) && li.useLandingPage == 0){
                         bo = true;
                     }
+                    // if(!li.landingPage){
+                    //     bo = true;
+                    // }
                     if(!li.adCreativeName){
                         bo = true;
                     }
@@ -309,9 +315,12 @@ app.controller("putListEditCtrl", ["$scope", "$http", "$location", "AdCreativeFt
                     if(!li.h5Content){
                         bo = true;
                     }
-                    if(!li.landingPage){
+                    if(!regUrl.test(li.landingPage) && li.useLandingPage == 0){
                         bo = true;
                     }
+                    // if(!li.landingPage){
+                    //     bo = true;
+                    // }
                     if(!li.adCreativeName){
                         bo = true;
                     }
@@ -326,7 +335,9 @@ app.controller("putListEditCtrl", ["$scope", "$http", "$location", "AdCreativeFt
             delete li.handler;
             delete li.sort;
             delete li.state;
-            AdCreativeFty.adCreativeUpdate(li).success(function (response) {
+            ycui.loading.show();
+            AdCreativeFty.adCreativeUpdate(li).then(function (response) {
+                ycui.loading.hide();
                 if (response && response.code == 200) {
                     ycui.alert({
                         content: response.msg,
@@ -556,7 +567,7 @@ app.controller("putListEditCtrl", ["$scope", "$http", "$location", "AdCreativeFt
             //             showTimeSeconds:_body.showTimeSeconds
             //         };
             //
-            //         AdCreativeFty.adCreativeUpdate(_body).success(function (response) {
+            //         AdCreativeFty.adCreativeUpdate(_body).then(function (response) {
             //             if (response && response.code == 200) {
             //                 ycui.alert({
             //                     content: response.msg,

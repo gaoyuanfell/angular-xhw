@@ -399,6 +399,19 @@
     height: 80px;
 }
 
+/*有效期*/
+.orderValidDate{
+    display: inline-block;
+    padding: 0 15px;
+}
+.orderValidDate input{
+    width: 35px;
+    background-color: #f5f8fa;
+    border: 1px solid #f5f8fa;
+}
+.orderValidDate input.input-border{
+    border: 1px solid #ccc;
+}
 /*投放图标*/
 .toGreen{
     color: green;

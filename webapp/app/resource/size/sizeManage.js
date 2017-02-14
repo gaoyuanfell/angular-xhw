@@ -17,12 +17,12 @@ app.controller("sizeManageCtrl", ["$scope", "$http", "ResSizeFty",
             $scope.items = response.items;
             $scope.total_page = response.total_page;
         }
-        ResSizeFty.sizePageList($scope.query).success(modView)
+        ResSizeFty.sizePageList($scope.query).then(modView)
 
         $scope.redirect = function (num, con) {
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.size = $scope.query.search;
-            ResSizeFty.sizePageList($scope.query).success(modView)
+            ResSizeFty.sizePageList($scope.query).then(modView)
         };
     }]);

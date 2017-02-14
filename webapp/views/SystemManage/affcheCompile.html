@@ -55,8 +55,8 @@
             <div class="form-group">
                 <label for="" class="yc-col-2 control-label"> <span>*</span> 发布范围：</label>
                 <div class="yc-col-10">
-                    <label class="radio"><input class="form-control" type="radio" ng-model="affche.publishRange" value="0">至所有用户</label>
-                    <label class="radio"><input class="form-control" type="radio" ng-model="affche.publishRange" value="1">至所属公司的用户</label>
+                    <label class="radio"><input class="form-control" type="radio" ng-model="affche.publishRange" ng-value="0">至所有用户</label>
+                    <label class="radio"><input class="form-control" type="radio" ng-model="affche.publishRange" ng-value="1">至所属公司的用户</label>
                 </div>
             </div>
             <div class="form-group">
@@ -69,7 +69,7 @@
                 <label for="" class="yc-col-2 control-label"> <span>*</span> 发布角色：</label>
                 <div class="yc-col-10">
                     <label class="radio" ng-repeat="r in roleList">
-                        <input class="form-control" type="radio" ng-model="affche.publishRoleId" value="{{r.id}}">
+                        <input class="form-control" type="radio" ng-model="affche.publishRoleId" ng-value="r.id">
                         {{r.roleName}}
                     </label>
                 </div>

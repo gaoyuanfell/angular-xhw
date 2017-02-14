@@ -12,12 +12,12 @@ app.controller("putListAddCtrl", ["$scope", "$http", "$location", "OrdersFty", "
                 }
             }
         };
-        var adCreativeOrderNames = AdCreativeFty.adCreativeOrderNames().success(function (response) {
+        var adCreativeOrderNames = AdCreativeFty.adCreativeOrderNames().then(function (response) {
             if(response){
                 $scope.orderListSel.list = response.orderNames;
             }
         });
-        var adMarkSelect = SysMarkFty.adMarkSelect({adMarkType:1}).success(function (res) {
+        var adMarkSelect = SysMarkFty.adMarkSelect({adMarkType:1}).then(function (res) {
             if(res && res.length > 0){
                 $scope.adMarkSelect = res;
             }
@@ -34,7 +34,7 @@ app.controller("putListAddCtrl", ["$scope", "$http", "$location", "OrdersFty", "
                 beforeFileQueued:function(than,file){
                     ycui.loading.show();
                     than.stop(file);
-                    UploadKeyFty.uploadKey().success(function (da) {
+                    UploadKeyFty.uploadKey().then(function (da) {
                         key = da.items;
                         than.upload(file);
                     });
@@ -61,38 +61,67 @@ app.controller("putListAddCtrl", ["$scope", "$http", "$location", "OrdersFty", "
                 uploadSuccess:function(than,file, res){
                     if (res && res.code == 200) {
                         var adCreative = res.adCreative;
-                        var object = document.querySelector("." + advertising.uploadId);
+                        var fileType = adCreative.fileType;
+                        var adCreativeType = advertising.adCreativeType;
 
                         var config = {
-                            src: adCreative.fileHttpUrl,
+                            style: true,
                             size:sizes,
-                            style: true
+                            fileType:fileType,
+                            style:true
                         };
 
-                        if(advertising.adCreativeType == 2){
-                            if(type == 'left'){
-                                advertising.fileHttpUrl = adCreative.fileHttpUrl;
-                                object = document.querySelector("." + advertising.leftId);
-                            }else if(type == 'right'){
-                                config.size = sizes2;
-                                advertising.fileHttpUrl2 = adCreative.fileHttpUrl;
-                                object = document.querySelector("." + advertising.rightId);
+                        var photoSrc;
+                        if(fileType == 2){
+                            var totalSeconds = adCreative.totalSeconds
+                            var showTimeLimit = advertising.showTimeLimit
+                            if(showTimeLimit < totalSeconds){
+                                ycui.alert({
+                                    content: "视频长度超过最大限制（视频总长"+ totalSeconds +"秒）",
+                                    timeout: 10,
+                                    error:true
+                                });
+                                than.reset();
+                                return;
                             }
-                            advertising.fileMD5 = adCreative.fileMD5;
-                            advertising.fileSize = adCreative.fileSize;
-                            advertising.fileType = adCreative.fileType;
-                            config.width = 130;
-                            config.height = 180;
-                        }else{
-                            advertising.fileHttpUrl = adCreative.fileHttpUrl;
-                            advertising.fileMD5 = adCreative.fileMD5;
-                            advertising.fileSize = adCreative.fileSize;
-                            advertising.fileType = adCreative.fileType;
-                            config.width = 260;
-                            config.height = 180;
+                            $scope.$apply(function(){
+                                advertising.showTimeSeconds = totalSeconds;
+                            })
+                            photoSrc = adCreative.httpUrl;
+                            config.src = photoSrc;
+                        }else if(fileType == 0){
+                            photoSrc = adCreative.fileHttpUrl;
+                            config.src = photoSrc;
                         }
 
-                        var html = photoAndSwfPreview(config);
+                        var object = document.querySelector("." + advertising.uploadId);
+                        switch (+adCreativeType) {
+                            case 2:
+                                if(type == 'left'){
+                                    advertising.fileHttpUrl = photoSrc;
+                                    object = document.querySelector("." + advertising.leftId);
+                                }else if(type == 'right'){
+                                    config.size = sizes2;
+                                    advertising.fileHttpUrl2 = photoSrc;
+                                    object = document.querySelector("." + advertising.rightId);
+                                }
+                                advertising.fileMD5 = adCreative.fileMD5;
+                                advertising.fileSize = adCreative.fileSize;
+                                advertising.fileType = adCreative.fileType;
+                                config.width = 130;
+                                config.height = 180;
+                                break;
+                            default:
+                                advertising.fileHttpUrl = photoSrc;
+                                advertising.fileMD5 = adCreative.fileMD5;
+                                advertising.fileSize = adCreative.fileSize;
+                                advertising.fileType = adCreative.fileType;
+                                config.width = 260;
+                                config.height = 180;
+                                break;
+                        }
+
+                        var html = showMaterials(config);
                         object.innerHTML = "<div class='channel-object'>" + html + "</div>";
                         ycui.loading.hide();
                         than.reset();
@@ -123,7 +152,7 @@ app.controller("putListAddCtrl", ["$scope", "$http", "$location", "OrdersFty", "
         function getAdSpacesFun() {
             $scope.advertising = [];
             ycui.loading.show();
-            AdCreativeFty.adSpaceNamesByOrderId({orderId: $scope.config.orderId}).success(function (response) {
+            AdCreativeFty.adSpaceNamesByOrderId({orderId: $scope.config.orderId}).then(function (response) {
                 ycui.loading.hide();
                 $scope.adShow = true; //数据展现
                 $scope.advertising = response.adSpaceNames;
@@ -137,7 +166,7 @@ app.controller("putListAddCtrl", ["$scope", "$http", "$location", "OrdersFty", "
         function getUseSizeData() {
             $scope.advertising = [];
             ycui.loading.show();
-            AdCreativeFty.adSpaceSizesByOrderId({orderId: $scope.config.orderId}).success(function (response) {
+            AdCreativeFty.adSpaceSizesByOrderId({orderId: $scope.config.orderId}).then(function (response) {
                 ycui.loading.hide();
                 var array = [];
                 response.sizes.forEach(function (data) {
@@ -185,7 +214,7 @@ app.controller("putListAddCtrl", ["$scope", "$http", "$location", "OrdersFty", "
                             i--
                         }
                     }
-                    data.catagory = catagorys[0];
+                    data.catagory = +catagorys[0];
                     data.catagorysList = catagorysList;
                 }
 
@@ -212,12 +241,17 @@ app.controller("putListAddCtrl", ["$scope", "$http", "$location", "OrdersFty", "
                         }
                         var _da = angular.copy(da);
                         //角标
+                        var list = angular.copy($scope.adMarkSelect);
+                        list.unshift({adMarkName:'无',id:0})
                         _da.adMarkSelectSel = {
-                            list:angular.copy($scope.adMarkSelect),
+                            list:list,
                             callback:function(e,d){
                                 _da.adMarkArea = 3
                             }
                         };
+                        _da.urlOrContent = 1;
+                        _da.useLandingPage = 0;
+                        _da.urlLoadType = 0;
                         var lr = $scope.$on('advertising-upload',function () {
                             switch (da.adCreativeType){
                                 case 2:
@@ -302,28 +336,6 @@ app.controller("putListAddCtrl", ["$scope", "$http", "$location", "OrdersFty", "
                 var ob = angular.copy(da);
                 ob.adCreativeName = da.adCreativeName + "-" + (index + 1)
                 arr.push(ob);
-                // arr.push({
-                //     adCreativeName:da.adCreativeName?(da.adCreativeName + "-" + (index + 1)):'',
-                //     adCreativeType:data.adCreativeType,
-                //     adSpaceId:data.id,
-                //     fileHttpUrl:da.fileHttpUrl,
-                //     fileMD5:da.fileMD5,
-                //     fileSize:da.fileSize,
-                //     fileType:da.fileType,
-                //     size:data.size,
-                //     landingPage:da.landingPage,
-
-                //     adMarkId:da.adMarkId,
-                //     adMarkArea:da.adMarkArea,
-                //     monitorType:da.monitorType,
-
-                //     urlOrContent:da.urlOrContent,
-                //     h5Content:da.h5Content,
-                //     jsCode:da.jsCode,
-                //     pvMonitor:da.pvMonitor,
-                //     clickMonitor:da.clickMonitor,
-                //     showTimeSeconds:da.showTimeSeconds
-                // });
             })
             return arr;
         }
@@ -371,7 +383,7 @@ app.controller("putListAddCtrl", ["$scope", "$http", "$location", "OrdersFty", "
                 for (var j = 0;j<ali.length;j++){
                     var li = ali[j];
                     var bo = false;
-                    if(!regUrl.test(li.landingPage)){
+                    if(!regUrl.test(li.landingPage) && li.useLandingPage == 0){
                         bo = true;
                         break;
                     }
@@ -418,9 +430,9 @@ app.controller("putListAddCtrl", ["$scope", "$http", "$location", "OrdersFty", "
                             if(!li.jsCode){
                                 bo = true;
                             }
-                            if(!li.landingPage){
-                                bo = true;
-                            }
+                            // if(!li.landingPage){
+                            //     bo = true;
+                            // }
                             if(!li.adCreativeName){
                                 bo = true;
                             }
@@ -432,9 +444,9 @@ app.controller("putListAddCtrl", ["$scope", "$http", "$location", "OrdersFty", "
                             if(!li.h5Content){
                                 bo = true;
                             }
-                            if(!li.landingPage){
-                                bo = true;
-                            }
+                            // if(!li.landingPage){
+                            //     bo = true;
+                            // }
                             if(!li.adCreativeName){
                                 bo = true;
                             }
@@ -614,7 +626,7 @@ app.controller("putListAddCtrl", ["$scope", "$http", "$location", "OrdersFty", "
                 orderAdCreativeList: arr
             };
             ycui.loading.show();
-            AdCreativeFty.adCreativeUpload(body).success(function (response) {
+            AdCreativeFty.adCreativeUpload(body).then(function (response) {
                 ycui.loading.hide();
                 if (response && response.code == 200) {
                     ycui.alert({

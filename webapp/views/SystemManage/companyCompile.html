@@ -46,9 +46,9 @@
             <div class="form-group">
                 <label class="yc-col-2 control-label"> <span>*</span> 所属类型：</label>
                 <div class="yc-col-10">
-                    <label class="radio" ng-show="companyType == 2"> <input type="radio" class="form-control" disabled ng-model="companyType" value="2">分公司 </label>
+                    <label class="radio" ng-show="companyType == 2"> <input type="radio" class="form-control" disabled ng-model="companyType" ng-value="2">分公司 </label>
 
-                    <label class="radio" ng-show="companyType == 1"> <input type="radio" class="form-control" disabled ng-model="companyType" value="1">总公司 </label>
+                    <label class="radio" ng-show="companyType == 1"> <input type="radio" class="form-control" disabled ng-model="companyType" ng-value="1">总公司 </label>
                 </div>
             </div>
             <div class="form-group" ng-show="companyType == 2">
@@ -61,7 +61,7 @@
                             </dt>
                             <dd>
                                 <div class="area-self" ng-repeat="areaNext in areaList.parentList">
-                                    <label class="radio"><input type="radio" value="{{areaNext.parentId}}" ng-model="$parent.$parent.companyAreaId" data-level="{{areaNext.level}}">{{areaNext.parentName}}</label>
+                                    <label class="radio"><input type="radio" ng-value="areaNext.parentId" ng-model="$parent.$parent.companyAreaId" data-level="{{areaNext.level}}">{{areaNext.parentName}}</label>
                                 </div>
                             </dd>
                         </dl>

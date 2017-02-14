@@ -8,13 +8,13 @@ app.controller('advertisementCtrl', ["$scope", "$http", "ReportResourceFty", "Re
         $scope.mediaListSel = {
             callback:function(e,d){
                 $scope.channelListSel.$destroy();
-                d && ResChannelFty.getChannelsByMedia({mediaId: d.id}).success(function (response) {
+                d && ResChannelFty.getChannelsByMedia({mediaId: d.id}).then(function (response) {
                     $scope.channelListSel.list = response.channels;
                 })
             }
         };
 
-        var downListForSearch = ResAdvertisingFty.downListForSearch().success(function (response) {
+        var downListForSearch = ResAdvertisingFty.downListForSearch().then(function (response) {
             $scope.mediaListSel.list = response.mediaList;
             $scope.typeListSel.list = response.typeList;
         });
@@ -37,26 +37,26 @@ app.controller('advertisementCtrl', ["$scope", "$http", "ReportResourceFty", "Re
         $scope.$on('advertisementListGroup',function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            ReportResourceFty.aDSpaceConsume($scope.query).success(modViewD);
-            ReportResourceFty.collectADSpaceConsume($scope.query).success(summarizingD);
+            ReportResourceFty.aDSpaceConsume($scope.query).then(modViewD);
+            ReportResourceFty.collectADSpaceConsume($scope.query).then(summarizingD);
         })
 
-        ReportResourceFty.aDSpaceConsume($scope.query).success(modViewD);
+        ReportResourceFty.aDSpaceConsume($scope.query).then(modViewD);
 
         //汇总
         summarizingD = function (response) {
             if(!response) return;
             $scope.summarizing = response.items;
         };
-        ReportResourceFty.collectADSpaceConsume($scope.query).success(summarizingD);
+        ReportResourceFty.collectADSpaceConsume($scope.query).then(summarizingD);
 
         //搜索框
         $scope.redirect = function (num, con) {
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.param1 = $scope.query.search;
-            ReportResourceFty.aDSpaceConsume($scope.query).success(modViewD);
-            ReportResourceFty.collectADSpaceConsume($scope.query).success(summarizingD);
+            ReportResourceFty.aDSpaceConsume($scope.query).then(modViewD);
+            ReportResourceFty.collectADSpaceConsume($scope.query).then(summarizingD);
         };
 
         //日历查询
@@ -73,8 +73,8 @@ app.controller('advertisementCtrl', ["$scope", "$http", "ReportResourceFty", "Re
                 $scope.query.pageIndex = 1;
                 $scope.query.startTime = obj.startDate;
                 $scope.query.endTime = obj.endDate;
-                ReportResourceFty.aDSpaceConsume($scope.query).success(modViewD);
-                ReportResourceFty.collectADSpaceConsume($scope.query).success(summarizingD);
+                ReportResourceFty.aDSpaceConsume($scope.query).then(modViewD);
+                ReportResourceFty.collectADSpaceConsume($scope.query).then(summarizingD);
             }
         });
 

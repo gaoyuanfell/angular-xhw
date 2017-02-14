@@ -8,7 +8,7 @@ app.controller("departmentAddCtrl", ['$scope', '$http', 'SysDepartmentFty', '$q'
             callback:function(e,d){
                 if(d){
                     $scope.parentDepSel.$destroy()
-                    SysDepartmentFty.parentDeps({companyId:d.id}).success(function(res){
+                    SysDepartmentFty.parentDeps({companyId:d.id}).then(function(res){
                         if(res && res.code == 200){
                             $scope.parentDepSel.list = res.departmentList
                         }
@@ -17,7 +17,7 @@ app.controller("departmentAddCtrl", ['$scope', '$http', 'SysDepartmentFty', '$q'
             }
         };
         
-        var departmentListForDep = SysDepartmentFty.departmentListForDep().success(function (response) {
+        var departmentListForDep = SysDepartmentFty.departmentListForDep().then(function (response) {
             $scope.deListSel.list = response.companyList;
         });
 
@@ -35,7 +35,7 @@ app.controller("departmentAddCtrl", ['$scope', '$http', 'SysDepartmentFty', '$q'
                     companyId: $scope.deListId,
                     parentDepId:$scope.parentDepId,
                     companyType:$scope.companyType
-                }).success(function (response) {
+                }).then(function (response) {
                     ycui.loading.hide();
                     if (response && response.code == 200) {
                         ycui.alert({

@@ -18,13 +18,13 @@ app.controller("channelLevelManageCtrl", ['$scope', 'ResChannelLevelFty',
             $scope.total_page = response.total_page;
         }
 
-        ResChannelLevelFty.channelLevelPageList($scope.query).success(modView);
+        ResChannelLevelFty.channelLevelPageList($scope.query).then(modView);
 
         $scope.redirect = function (num, con) {
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.levelNameOrId = $scope.query.search;
-            ResChannelLevelFty.channelLevelPageList($scope.query).success(modView);
+            ResChannelLevelFty.channelLevelPageList($scope.query).then(modView);
         };
         
     }]);

@@ -6,7 +6,7 @@ app.controller("channelLevelEditCtrl", ['$scope', 'ResChannelLevelFty',
         var id = getSearch("id");
 
         ycui.loading.show();
-        ResChannelLevelFty.channelLevelOne({id:id}).success(function (res) {
+        ResChannelLevelFty.channelLevelOne({id:id}).then(function (res) {
             if(res){
                 $scope.channelLevel = res;
             }
@@ -22,7 +22,7 @@ app.controller("channelLevelEditCtrl", ['$scope', 'ResChannelLevelFty',
             $scope.channelLevel.remark && (body.remark = $scope.channelLevel.remark);
 
             ycui.loading.show();
-            ResChannelLevelFty.channelLevelEdit($scope.channelLevel).success(function(res){
+            ResChannelLevelFty.channelLevelEdit($scope.channelLevel).then(function(res){
                 ycui.loading.hide();
                 if (res.code == 200) {
                     ycui.alert({

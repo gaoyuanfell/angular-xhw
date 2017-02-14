@@ -341,8 +341,9 @@
      background:url(../../static/img/tjtp.png) center center no-repeat;
 }
 .yc-tue-indent .uploading{
-     text-align: center;
+    text-align: center;
     margin-top: 20px;
+    line-height: 1.1
  }
 
  /*订单审核*/

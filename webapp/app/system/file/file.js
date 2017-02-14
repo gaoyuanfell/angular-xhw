@@ -18,13 +18,13 @@ app.controller('FileManageCtrl',['$scope','SysDocumentFty',function ($scope,SysD
         $scope.total_page = response.total_page;
     };
 
-    SysDocumentFty.documentList($scope.query).success(modView);
+    SysDocumentFty.documentList($scope.query).then(modView);
 
     $scope.redirect = function (num, con) {
         ycui.loading.show();
         $scope.query.pageIndex = num || 1;
         $scope.query.param1 = $scope.query.search;
-        SysDocumentFty.documentList($scope.query).success(modView);
+        SysDocumentFty.documentList($scope.query).then(modView);
     };
 
     $scope.delete = function (id) {
@@ -32,13 +32,13 @@ app.controller('FileManageCtrl',['$scope','SysDocumentFty',function ($scope,SysD
             title:'文档删除',
             content:'确定要删除此文档?',
             okclick:function () {
-                SysDocumentFty.documentDel({id:id}).success(function (res) {
+                SysDocumentFty.documentDel({id:id}).then(function (res) {
                     if(res && res.code == 200){
                         ycui.alert({
                             content:res.msg,
                             timeout:10,
                             okclick:function () {
-                                SysDocumentFty.documentList($scope.query).success(modView);
+                                SysDocumentFty.documentList($scope.query).then(modView);
                             }
                         })
                     }
@@ -84,7 +84,7 @@ app.controller('FileAddCtrl',['$scope','UploadKeyFty','SysDocumentFty',function 
                 }
                 ycui.loading.show();
                 uploader.stop(file);
-                UploadKeyFty.uploadKey().success(function (da) {
+                UploadKeyFty.uploadKey().then(function (da) {
                     key = da.items;
                     uploader.upload(file);
                 });
@@ -112,8 +112,13 @@ app.controller('FileAddCtrl',['$scope','UploadKeyFty','SysDocumentFty',function 
         if(!$(".form").valid()){
             bo = false;
         }
+        if(!$scope.document.documentUrl){
+            bo = false;
+        }
         if(!bo){return};
-        SysDocumentFty.documentAdd($scope.document).success(function (res) {
+        ycui.loading.show();
+        SysDocumentFty.documentAdd($scope.document).then(function (res) {
+            ycui.loading.hide();
             if(res && res.code == 200){
                 ycui.alert({
                     content:res.msg,

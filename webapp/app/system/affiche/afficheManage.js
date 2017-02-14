@@ -23,24 +23,24 @@ app.controller('afficheManageCtrl', ['$scope', '$http', 'SysNoticeFty',
         $scope.query.endTime = endTime;
         $scope.query.startTime = startTime;
 
-        SysNoticeFty.noticeList($scope.query).success(modView);
+        SysNoticeFty.noticeList($scope.query).then(modView);
         $scope.ruleId = getSearch("ruleId");
         $scope.redirect = function (num, con) {
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.searchConext = $scope.query.search;
-            SysNoticeFty.noticeList($scope.query).success(modView);
+            SysNoticeFty.noticeList($scope.query).then(modView);
         };
         $scope.delete = function (id) {
             ycui.confirm({
                 content: "您确定要删除么",
                 okclick: function () {
-                    SysNoticeFty.removeNotice({id: id}).success(function (response) {
+                    SysNoticeFty.removeNotice({id: id}).then(function (response) {
                         if (!response) return;
                         ycui.alert({
                             content: response.msg,
                             okclick: function () {
-                                SysNoticeFty.noticeList($scope.query).success(modView);
+                                SysNoticeFty.noticeList($scope.query).then(modView);
                             }
                         });
                     })
@@ -59,14 +59,14 @@ app.controller('afficheManageCtrl', ['$scope', '$http', 'SysNoticeFty',
             success: function (obj) {
                 $scope.query.startTime = obj.startDate + " 00:00:00";
                 $scope.query.endTime = obj.endDate + " 23:59:59";
-                SysNoticeFty.noticeList($scope.query).success(modView);
+                SysNoticeFty.noticeList($scope.query).then(modView);
             }
         });
         
         $scope.changeState = function (id,state) {
-            SysNoticeFty.enableNotice({id:id,state:~state}).success(function (res) {
+            SysNoticeFty.enableNotice({id:id,state:~state}).then(function (res) {
                 if(res && res.code == 200){
-                    SysNoticeFty.noticeList($scope.query).success(modView);
+                    SysNoticeFty.noticeList($scope.query).then(modView);
                 }
             })
         }

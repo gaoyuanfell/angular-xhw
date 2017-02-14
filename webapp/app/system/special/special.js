@@ -18,26 +18,26 @@ app.controller('SpecialManageCtrl',['$scope','SysSpecialFty',function ($scope,Sy
         $scope.total_page = response.total_page;
     };
 
-    SysSpecialFty.specialList($scope.query).success(modView);
+    SysSpecialFty.specialList($scope.query).then(modView);
 
     $scope.redirect = function (num, con) {
         ycui.loading.show();
         $scope.query.pageIndex = num || 1;
         $scope.query.param1 = $scope.query.search
-        SysSpecialFty.specialList($scope.query).success(modView);
+        SysSpecialFty.specialList($scope.query).then(modView);
     };
     
     $scope.delete = function (id) {
         ycui.confirm({
             content:'是否删除此特效',
             okclick:function () {
-                SysSpecialFty.specialDelete({id:id}).success(function (res) {
+                SysSpecialFty.specialDelete({id:id}).then(function (res) {
                     if(res && res.code == 200){
                         ycui.alert({
                             content:res.msg,
                             timeout:10,
                             okclick:function () {
-                                SysSpecialFty.specialList($scope.query).success(modView);
+                                SysSpecialFty.specialList($scope.query).then(modView);
                             }
                         })
                     }
@@ -58,8 +58,9 @@ app.controller('SpecialAddCtrl',['$scope','SysSpecialFty',function ($scope,SysSp
         if(!$(".form").valid){
             return;
         }
-
-        SysSpecialFty.specialAdd($scope.special).success(function (res) {
+        ycui.loading.show();
+        SysSpecialFty.specialAdd($scope.special).then(function (res) {
+            ycui.loading.hide();
             if(res && res.code == 200){
                 ycui.alert({
                     content:res.msg,
@@ -96,7 +97,7 @@ app.controller('SpecialAddCtrl',['$scope','SysSpecialFty',function ($scope,SysSp
 app.controller('SpecialCompileCtrl',['$scope','SysSpecialFty',function ($scope,SysSpecialFty) {
     var id = getSearch("id");
     $scope.special = {};
-    SysSpecialFty.getSpecial({id:id}).success(function (res) {
+    SysSpecialFty.getSpecial({id:id}).then(function (res) {
         if(res && res.code == 200){
             $scope.special = res.items;
         }
@@ -115,8 +116,9 @@ app.controller('SpecialCompileCtrl',['$scope','SysSpecialFty',function ($scope,S
             specialEffectsUrl:$scope.special.specialEffectsUrl,
             remark:$scope.special.remark
         }
-
-        SysSpecialFty.specialUpdate(body).success(function (res) {
+        ycui.loading.show();
+        SysSpecialFty.specialUpdate(body).then(function (res) {
+            ycui.loading.hide();
             if(res && res.code == 200){
                 ycui.alert({
                     content:res.msg,

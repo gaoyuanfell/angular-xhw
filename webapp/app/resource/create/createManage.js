@@ -18,12 +18,12 @@ app.controller("createManageCtrl", ["$scope", "$http", "ResCreativityFty",
             $scope.items = response.items;
             $scope.total_page = response.total_page;
         };
-        ResCreativityFty.adSpacePageList($scope.query).success(modView);
+        ResCreativityFty.adSpacePageList($scope.query).then(modView);
         $scope.redirect = function (num, con) {
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.typeNameOrId = $scope.query.search;
-            ResCreativityFty.adSpacePageList($scope.query).success(modView);
+            ResCreativityFty.adSpacePageList($scope.query).then(modView);
         };
 
         $scope.replaceReg = function (catagorys) {

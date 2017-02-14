@@ -6,11 +6,11 @@ app.controller('territoryCtrl', ["$scope", "$http", "ReportAdvertiseFty", "Dicti
         $scope.orderListSel = {};
         $scope.provinceListSel = {};
 
-        var allNDefaultOrderNames = ReportAdvertiseFty.allNDefaultOrderNames().success(function (response) {
+        var allNDefaultOrderNames = ReportAdvertiseFty.allNDefaultOrderNames().then(function (response) {
             $scope.orderListSel.list = response.items;
         });
         //获取城市列表
-        DictionaryFty.provinceList().success(function (data) {
+        DictionaryFty.provinceList().then(function (data) {
             if(!data) return;
             $scope.provinceListSel.list = data.lists;
         })
@@ -18,8 +18,8 @@ app.controller('territoryCtrl', ["$scope", "$http", "ReportAdvertiseFty", "Dicti
         $scope.$on('ad-report-territory',function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            ReportAdvertiseFty.totalCity($scope.query).success(modViewD);
-            ReportAdvertiseFty.collectCity($scope.query).success(summarizingD);
+            ReportAdvertiseFty.totalCity($scope.query).then(modViewD);
+            ReportAdvertiseFty.collectCity($scope.query).then(summarizingD);
         })
 
         ycui.loading.show();
@@ -38,21 +38,21 @@ app.controller('territoryCtrl', ["$scope", "$http", "ReportAdvertiseFty", "Dicti
         $scope.query = {pageSize: pageSize,pageIndex: 1}
 
         //列表
-        ReportAdvertiseFty.totalCity($scope.query).success(modViewD);
+        ReportAdvertiseFty.totalCity($scope.query).then(modViewD);
 
         //汇总
         var summarizingD = function (response) {
             $scope.summarizing = response.items;
         };
-        ReportAdvertiseFty.collectCity($scope.query).success(summarizingD);
+        ReportAdvertiseFty.collectCity($scope.query).then(summarizingD);
 
         //搜索框
         $scope.redirect = function (num, con) {
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.param1 = $scope.query.search;
-            ReportAdvertiseFty.totalCity($scope.query).success(modViewD);
-            ReportAdvertiseFty.collectCity($scope.query).success(summarizingD);
+            ReportAdvertiseFty.totalCity($scope.query).then(modViewD);
+            ReportAdvertiseFty.collectCity($scope.query).then(summarizingD);
         };
 
         //日历查询
@@ -69,8 +69,8 @@ app.controller('territoryCtrl', ["$scope", "$http", "ReportAdvertiseFty", "Dicti
                 $scope.query.pageIndex = 1;
                 $scope.query.startTime = obj.startDate;
                 $scope.query.endTime = obj.endDate;
-                ReportAdvertiseFty.totalCity($scope.query).success(modViewD);
-                ReportAdvertiseFty.collectCity($scope.query).success(summarizingD);
+                ReportAdvertiseFty.totalCity($scope.query).then(modViewD);
+                ReportAdvertiseFty.collectCity($scope.query).then(summarizingD);
                 
             }
         });
@@ -114,7 +114,7 @@ app.controller('territoryCtrl', ["$scope", "$http", "ReportAdvertiseFty", "Dicti
                 $scope.forCitySearch = '请输入省'
                 $scope.clientCustom.cityName = false;
             }
-            ReportAdvertiseFty.totalCity($scope.query).success(modViewD);
-            ReportAdvertiseFty.collectCity($scope.query).success(summarizingD);
+            ReportAdvertiseFty.totalCity($scope.query).then(modViewD);
+            ReportAdvertiseFty.collectCity($scope.query).then(summarizingD);
         })
     }]);

@@ -5,7 +5,7 @@ app.controller("trueCreateListCtrl", ["$scope", "$http", "DefaultOrdersFty", '$q
     function ($scope, $http, DefaultOrdersFty, $q) {
         $scope.checkStateSel = {
             list:[
-                {name:'全部',id:-2},
+                {name:'全部'},
                 {name:'审核中',id:0},
                 {name:'审核通过',id:1},
                 {name:'审核不通过',id:-1},
@@ -25,15 +25,15 @@ app.controller("trueCreateListCtrl", ["$scope", "$http", "DefaultOrdersFty", '$q
         };
 
         //获取默认订单的名称下拉
-        var defaultOrdersNameSearch = DefaultOrdersFty.defaultOrdersNameSearch().success(function (response) {
+        var defaultOrdersNameSearch = DefaultOrdersFty.defaultOrdersNameSearch().then(function (response) {
             $scope.defaultOrderSel.list = response.defaultOrdersList;
         });
 
         $scope.$on('deCreateListGroup',function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            DefaultOrdersFty.defaultAdCreativeList($scope.query).success(modViewA);
-            DefaultOrdersFty.defaultAdCreativeDataCount($scope.query).success(getDataCount);
+            DefaultOrdersFty.defaultAdCreativeList($scope.query).then(modViewA);
+            DefaultOrdersFty.defaultAdCreativeDataCount($scope.query).then(getDataCount);
         })
 
         ycui.loading.show();
@@ -77,8 +77,8 @@ app.controller("trueCreateListCtrl", ["$scope", "$http", "DefaultOrdersFty", '$q
         $scope.query.orderId = id;
         $scope.queryValue.orderName = orderName;
 
-        DefaultOrdersFty.defaultAdCreativeList($scope.query).success(modViewA);
-        DefaultOrdersFty.defaultAdCreativeDataCount($scope.query).success(getDataCount);
+        DefaultOrdersFty.defaultAdCreativeList($scope.query).then(modViewA);
+        DefaultOrdersFty.defaultAdCreativeDataCount($scope.query).then(getDataCount);
 
         //判断审核能不能跳转
         $scope.okChecked = function (id, priority, state, emergencyCheckState) {
@@ -109,7 +109,7 @@ app.controller("trueCreateListCtrl", ["$scope", "$http", "DefaultOrdersFty", '$q
                         content: "该创意已被审核，不能重复审核"
                     })
                 } else {
-                    DefaultOrdersFty.defaultAdCreativeDetail({id: id}).success(function (data) {
+                    DefaultOrdersFty.defaultAdCreativeDetail({id: id}).then(function (data) {
                         var url = data.adCreative.fileHttpUrl;
                         var wh = data.adCreative.size.split("*");
                         var landingPage = data.adCreative.landingPage;
@@ -136,14 +136,14 @@ app.controller("trueCreateListCtrl", ["$scope", "$http", "DefaultOrdersFty", '$q
                                 }
                                 var query = {id: id, emergencyCheckState: check};
                                 remark && (query.emergencyRemark = remark);
-                                DefaultOrdersFty.checkEmergencyCheck(query).success(function (res) {
+                                DefaultOrdersFty.checkEmergencyCheck(query).then(function (res) {
                                     if(res && res.code == 200){
                                         ycui.alert({
                                             content:res.msg,
                                             timeout:10,
                                             okclick:function(){
-                                                DefaultOrdersFty.defaultAdCreativeList($scope.query).success(modViewA);
-                                                DefaultOrdersFty.defaultAdCreativeDataCount($scope.query).success(getDataCount);
+                                                DefaultOrdersFty.defaultAdCreativeList($scope.query).then(modViewA);
+                                                DefaultOrdersFty.defaultAdCreativeDataCount($scope.query).then(getDataCount);
                                             }
                                         })
                                     }
@@ -234,21 +234,21 @@ app.controller("trueCreateListCtrl", ["$scope", "$http", "DefaultOrdersFty", '$q
                 ycui.confirm({
                     content: '请确认，您将批量删除所选择的创意',
                     okclick: function () {
-                        DefaultOrdersFty.defaultAdCreativeDelete({"creatives": arrId}).success(function (response) {
+                        DefaultOrdersFty.defaultAdCreativeDelete({"creatives": arrId}).then(function (response) {
                             if (response.code == 200) {
                                 ycui.alert({
                                     content: response.msg,
                                     okclick: function () {
-                                        DefaultOrdersFty.defaultAdCreativeList($scope.query).success(modViewA);
-                                        DefaultOrdersFty.defaultAdCreativeDataCount($scope.query).success(getDataCount);
+                                        DefaultOrdersFty.defaultAdCreativeList($scope.query).then(modViewA);
+                                        DefaultOrdersFty.defaultAdCreativeDataCount($scope.query).then(getDataCount);
                                     }
                                 });
                             } else if (response.code == 201) {
                                 ycui.alert({
                                     content: response.hasPVNames.join(",") + "创意有投放数据，不能删除",
                                     okclick: function () {
-                                        DefaultOrdersFty.defaultAdCreativeList($scope.query).success(modViewA);
-                                        DefaultOrdersFty.defaultAdCreativeDataCount($scope.query).success(getDataCount);
+                                        DefaultOrdersFty.defaultAdCreativeList($scope.query).then(modViewA);
+                                        DefaultOrdersFty.defaultAdCreativeDataCount($scope.query).then(getDataCount);
                                     }
                                 });
                             }
@@ -301,13 +301,13 @@ app.controller("trueCreateListCtrl", ["$scope", "$http", "DefaultOrdersFty", '$q
             ycui.confirm({
                 content: msg,
                 okclick: function () {
-                    DefaultOrdersFty.defaultAdCreativeEnable(body).success(function (response) {
+                    DefaultOrdersFty.defaultAdCreativeEnable(body).then(function (response) {
                         if (response.code == 200) {
                             ycui.alert({
                                 content: response.msg,
                                 okclick: function () {
-                                    DefaultOrdersFty.defaultAdCreativeList($scope.query).success(modViewA);
-                                    DefaultOrdersFty.defaultAdCreativeDataCount($scope.query).success(getDataCount);
+                                    DefaultOrdersFty.defaultAdCreativeList($scope.query).then(modViewA);
+                                    DefaultOrdersFty.defaultAdCreativeDataCount($scope.query).then(getDataCount);
                                 }
                             });
                         } else if (response.code == 201) {
@@ -333,8 +333,8 @@ app.controller("trueCreateListCtrl", ["$scope", "$http", "DefaultOrdersFty", '$q
         $scope.redirect = function (num,con) {
             ycui.loading.show();
             $scope.query.adCreativeNameOrId = $scope.query.search;
-            DefaultOrdersFty.defaultAdCreativeList($scope.query).success(modViewA);
-            DefaultOrdersFty.defaultAdCreativeDataCount($scope.query).success(getDataCount);
+            DefaultOrdersFty.defaultAdCreativeList($scope.query).then(modViewA);
+            DefaultOrdersFty.defaultAdCreativeDataCount($scope.query).then(getDataCount);
         };
 
         var dateRange = new pickerDateRange('clientAff', {
@@ -350,8 +350,8 @@ app.controller("trueCreateListCtrl", ["$scope", "$http", "DefaultOrdersFty", '$q
                 $scope.query.startDate = obj.startDate;
                 $scope.query.endDate = obj.endDate;
                 $scope.query.pageIndex = 1;
-                DefaultOrdersFty.defaultAdCreativeList($scope.query).success(modViewA);
-                DefaultOrdersFty.defaultAdCreativeDataCount($scope.query).success(getDataCount);
+                DefaultOrdersFty.defaultAdCreativeList($scope.query).then(modViewA);
+                DefaultOrdersFty.defaultAdCreativeDataCount($scope.query).then(getDataCount);
             }
         });
     }])

@@ -32,7 +32,7 @@
                 <thead>
                 <tr>
                     <th>媒体名称</th>
-                    <th>所属 <i class="yc-icon pointer" ng-title="所属提交之后，不能修改">&#xe601;</i> </th>
+                    <th>所属 <i class="yc-icon pointer" title="所属提交之后，不能修改">&#xe622;</i> </th>
                     <th>媒体类型</th>
                     <th>域名</th>
                     <th>
@@ -49,7 +49,7 @@
                             <div yc-select="media.companyListSel" width="260" query="media" value="companyId" key="id" name="companyName" placeholder="所属"></div>
                         </td>
                         <td>
-                            <label class="radio"> <input type="radio" ng-model="media.mediaType" value="1"> Web</label>
+                            <label class="radio"> <input type="radio" ng-model="media.mediaType" ng-value="1"> Web</label>
                         </td>
                         <td>
                             <input class="form-control" name="myUrl" type="text" ng-placeholder="请输入域名" ng-model="media.url"/>

@@ -1,15 +1,55 @@
 /**
  * Created by moka on 16-6-21.
  */
-app.controller('listManageCtrl', ["$scope", "$http", "$q", "ScheduleFty", "DictionaryFty", 'ResChannelFty',
-    function ($scope, $http, $q, ScheduleFty, DictionaryFty, ResChannelFty) {
+app.controller('listManageCtrl', ["$scope", "$http", "$q", "ScheduleFty", "DictionaryFty", 'ResChannelFty','SysCompanyFty','SysDepartmentFty',
+    function ($scope, $http, $q, ScheduleFty, DictionaryFty, ResChannelFty,SysCompanyFty,SysDepartmentFty) {
         $scope.query = {};
+        $scope.departmentListSel = {
+            callback:function(e,d){
+                if(d){
+                    $scope.query.depScope = d.agencyNumber;
+                }else{
+                    $scope.query.depScope = $scope.companyListSel.$placeholder.agencyNumber;//从暂存数据取出
+                }
+                ycui.loading.show();
+                $scope.query.pageIndex = 1;
+                ScheduleFty.scheduleList($scope.query).then(modView)
+            }
+        };
+        $scope.companyListSel = {
+            callback:function(e,d){
+                $scope.departmentListSel.$destroy();
+                if(d && d.id == 3){
+                    SysDepartmentFty.parentDeps({ companyId: d.id }).then(function (res) {
+                        if(res && res.code == 200){
+                            $scope.departmentListSel.list = res.departmentList;
+                        }
+                    });
+                }
+            },
+            sessionBack:function(d){
+                if(d && d.id == 3){
+                    SysDepartmentFty.parentDeps({ companyId: d.id }).then(function (res) {
+                        if(res && res.code == 200){
+                            $scope.departmentListSel.list = res.departmentList;
+                        }
+                    });
+                }
+            }
+        };
+
+        SysCompanyFty.companyList().then(function(res){
+            if(res instanceof Array){
+                $scope.companyListSel.list = res;
+            }
+        })
+
         $scope.languageSel = {};
         $scope.mediaNameSel = {
             callback:function(e,data){
                 $scope.channelsSel.$destroy();
                 if(!data){return};
-                ResChannelFty.getChannelsByMedia({ mediaId: data.id }).success(function (response) {
+                ResChannelFty.getChannelsByMedia({ mediaId: data.id }).then(function (response) {
                     $scope.channelsSel.list = response.channels;
                     $scope.channelsSel.list.unshift({'channelName':'全部'})
                 });
@@ -17,9 +57,8 @@ app.controller('listManageCtrl', ["$scope", "$http", "$q", "ScheduleFty", "Dicti
             sessionBack:function(d){
                 if(d){
                     var key = this.key.split(',')[0];
-                    ResChannelFty.getChannelsByMedia({ mediaId: d[key] }).success(function (response) {
+                    ResChannelFty.getChannelsByMedia({ mediaId: d[key] }).then(function (response) {
                         $scope.channelsSel.list = response.channels;
-                        $scope.channelsSel.list.unshift({'channelName':'全部'})
                     });
                 }
             }
@@ -30,18 +69,15 @@ app.controller('listManageCtrl', ["$scope", "$http", "$q", "ScheduleFty", "Dicti
         var pageSize = 8;
         $scope.query.pageSize = pageSize;
 
-        var scheduleDownList = ScheduleFty.scheduleDownList().success(function (response) {
+        var scheduleDownList = ScheduleFty.scheduleDownList().then(function (response) {
             if (response && response.code == 200) {
                 $scope.languageSel.list = response.languageList;
                 $scope.mediaNameSel.list = response.mediaList;
                 $scope.sizeListSel.list = response.sizeList;
-                $scope.languageSel.list.unshift({'language':'全部'})
-                $scope.mediaNameSel.list.unshift({'mediaName':'全部'})
-                $scope.sizeListSel.list.unshift({'size':'全部'})
             }
         })
 
-        $http.get(baseUrl + "/static/data/provinceList.json").success(function (data) {
+        $http.get(baseUrl + "/static/data/provinceList.json").then(function (data) {
             $scope.provinceList = data;
         });
 
@@ -72,13 +108,13 @@ app.controller('listManageCtrl', ["$scope", "$http", "$q", "ScheduleFty", "Dicti
         };
 
         $q.all([scheduleDownList]).then(function(){
-            ScheduleFty.scheduleList($scope.query).success(modView);
+            ScheduleFty.scheduleList($scope.query).then(modView);
         })
 
         $scope.$on('schedulingGroup',function(){
             $scope.query.pageIndex = 1;
             ycui.loading.show();
-            ScheduleFty.scheduleList($scope.query).success(modView)
+            ScheduleFty.scheduleList($scope.query).then(modView)
         })
 
         /**
@@ -91,7 +127,7 @@ app.controller('listManageCtrl', ["$scope", "$http", "$q", "ScheduleFty", "Dicti
             if (window.sessionStorage.getItem("listManageSession")) {
                 _date = JSON.parse(window.sessionStorage.getItem("listManageSession")).nowDate
             }
-            ScheduleFty.getHolidaySet({ currentYearMonth: _date }).success(function (res) {
+            ScheduleFty.getHolidaySet({ currentYearMonth: _date }).then(function (res) {
                 if (res && res.code == 200) {
                     if (res.items) {
                         res.items.forEach(function (data, index) {
@@ -134,10 +170,12 @@ app.controller('listManageCtrl', ["$scope", "$http", "$q", "ScheduleFty", "Dicti
                     var time = stringToDate($scope.nowDate + "-" + (da.date || da));
                     var num = 0;
                     var area = 0;
+                    var isBookOrder = false;
                     vaDate.details.forEach(function (vaTime) {
                         var _areaBo = vaTime.directionArea && vaTime.directionArea.length > 0;
                         var startDate = vaTime.startDate;
                         var endDate = vaTime.endDate;
+                        var orderType = vaTime.orderType;
                         if (startDate <= time.getTime() && time.getTime() <= endDate) {
                             ++num;
                             // if(vaDate.priceCycle == 3 || _areaBo){//地域定向 按小时投放
@@ -146,9 +184,12 @@ app.controller('listManageCtrl', ["$scope", "$http", "$q", "ScheduleFty", "Dicti
                             if(_areaBo){//地域定向
                                 ++area
                             }
+                            if(orderType == 1){
+                                isBookOrder = true;
+                            }
                         }
                     });
-                    dateArray.push({ num: num, id: vaDate.id, name: vaDate.name, date: da.date || da, area: area });
+                    dateArray.push({ num: num, id: vaDate.id, name: vaDate.name, date: da.date || da, area: area,isBookOrder:isBookOrder });
                 })
             });
             $scope.dateArray = array1Change2(dateArray, $scope.dateList.length);
@@ -202,7 +243,7 @@ app.controller('listManageCtrl', ["$scope", "$http", "$q", "ScheduleFty", "Dicti
         $scope.getclass = function (id) {
             for (var i = 0; i < $scope.adList.length; i++) {
                 if (id == $scope.adList[i].id) {
-                    return "noClick"
+                    return true
                 }
             }
         };
@@ -232,7 +273,7 @@ app.controller('listManageCtrl', ["$scope", "$http", "$q", "ScheduleFty", "Dicti
             ycui.loading.show();
             $scope.query.adSpaceNameOrId = $scope.query.search;
             $scope.query.pageIndex = num || 1;
-            ScheduleFty.scheduleList($scope.query).success(modView)
+            ScheduleFty.scheduleList($scope.query).then(modView)
         };
 
         //点击创建订单
@@ -242,7 +283,10 @@ app.controller('listManageCtrl', ["$scope", "$http", "$q", "ScheduleFty", "Dicti
             $scope.adList.forEach(function (data) {
                 if (data.check) {
                     idArr.push(data.id);
-                    companyId.push(data.companyId)
+                    companyId.push({
+                        depScope:data.depScope,
+                        companyId:data.companyId
+                    })
                 }
             });
             if (idArr.length == 0) {
@@ -254,19 +298,20 @@ app.controller('listManageCtrl', ["$scope", "$http", "$q", "ScheduleFty", "Dicti
             } else {
                 var _bo = true;
                 companyId.forEach(function (data) {
-                    if (companyId[0] != data) {
+                    if (companyId[0].companyId != data.companyId || companyId[0].depScope != data.depScope) {
                         _bo = false;
                     }
                 });
                 if (_bo) {
                     goRoute('ViewPutOrderAdd',{
                         ids:idArr.join(","),
-                        companyId:companyId[0]
+                        companyId:companyId[0].companyId,
+                        depScope:companyId[0].depScope
                     });
                 } else {
                     ycui.alert({
                         error:true,
-                        content: "一个订单只能添加同一公司下的广告位",
+                        content: "一个订单只能添加同一范围下的广告位",
                         timeout:10
                     })
                 }
@@ -376,7 +421,7 @@ app.controller('listManageCtrl', ["$scope", "$http", "$q", "ScheduleFty", "Dicti
             if (!num) {
                 $scope.query.pageIndex = 1;
                 $scope.query.childId = $scope.childId;
-                ScheduleFty.scheduleList($scope.query).success(modView);
+                ScheduleFty.scheduleList($scope.query).then(modView);
             }
             $scope.provinceListFitter = [];
             var cityFitter = document.querySelector('#cityFitter');
@@ -555,8 +600,9 @@ app.controller('listManageCtrl', ["$scope", "$http", "$q", "ScheduleFty", "Dicti
 
             $scope.query.languageId && (query.languageId = $scope.query.languageId);
             $scope.query.childId && (query.childId = $scope.query.childId);
-
-            ScheduleFty.scheduleDetail(query).success(function (res) {
+            ycui.loading.show();
+            ScheduleFty.scheduleDetail(query).then(function (res) {
+                ycui.loading.hide();
                 if(res && res.code == 200){
                     for (var i = 0; i < res.details.length; i++) {
                         var data = res.details[i];

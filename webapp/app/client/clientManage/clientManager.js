@@ -8,7 +8,7 @@ app.controller('clientManageCtrl', ['$scope', '$http', '$location', 'CustomerFty
             callback:function(e,d){
                 $scope.query.pageIndex = 1;
                 ycui.loading.show();
-                CustomerFty.listCustomer($scope.query).success(modView);
+                CustomerFty.listCustomer($scope.query).then(modView);
             }
         }
         
@@ -30,10 +30,10 @@ app.controller('clientManageCtrl', ['$scope', '$http', '$location', 'CustomerFty
 
         if (paramInt1) {
             $scope.query.paramInt1 = paramInt1;
-            CustomerFty.listCustomer($scope.query).success(modView);
+            CustomerFty.listCustomer($scope.query).then(modView);
         } else {
             delete $scope.query.paramInt1
-            CustomerFty.listCustomer($scope.query).success(modView);
+            CustomerFty.listCustomer($scope.query).then(modView);
         }
 
         $scope.listActive = function (listItems, id, name) {
@@ -47,7 +47,7 @@ app.controller('clientManageCtrl', ['$scope', '$http', '$location', 'CustomerFty
             }
         }
 
-        SysRuleUserFty.getUserRightsByParentId({rightsParentId: 1}).success(function (response) {
+        SysRuleUserFty.getUserRightsByParentId({rightsParentId: 1}).then(function (response) {
             if (response && response.code == 200) {
                 $scope.listItems = response.items;
             }
@@ -58,7 +58,7 @@ app.controller('clientManageCtrl', ['$scope', '$http', '$location', 'CustomerFty
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.param1 = $scope.query.search;
-            CustomerFty.listCustomer($scope.query).success(modView);
+            CustomerFty.listCustomer($scope.query).then(modView);
         };
 
         //审核状态图标
@@ -101,7 +101,7 @@ app.controller('clientManageCtrl', ['$scope', '$http', '$location', 'CustomerFty
         //     $scope.search && (query.param1 = $scope.search);
         //     $scope.optype && (query.paramInt2 = $scope.optype);
         //     $scope.state && (query.paramInt3 = $scope.state);
-        //     CustomerFty.listCustomer(query).success(modView);
+        //     CustomerFty.listCustomer(query).then(modView);
         // });
 
         //审核状态
@@ -123,7 +123,7 @@ app.controller('clientManageCtrl', ['$scope', '$http', '$location', 'CustomerFty
         $scope.showContacList = function (id, index, bo) {
             if (bo) {
                 ycui.loading.show();
-                CustomerFty.getCustomerContacts({customerId: id}).success(function (res) {
+                CustomerFty.getCustomerContacts({customerId: id}).then(function (res) {
                     ycui.loading.hide();
                     if(res && res.items && res.items.length > 0){
                         var array = angular.copy($scope.items);
@@ -145,7 +145,7 @@ app.controller('clientManageCtrl', ['$scope', '$http', '$location', 'CustomerFty
                 });
             } else {
                 ycui.loading.show();
-                CustomerFty.getCustomerContacts({customerId: id}).success(function (res) {
+                CustomerFty.getCustomerContacts({customerId: id}).then(function (res) {
                     ycui.loading.hide();
                     if(res && res.items && res.items.length > 0){
                         var array = angular.copy($scope.items);
@@ -200,7 +200,7 @@ app.controller('clientManageCtrl', ['$scope', '$http', '$location', 'CustomerFty
                 beforeFileQueued:function (uploader,file) {
                     ycui.loading.show();
                     uploader.stop(file);
-                    UploadKeyFty.uploadKey().success(function (da) {
+                    UploadKeyFty.uploadKey().then(function (da) {
                         key = da.items;
                         uploader.upload(file);
                     });
@@ -215,7 +215,7 @@ app.controller('clientManageCtrl', ['$scope', '$http', '$location', 'CustomerFty
                             content: '<div style="max-height: 300px;overflow-y: auto;width: auto;">'+ arr +'</div>',
                             timeout: 10,
                             okclick:function () {
-                                CustomerFty.listCustomer($scope.query).success(modView);
+                                CustomerFty.listCustomer($scope.query).then(modView);
                             }
                         });
                         ycui.loading.hide();

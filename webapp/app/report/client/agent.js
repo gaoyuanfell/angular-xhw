@@ -16,14 +16,14 @@ app.controller('client2Ctrl', ["$scope", "$http", "ReportCustomerFty",
             $scope.items = response.items;
             $scope.total_page = response.total_page;
         };
-        ReportCustomerFty.agentCustomerReport($scope.query).success(modView);
+        ReportCustomerFty.agentCustomerReport($scope.query).then(modView);
 
         //汇总
         var summarizing = function (response) {
             if(!response) return;
             $scope.summarizing = response.items;
         };
-        ReportCustomerFty.collectAgentCustomerReport($scope.query).success(summarizing);
+        ReportCustomerFty.collectAgentCustomerReport($scope.query).then(summarizing);
 
         $scope.search = '';
         $scope.go = '';
@@ -36,8 +36,8 @@ app.controller('client2Ctrl', ["$scope", "$http", "ReportCustomerFty",
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.param1 = $scope.query.search;
-            ReportCustomerFty.agentCustomerReport($scope.query).success(modView);
-            ReportCustomerFty.collectAgentCustomerReport($scope.query).success(summarizing);
+            ReportCustomerFty.agentCustomerReport($scope.query).then(modView);
+            ReportCustomerFty.collectAgentCustomerReport($scope.query).then(summarizing);
         };
 
         //日历查询
@@ -54,8 +54,8 @@ app.controller('client2Ctrl', ["$scope", "$http", "ReportCustomerFty",
                 ycui.loading.show();
                 $scope.query.startTime = obj.startDate;
                 $scope.query.endTime = obj.endDate;
-                ReportCustomerFty.agentCustomerReport($scope.query).success(modView);
-                ReportCustomerFty.collectAgentCustomerReport($scope.query).success(summarizing);
+                ReportCustomerFty.agentCustomerReport($scope.query).then(modView);
+                ReportCustomerFty.collectAgentCustomerReport($scope.query).then(summarizing);
             }
         });
 

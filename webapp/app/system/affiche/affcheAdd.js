@@ -12,7 +12,7 @@ app.controller("affcheAddCtrl", ['$scope', 'SysNoticeFty','SysUserFty','UploadKe
         };
 
         $scope.$on('loginUserInfo',function () {
-            SysUserFty.userInfo({id: $scope.$parent.user.id}).success(function (res) {
+            SysUserFty.userInfo({id: $scope.$parent.user.id}).then(function (res) {
                 if (res) {
                     $scope.roleList = res.roleList;
                     $scope.affche.publishUserId = res.id;
@@ -55,7 +55,7 @@ app.controller("affcheAddCtrl", ['$scope', 'SysNoticeFty','SysUserFty','UploadKe
                     }
                     ycui.loading.show();
                     uploader.stop(file);
-                    UploadKeyFty.uploadKey().success(function (da) {
+                    UploadKeyFty.uploadKey().then(function (da) {
                         key = da.items;
                         uploader.upload(file);
                     });
@@ -79,7 +79,7 @@ app.controller("affcheAddCtrl", ['$scope', 'SysNoticeFty','SysUserFty','UploadKe
         $scope.postEdit = function () {
             if(!$(".form").valid())return;
             ycui.loading.show();
-            SysNoticeFty.addNotice($scope.affche).success(function (res) {
+            SysNoticeFty.addNotice($scope.affche).then(function (res) {
                 ycui.loading.hide();
                 if (res && res.code == 200) {
                     ycui.alert({

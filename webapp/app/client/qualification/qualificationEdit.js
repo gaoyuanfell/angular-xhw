@@ -12,9 +12,18 @@ app.controller('QualificationEditCtrl', ["$scope", "$http", "QualificationFty","
                     multiple: false
                 },
                 beforeFileQueued:function(uploader,file){
+                    var size = 3*1024*1024;
+                    if(file.size > size){
+                        ycui.alert({
+                            content: "文件大小不能超过3M(1M等于1024KB)",
+                            timeout: 10,
+                            error:true
+                        });
+                        return false;
+                    }
                     ycui.loading.show();
                     uploader.stop();
-                    UploadKeyFty.uploadKey().success(function (da) {
+                    UploadKeyFty.uploadKey().then(function (da) {
                         key = da.items;
                         uploader.upload();
                     });
@@ -49,7 +58,7 @@ app.controller('QualificationEditCtrl', ["$scope", "$http", "QualificationFty","
         var id = getSearch('id');
 
         ycui.loading.show();
-        QualificationFty.findQualifications({id: id}).success(function (response) {
+        QualificationFty.findQualifications({id: id}).then(function (response) {
             ycui.loading.hide();
             if(response){
                 $scope.clientId = response.customerId;
@@ -279,7 +288,9 @@ app.controller('QualificationEditCtrl', ["$scope", "$http", "QualificationFty","
                 qualificationsUrl: $scope.qualificationsUrl,
                 qualificationName: $scope.qualificationName
             }
-            QualificationFty.updateQualifications(body).success(function (res) {
+            ycui.loading.show();
+            QualificationFty.updateQualifications(body).then(function (res) {
+                ycui.loading.hide();
                 if (res && res.code == 200) {
                     ycui.alert({
                         content: res.msg,

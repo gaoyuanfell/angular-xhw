@@ -7,18 +7,18 @@ app.controller('dateCtrl', ["$scope", "$http", "ReportAdvertiseFty", "CustomerFt
         $scope.customerListSel = {};
         $scope.orderListSel = {};
 
-        var allNDefaultOrderNames = ReportAdvertiseFty.allNDefaultOrderNames().success(function (response) {
+        var allNDefaultOrderNames = ReportAdvertiseFty.allNDefaultOrderNames().then(function (response) {
             $scope.orderListSel.list = response.items;
         });
-        var getPartCustomer = CustomerFty.getPartCustomer({customerType: 2}).success(function (response) {
+        var getPartCustomer = CustomerFty.getPartCustomer({customerType: 2}).then(function (response) {
             $scope.customerListSel.list = response.items;
         });
 
         $scope.$on('ad-report-data',function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            ReportAdvertiseFty.dateReport($scope.query).success(modViewA);
-            ReportAdvertiseFty.collectDateReport($scope.query).success(summarizingA);
+            ReportAdvertiseFty.dateReport($scope.query).then(modViewA);
+            ReportAdvertiseFty.collectDateReport($scope.query).then(summarizingA);
         })
         
         ycui.loading.show();
@@ -39,15 +39,15 @@ app.controller('dateCtrl', ["$scope", "$http", "ReportAdvertiseFty", "CustomerFt
             $scope.summarizing = response.items;
         };
 
-        ReportAdvertiseFty.dateReport($scope.query).success(modViewA);
-        ReportAdvertiseFty.collectDateReport($scope.query).success(summarizingA);
+        ReportAdvertiseFty.dateReport($scope.query).then(modViewA);
+        ReportAdvertiseFty.collectDateReport($scope.query).then(summarizingA);
 
         //搜索框
         $scope.redirect = function (num, con) {
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
-            ReportAdvertiseFty.dateReport($scope.query).success(modViewA);
-            ReportAdvertiseFty.collectDateReport($scope.query).success(summarizingA);
+            ReportAdvertiseFty.dateReport($scope.query).then(modViewA);
+            ReportAdvertiseFty.collectDateReport($scope.query).then(summarizingA);
         };
 
         //日历查询
@@ -64,8 +64,8 @@ app.controller('dateCtrl', ["$scope", "$http", "ReportAdvertiseFty", "CustomerFt
                 $scope.query.startTime = obj.startDate;
                 $scope.query.endTime = obj.endDate;
                 $scope.query.pageIndex = 1;
-                ReportAdvertiseFty.dateReport($scope.query).success(modViewA);
-                ReportAdvertiseFty.collectDateReport($scope.query).success(summarizingA);
+                ReportAdvertiseFty.dateReport($scope.query).then(modViewA);
+                ReportAdvertiseFty.collectDateReport($scope.query).then(summarizingA);
             }
         });
 

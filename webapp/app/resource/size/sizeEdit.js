@@ -5,7 +5,7 @@ app.controller("sizeEditCtrl", ['$scope', 'ResSizeFty',
     function ($scope, ResSizeFty) {
         var id = getSearch("id");
         ycui.loading.show();
-        ResSizeFty.getSize({id:id}).success(function (response) {
+        ResSizeFty.getSize({id:id}).then(function (response) {
             ycui.loading.hide();
             var arr = [];
             $scope.size = response.size;
@@ -21,7 +21,7 @@ app.controller("sizeEditCtrl", ['$scope', 'ResSizeFty',
                 size: $scope.firstSize + "*" + $scope.lastSize
             }
             ycui.loading.show();
-            ResSizeFty.updateSize(body).success(function(res){
+            ResSizeFty.updateSize(body).then(function(res){
                 ycui.loading.hide();
                 if (res.code == 200) {
                     ycui.alert({

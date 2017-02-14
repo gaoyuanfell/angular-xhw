@@ -1,8 +1,8 @@
 /**
  * Created by moka on 16-6-17.
  */
-app.controller("channelAddCtrl", ['$scope', '$http','ResChannelFty','ResChannelLevelFty','$q',
-    function ($scope, $http ,ResChannelFty, ResChannelLevelFty,$q) {
+app.controller("channelAddCtrl", ['$scope', 'ResChannelFty','ResChannelLevelFty','SysDepartmentFty',
+    function ($scope, ResChannelFty, ResChannelLevelFty,SysDepartmentFty) {
         
         function ClearBr(key) {
             key = key.replace(/(\n)/g, "&");
@@ -14,22 +14,30 @@ app.controller("channelAddCtrl", ['$scope', '$http','ResChannelFty','ResChannelL
         $scope.level = 0;
         $scope.mediaId = 0;
 
-        $scope.mediaListNameSel = {};
-        var downListForSearch = ResChannelFty.mediaListForAdd().success(function (res) {
+        $scope.departmentListSel = {};
+        $scope.mediaListNameSel = {
+            callback:function(e,d){
+                $scope.departmentListSel.$destroy();
+                if(d && d.companyId == 3){
+                    SysDepartmentFty.parentDeps({companyId:d.companyId}).then(function(res){
+                        if(res && res.code == 200){
+                            $scope.departmentListSel.list = res.departmentList;
+                        }
+                    })
+                }
+            }
+        };
+
+        var downListForSearch = ResChannelFty.mediaListForAdd().then(function (res) {
             if(res && res.code == 200){
                 $scope.mediaListNameSel.list = res.mediaList
             }
         });
 
         $scope.levelListSel = {}
-        ResChannelLevelFty.channelLevelList().success(function(res){
-            console.info(res);
+        ResChannelLevelFty.channelLevelList().then(function(res){
             $scope.levelListSel.list = res.levels
         })
-
-        
-
-        //updateMediaName
 
         $scope.postEdit = function () {
             var pass = true, parent;
@@ -50,8 +58,9 @@ app.controller("channelAddCtrl", ['$scope', '$http','ResChannelFty','ResChannelL
                 ResChannelFty.channelAdd({
                     channelNames: ClearBr($scope.channelNames),
                     mediaId: $scope.mediaId,
-                    level: $scope.level
-                }).success(function (response) {
+                    level: $scope.level,
+                    depScope: $scope.depScope || ''
+                }).then(function (response) {
                     ycui.loading.hide();
                     if (response.code == 200) {
                         ycui.alert({

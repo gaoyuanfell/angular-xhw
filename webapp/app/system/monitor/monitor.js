@@ -18,13 +18,13 @@ app.controller('MonitorManageCtrl',['$scope','SysMonitorFty',function ($scope,Sy
         $scope.total_page = response.total_page;
     };
 
-    SysMonitorFty.monitorList($scope.query).success(modView);
+    SysMonitorFty.monitorList($scope.query).then(modView);
 
     $scope.redirect = function (num, con) {
         ycui.loading.show();
         $scope.query.pageIndex = num || 1;
         $scope.query.param1 = $scope.query.search
-        SysMonitorFty.monitorList($scope.query).success(modView);
+        SysMonitorFty.monitorList($scope.query).then(modView);
     };
 
     $scope.delete = function (id, name) {
@@ -33,13 +33,13 @@ app.controller('MonitorManageCtrl',['$scope','SysMonitorFty',function ($scope,Sy
             content:'是否删除此监控类型？',
             timeout:-1,
             okclick:function () {
-                SysMonitorFty.monitorDel({id:id}).success(function (res) {
+                SysMonitorFty.monitorDel({id:id}).then(function (res) {
                     if(res && res.code == 200){
                         ycui.alert({
                             content:res.msg,
                             timeout:-1,
                             okclick:function () {
-                                SysMonitorFty.monitorList($scope.query).success(modView);
+                                SysMonitorFty.monitorList($scope.query).then(modView);
                             }
                         })
                     }
@@ -53,13 +53,13 @@ app.controller('MonitorManageCtrl',['$scope','SysMonitorFty',function ($scope,Sy
             title:'监控类型开/关',
             content:'确定要'+ (state == -1?'开':'关') +'此监控类型?',
             okclick:function () {
-                SysMonitorFty.monitorState({id:id,state:~state}).success(function (res) {
+                SysMonitorFty.monitorState({id:id,state:~state}).then(function (res) {
                     if(res && res.code == 200){
                         ycui.alert({
                             content:res.msg,
                             timeout:10,
                             okclick:function () {
-                                SysMonitorFty.monitorList($scope.query).success(modView);
+                                SysMonitorFty.monitorList($scope.query).then(modView);
                             }
                         })
                     }
@@ -74,14 +74,13 @@ app.controller('MonitorInfoCtrl',['$scope','SysMonitorFty',function ($scope,SysM
     console.info('system');
     $scope.monitorStateSel = {
         list:[
-            {name:'全部'},
             {name:'正常',id:'1'},
             {name:'异常',id:'0'}
         ],
         callback:function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            SysMonitorFty.monitorDetailsList($scope.query).success(modView);
+            SysMonitorFty.monitorDetailsList($scope.query).then(modView);
         }
     }
 
@@ -101,13 +100,13 @@ app.controller('MonitorInfoCtrl',['$scope','SysMonitorFty',function ($scope,SysM
         $scope.total_page = response.total_page;
     };
 
-    SysMonitorFty.monitorDetailsList($scope.query).success(modView);
+    SysMonitorFty.monitorDetailsList($scope.query).then(modView);
 
     $scope.redirect = function (num, con) {
         ycui.loading.show();
         $scope.query.pageIndex = num || 1;
         $scope.query.param1 = $scope.query.search
-        SysMonitorFty.monitorDetailsList($scope.query).success(modView);
+        SysMonitorFty.monitorDetailsList($scope.query).then(modView);
     };
 }]);
 
@@ -126,7 +125,7 @@ app.controller('MonitorAddCtrl',['$scope','SysMonitorFty',function ($scope,SysMo
             return;
         }
         ycui.loading.show();
-        SysMonitorFty.monitorAdd($scope.monitor).success(function (res) {
+        SysMonitorFty.monitorAdd($scope.monitor).then(function (res) {
             ycui.loading.hide();
             if(res && res.code == 200){
                 ycui.alert({
@@ -162,7 +161,7 @@ app.controller('MonitorAddCtrl',['$scope','SysMonitorFty',function ($scope,SysMo
 
 app.controller('MonitorEditCtrl',['$scope','SysMonitorFty',function ($scope,SysMonitorFty) {
     var id = getSearch('id');
-    SysMonitorFty.getMonitor({id:id}).success(function (res) {
+    SysMonitorFty.getMonitor({id:id}).then(function (res) {
         if(res && res.code == 200){
             $scope.monitor = res.items;
         }
@@ -176,7 +175,7 @@ app.controller('MonitorEditCtrl',['$scope','SysMonitorFty',function ($scope,SysM
         }
         delete $scope.monitor.updateTime;
         ycui.loading.show();
-        SysMonitorFty.monitorUpdate($scope.monitor).success(function (res) {
+        SysMonitorFty.monitorUpdate($scope.monitor).then(function (res) {
             ycui.loading.hide();
             if(res && res.code == 200){
                 ycui.alert({

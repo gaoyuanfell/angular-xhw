@@ -34,7 +34,7 @@ app.controller("trueAdvertisementAuditCtrl", ["$scope", "$http", "DefaultOrdersF
         //     $scope.orderShowDates.splice(index, 1);
         // }
 
-        // ResMediaFty.listForOrder().success(function (response) {
+        // ResMediaFty.listForOrder().then(function (response) {
         //     $scope.media = response.mediaList;
         // });
 
@@ -65,7 +65,7 @@ app.controller("trueAdvertisementAuditCtrl", ["$scope", "$http", "DefaultOrdersF
         $scope.emergencyCheckState = 1
         var id = getSearch("id");
         ycui.loading.show();//$check
-        var defaultOrdersDetail = DefaultOrdersFty.defaultOrdersDetail({id: id}).success(function (response) {
+        var defaultOrdersDetail = DefaultOrdersFty.defaultOrdersDetail({id: id}).then(function (response) {
             ycui.loading.hide();
             if(!response) return;
             $scope.orderName = response.order.orderName
@@ -104,7 +104,7 @@ app.controller("trueAdvertisementAuditCtrl", ["$scope", "$http", "DefaultOrdersF
         // })
 
         $q.all([defaultOrdersDetail]).then(function(){
-            ResMediaFty.listForOrder().success(function (response) {
+            ResMediaFty.listForOrder().then(function (response) {
                 var m = $scope.mediaIds.split(',');
                 var list = response.mediaList;
                 for(var i = 0;i<list.length;i++){
@@ -127,7 +127,7 @@ app.controller("trueAdvertisementAuditCtrl", ["$scope", "$http", "DefaultOrdersF
                         DefaultOrdersFty.defaultOrderCheck({
                             id: id,
                             emergencyCheckState: 1
-                        }).success(function (response) {
+                        }).then(function (response) {
                             if (response.code == 200) {
                                 ycui.alert({
                                     content: response.msg,
@@ -143,11 +143,13 @@ app.controller("trueAdvertisementAuditCtrl", ["$scope", "$http", "DefaultOrdersF
 
             if (pass) {
                 var id = parseInt(getSearch("id"));
+                ycui.loading.show();
                 DefaultOrdersFty.defaultOrderCheck({
                     id: id,
                     emergencyRemark: $scope.emergencyRemark,
                     emergencyCheckState: $scope.emergencyCheckState
-                }).success(function (response) {
+                }).then(function (response) {
+                    ycui.loading.hide();
                     if (response && response.code == 200) {
                         ycui.alert({
                             content: response.msg,

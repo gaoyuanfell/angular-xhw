@@ -1,7 +1,4 @@
-# Created by .ignore support plugin (hsz.mobi)
-.idea
-node_modules
-webapp/build
-webapp/template
-webapp/static/js
-.vscode
+/.vscode
+/node_modules
+/webapp/build
+/webapp/template

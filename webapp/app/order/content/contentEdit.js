@@ -9,21 +9,21 @@ app.controller('ContentEditCtrl', ['$scope', 'ContentFty', 'UploadKeyFty', 'Cust
             callback:function(e,d){
                 $scope.channelListSel.$destroy();
                 if(d){
-                    ContentFty.getChannelsByMedia({mediaId:d.id}).success(function(res){
+                    ContentFty.getChannelsByMedia({mediaId:d.id}).then(function(res){
                         $scope.channelListSel.list = res.channels;
                     })
                 }
             },
             sessionBack:function(d){
                 if(d){
-                    ContentFty.getChannelsByMedia({mediaId:d.id}).success(function(res){
+                    ContentFty.getChannelsByMedia({mediaId:d.id}).then(function(res){
                         $scope.channelListSel.list = res.channels;
                     })
                 }
             }
         };
 
-        ContentFty.mediaList().success(function(res){
+        ContentFty.mediaList().then(function(res){
             if(res && res.code == 200){
                 $scope.mediaListSel.list = res.mediaList;
             }
@@ -40,7 +40,7 @@ app.controller('ContentEditCtrl', ['$scope', 'ContentFty', 'UploadKeyFty', 'Cust
                 beforeFileQueued:function(than,file){
                     ycui.loading.show();
                     than.stop(file);
-                    UploadKeyFty.uploadKey().success(function (da) {
+                    UploadKeyFty.uploadKey().then(function (da) {
                         key = da.items;
                         than.upload(file);
                     });
@@ -180,8 +180,10 @@ app.controller('ContentEditCtrl', ['$scope', 'ContentFty', 'UploadKeyFty', 'Cust
                         }
                         var _da = angular.copy(da);
                         //角标
+                        var list = angular.copy($scope.adMarkSelect);
+                        list.unshift({adMarkName:'无',id:0})
                         _da.adMarkSelectSel = {
-                            list:angular.copy($scope.adMarkSelect),
+                            list:list,
                             callback:function(e,d){
                                 _da.adMarkArea = 3
                             }
@@ -214,7 +216,7 @@ app.controller('ContentEditCtrl', ['$scope', 'ContentFty', 'UploadKeyFty', 'Cust
             });
         }
 
-        var adMarkSelect = SysMarkFty.adMarkSelect({adMarkType:1}).success(function (res) {
+        var adMarkSelect = SysMarkFty.adMarkSelect({adMarkType:1}).then(function (res) {
             if(res && res.length > 0){
                 $scope.adMarkSelect = res;
             }
@@ -222,7 +224,7 @@ app.controller('ContentEditCtrl', ['$scope', 'ContentFty', 'UploadKeyFty', 'Cust
 
         var id = getSearch("id");
         var checkState = $scope.checkState = getSearch("checkState");
-        ContentFty.contentOne({ id: id }).success(function (res) {
+        ContentFty.contentOne({ id: id }).then(function (res) {
             if (res && res.code == 200) {
                 $scope.content = res.content;
                 $scope.advertising = res.content.creativeList;
@@ -265,7 +267,7 @@ app.controller('ContentEditCtrl', ['$scope', 'ContentFty', 'UploadKeyFty', 'Cust
                     }
                     ycui.loading.show();
                     uploader.stop(file);
-                    UploadKeyFty.uploadKey().success(function (da) {
+                    UploadKeyFty.uploadKey().then(function (da) {
                         key = da.items;
                         uploader.upload(file);
                     });
@@ -293,7 +295,7 @@ app.controller('ContentEditCtrl', ['$scope', 'ContentFty', 'UploadKeyFty', 'Cust
             }
         }
 
-        var adCreativeOrderNames = AdCreativeFty.adCreativeOrderNames().success(function (response) {
+        var adCreativeOrderNames = AdCreativeFty.adCreativeOrderNames().then(function (response) {
             if (response) {
                 $scope.orderListSel.list = response.orderNames;
             }
@@ -306,7 +308,7 @@ app.controller('ContentEditCtrl', ['$scope', 'ContentFty', 'UploadKeyFty', 'Cust
         function getAdvertising() {
             $scope.advertising = [];
             ycui.loading.show();
-            AdCreativeFty.adSpaceNamesByOrderId({ orderId: $scope.content.orderId }).success(function (response) {
+            AdCreativeFty.adSpaceNamesByOrderId({ orderId: $scope.content.orderId }).then(function (response) {
                 ycui.loading.hide();
                 $scope.adShow = true; //数据展现
                 $scope.advertising = response.adSpaceNames;
@@ -455,7 +457,7 @@ app.controller('ContentEditCtrl', ['$scope', 'ContentFty', 'UploadKeyFty', 'Cust
 
             $scope.content.creativeList = arr;
             ycui.loading.show();
-            ContentFty.editContent($scope.content).success(function (res) {
+            ContentFty.editContent($scope.content).then(function (res) {
                 ycui.loading.hide();
                 if (res && res.code == 200) {
                     ycui.alert({

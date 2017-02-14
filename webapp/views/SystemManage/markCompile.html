@@ -61,16 +61,34 @@
                 <label class="yc-col-2 control-label"> <span>*</span> 使用范围：</label>
                 <div class="yc-col-10">
                     <label class="radio">
-                        <input class="form-control" type="radio" ng-model="mark.adMarkType" value="1">客户广告
+                        <input class="form-control" type="radio" ng-model="mark.adMarkType" ng-value="1">客户广告
                     </label>
                     <label class="radio">
-                        <input class="form-control" type="radio" ng-model="mark.adMarkType" value="2">紧急广告
+                        <input class="form-control" type="radio" ng-model="mark.adMarkType" ng-value="2">紧急广告
                     </label>
                     <label class="radio">
-                        <input class="form-control" type="radio" ng-model="mark.adMarkType" value="3">默认广告
+                        <input class="form-control" type="radio" ng-model="mark.adMarkType" ng-value="3">默认广告
                     </label>
                     <label class="radio">
-                        <input class="form-control" type="radio" ng-model="mark.adMarkType" value="4">打底广告
+                        <input class="form-control" type="radio" ng-model="mark.adMarkType" ng-value="4">打底广告
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group" ng-show="mark.adMarkType != 1">
+                <label class="yc-col-2 control-label"> <span>*</span> 角标位置：</label>
+                <div class="yc-col-10">
+                    <label class="radio">
+                        <input class="form-control" type="radio" ng-model="mark.position" ng-value="1">左上角
+                    </label>
+                    <label class="radio">
+                        <input class="form-control" type="radio" ng-model="mark.position" ng-value="2">左下角
+                    </label>
+                    <label class="radio">
+                        <input class="form-control" type="radio" ng-model="mark.position" ng-value="3">右上角
+                    </label>
+                    <label class="radio">
+                        <input class="form-control" type="radio" ng-model="mark.position" ng-value="4">右下角
                     </label>
                 </div>
             </div>

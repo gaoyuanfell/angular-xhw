@@ -34,7 +34,7 @@ app.controller("trueAdvertisementEditCtrl", ["$scope", "$http", "DefaultOrdersFt
             $scope.orderShowDates.splice(index, 1);
         }
 
-        // ResMediaFty.listForDefautOrder().success(function (response) {
+        // ResMediaFty.listForDefautOrder().then(function (response) {
         //     $scope.media = response.mediaList;
         // });
 
@@ -65,7 +65,7 @@ app.controller("trueAdvertisementEditCtrl", ["$scope", "$http", "DefaultOrdersFt
 
         var id = getSearch("id");
         ycui.loading.show();//$check
-        var defaultOrdersDetail = DefaultOrdersFty.defaultOrdersDetail({id: id}).success(function (response) {
+        var defaultOrdersDetail = DefaultOrdersFty.defaultOrdersDetail({id: id}).then(function (response) {
             ycui.loading.hide();
             if(!response) return;
             $scope.orderName = response.order.orderName
@@ -104,7 +104,7 @@ app.controller("trueAdvertisementEditCtrl", ["$scope", "$http", "DefaultOrdersFt
         })
 
         $q.all([defaultOrdersDetail]).then(function(){
-            ResMediaFty.listForDefautOrder().success(function (response) {
+            ResMediaFty.listForDefautOrder().then(function (response) {
                 var m = $scope.mediaIds.split(',');
                 var list = response.mediaList;
                 for(var i = 0;i<list.length;i++){
@@ -148,7 +148,7 @@ app.controller("trueAdvertisementEditCtrl", ["$scope", "$http", "DefaultOrdersFt
             }
 
             ycui.loading.show();
-            DefaultOrdersFty.defaultOrdersUpdate(body).success(function(res){
+            DefaultOrdersFty.defaultOrdersUpdate(body).then(function(res){
                 if (res && res.code == 200) {
                     ycui.alert({
                         content: res.msg,

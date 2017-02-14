@@ -18,12 +18,11 @@ app.controller('roleManageCtrl', ['$scope', '$http', 'SysRuleUserFty', 'SysRoleF
 
         $scope.companyTypeSel = {
             list:[
-                {name:'全部'},
                 {name:'总公司角色',id:1},
                 {name:'分公司角色',id:2}
             ],
             callback:function () {
-                SysRuleUserFty.listRole($scope.query).success(modView);
+                SysRuleUserFty.listRole($scope.query).then(modView);
             }
         };
 
@@ -35,26 +34,26 @@ app.controller('roleManageCtrl', ['$scope', '$http', 'SysRuleUserFty', 'SysRoleF
                     content:'请确认是否禁用该角色，禁用后将影响使用该角色的用户，请相应进行调整！',
                     okclick:function () {
                         body.state = -1;
-                        SysRoleFty.enableRole(body).success(function (res) {
+                        SysRoleFty.enableRole(body).then(function (res) {
                             if(res && res.code == 200){
                                 ycui.alert({
                                     content:res.msg,
                                     timeout:10
                                 })
-                                SysRuleUserFty.listRole($scope.query).success(modView);
+                                SysRuleUserFty.listRole($scope.query).then(modView);
                             }
                         })
                     }
                 })
             }else{
                 body.state = 0;
-                SysRoleFty.enableRole(body).success(function (res) {
+                SysRoleFty.enableRole(body).then(function (res) {
                     if(res && res.code == 200){
                         ycui.alert({
                             content:res.msg,
                             timeout:10
                         })
-                        SysRuleUserFty.listRole($scope.query).success(modView);
+                        SysRuleUserFty.listRole($scope.query).then(modView);
                     }
                 })
             }
@@ -62,11 +61,11 @@ app.controller('roleManageCtrl', ['$scope', '$http', 'SysRuleUserFty', 'SysRoleF
 
         $scope.query = {pageSize: pageSize,pageIndex:1};
 
-        SysRuleUserFty.listRole({pageSize: pageSize}).success(modView);
+        SysRuleUserFty.listRole($scope.query).then(modView);
         $scope.redirect = function (num, con) {
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.param1 = $scope.query.search;
-            SysRuleUserFty.listRole($scope.query).success(modView);
+            SysRuleUserFty.listRole($scope.query).then(modView);
         };
 }]);

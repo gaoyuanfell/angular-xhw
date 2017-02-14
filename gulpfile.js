@@ -5,6 +5,7 @@ var runSequence = require('run-sequence'); //异步任务
 var gulpWatch = require('gulp-watch'); //监听插件
 var uglify = require("gulp-uglify");
 var htmlmin = require("gulp-htmlmin");
+var minifyHTML   = require('gulp-minify-html');
 var minifyCss = require("gulp-minify-css");
 var concat = require('gulp-concat');
 var through = require('through2');
@@ -27,15 +28,23 @@ gulp.task('rev-1',function(){
         // removeEmptyAttributes: true,//删除所有空格作属性值 <input id="" /> ==> <input />
         // removeScriptTypeAttributes: true,//删除<script>的type="text/javascript"
         // removeStyleLinkTypeAttributes: true,//删除<style>和<link>的type="text/css"
-        minifyJS: true,//压缩页面JS
+        // minifyJS: true,//压缩页面JS
         collapseInlineTagWhitespace: false,
-        minifyCSS: true//压缩页面CSS
+        // minifyCSS: true//压缩页面CSS
     };
     return gulp.src(['rev-manifest.json','webapp/views/*.html','webapp/views/**/*.html'])
-        .pipe(htmlmin(options))
         .pipe(revCollector({
             replaceReved: true
         }))
+        // .pipe(htmlmin(options))
+        .pipe(minifyHTML({
+            empty:true,
+            spare:true
+        }))
+        .on('error', function(err) {
+            gutil.log('Less Error!', err.message);
+            this.end();
+        })
         .pipe(addUpdateTime({type:"html"}))
         .pipe(gulp.dest('webapp/template/views/'))
 })
@@ -53,10 +62,18 @@ gulp.task('rev-2',function(){
         minifyCSS: true//压缩页面CSS
     };
     return gulp.src(['rev-manifest.json','webapp/login.html'])
-        .pipe(htmlmin(options))
         .pipe(revCollector({
             replaceReved: true
         }))
+        // .pipe(htmlmin(options))
+        .pipe(minifyHTML({
+            empty:true,
+            spare:true
+        }))
+        .on('error', function(err) {
+            gutil.log('Less Error!', err.message);
+            this.end();
+        })
         .pipe(addUpdateTime({type:"html"}))
         .pipe(gulp.dest('webapp/template/'))
 })

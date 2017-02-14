@@ -3,7 +3,7 @@
  */
 app.controller("mediaEditCtrl", ['$scope', '$http', 'ResMediaFty',
     function ($scope, $http, ResMediaFty) {
-        // ResMediaFty.companyList().success(function (res) {
+        // ResMediaFty.companyList().then(function (res) {
         //     if (res && res.code == 200) {
         //         $scope.companyList = res.companyList;
         //     }
@@ -11,7 +11,7 @@ app.controller("mediaEditCtrl", ['$scope', '$http', 'ResMediaFty',
 
         var id = getSearch("id");
         ycui.loading.show();
-        ResMediaFty.getMedia({id: id}).success(function (response) {
+        ResMediaFty.getMedia({id: id}).then(function (response) {
             ycui.loading.hide();
             if(!response) return;
             $scope.medias = [{
@@ -55,7 +55,7 @@ app.controller("mediaEditCtrl", ['$scope', '$http', 'ResMediaFty',
                 return;
             }
             ycui.loading.show();
-            ResMediaFty.mediaUpdate($scope.medias[0]).success(function (response) {
+            ResMediaFty.mediaUpdate($scope.medias[0]).then(function (response) {
                 ycui.loading.hide();
                 if (response && response.code == 200) {
                     ycui.alert({

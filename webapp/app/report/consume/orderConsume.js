@@ -8,12 +8,12 @@ app.controller('orderConsumeCtrl', ['$scope', 'ReportAdvertiseFty','$q','Custome
         $scope.customerListSel = {};
 
         //订单下拉框
-        var allNDefaultOrderNames = ReportAdvertiseFty.allNDefaultOrderNames().success(function (response) {
+        var allNDefaultOrderNames = ReportAdvertiseFty.allNDefaultOrderNames().then(function (response) {
             if(!response) return;
             $scope.orderListSel.list = response.items;
         });
         //客户下拉框
-        var getPartCustomer = CustomerFty.getAllCustomer().success(function (response) {
+        var getPartCustomer = CustomerFty.getAllCustomer().then(function (response) {
             if(!response) return;
             $scope.customerListSel.list = response.items;
         });
@@ -21,8 +21,8 @@ app.controller('orderConsumeCtrl', ['$scope', 'ReportAdvertiseFty','$q','Custome
         $scope.$on('ad-report-orderCon',function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            ReportAdvertiseFty.orderCostReport($scope.query).success(modViewG);
-            ReportAdvertiseFty.collectOrderCostReport($scope.query).success(collectG);
+            ReportAdvertiseFty.orderCostReport($scope.query).then(modViewG);
+            ReportAdvertiseFty.collectOrderCostReport($scope.query).then(collectG);
         })
 
         ycui.loading.show();
@@ -50,8 +50,8 @@ app.controller('orderConsumeCtrl', ['$scope', 'ReportAdvertiseFty','$q','Custome
         var _end = stringToDate(_tayEnd).calendar(6,-1);
         $scope.query = {pageSize: 10,pageIndex:1, startTime: _start.dateFormat('yyyy-MM-dd HH:mm:ss'), endTime: _end.dateFormat('yyyy-MM-dd HH:mm:ss')};
 
-        ReportAdvertiseFty.orderCostReport($scope.query).success(modViewG);
-        ReportAdvertiseFty.collectOrderCostReport($scope.query).success(collectG);
+        ReportAdvertiseFty.orderCostReport($scope.query).then(modViewG);
+        ReportAdvertiseFty.collectOrderCostReport($scope.query).then(collectG);
 
         new pickerDateRange('dateRangeOperate', {
             defaultText: ' / ',
@@ -65,8 +65,8 @@ app.controller('orderConsumeCtrl', ['$scope', 'ReportAdvertiseFty','$q','Custome
                 $scope.query.pageIndex = 1;
                 $scope.query.startTime = obj.startDate + ' 00:00:00';
                 $scope.query.endTime = obj.endDate + ' 23:59:59';
-                ReportAdvertiseFty.orderCostReport($scope.query).success(modViewG);
-                ReportAdvertiseFty.collectOrderCostReport($scope.query).success(collectG);
+                ReportAdvertiseFty.orderCostReport($scope.query).then(modViewG);
+                ReportAdvertiseFty.collectOrderCostReport($scope.query).then(collectG);
             }
         });
 
@@ -75,8 +75,8 @@ app.controller('orderConsumeCtrl', ['$scope', 'ReportAdvertiseFty','$q','Custome
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.param1 = $scope.query.search;
-            ReportAdvertiseFty.orderCostReport($scope.query).success(modViewG);
-            ReportAdvertiseFty.collectOrderCostReport($scope.query).success(collectG);
+            ReportAdvertiseFty.orderCostReport($scope.query).then(modViewG);
+            ReportAdvertiseFty.collectOrderCostReport($scope.query).then(collectG);
         };
 
         //导出

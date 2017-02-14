@@ -5,12 +5,12 @@ app.controller("roleEditCtrl", ['$scope', '$http','SysRuleUserFty','SysRoleFty',
     function ($scope, $http,SysRuleUserFty,SysRoleFty,$q) {
         var id = getSearch("id");
         ycui.loading.show();
-        var getRole = SysRoleFty.getRole({id:id}).success(function (response) {
+        var getRole = SysRoleFty.getRole({id:id}).then(function (response) {
             if(!response) return;
             $scope.role = response;
         });
         $q.all([getRole]).then(function(){
-            SysRuleUserFty.levelsRights().success(function (res) {
+            SysRuleUserFty.levelsRights().then(function (res) {
                 ycui.loading.hide();
                 if(res){
                     var array = changeRuleDate(res);
@@ -37,7 +37,7 @@ app.controller("roleEditCtrl", ['$scope', '$http','SysRuleUserFty','SysRoleFty',
                 roleName:$scope.role.roleName,
                 roleCluster:roleClusterId.join(",")
             }
-            SysRoleFty.updateRole(body).success(function (res) {
+            SysRoleFty.updateRole(body).then(function (res) {
                 ycui.loading.hide();
                 if(res && res.code == 200){
                     ycui.alert({

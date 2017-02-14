@@ -29,7 +29,7 @@
                 <a href="javascript:void(0)" data-route="ViewUserAdd" class="yc-btn" ng-if="systemManageRule['ManageUser']">新增用户</a>
             </div>
             <div class="query-g fr">
-                <div yc-select="userStateSel" width="120" query="query" value="state" key="id" placeholder="状态" session="sys-user-state" group="sys-user"></div>
+                <div yc-select="userStateSel" width="120" query="query" value="state" key="id" placeholder="状态" add="全部" session="sys-user-state" group="sys-user"></div>
                 <div yc-select="roleListSel" width="150" query="query" value="searchRole" name="roleName" key="id" add="全部" placeholder="角色名称" session="sys-user-role" group="sys-user"></div>
                 <div yc-select="companyListSel" width="150" query="query" value="searchCompany" name="companyName" key="id" add="全部" placeholder="所属" session="sys-user-company" group="sys-user"></div>
                 <div yc-select="departmentListSel" width="200" query="query" value="searchDepartment" name="departmentName" key="agencyNumber" add="全部" recursion="nextDepts" placeholder="所属部门" session="sys-user-department" group="sys-user"></div>
@@ -45,30 +45,39 @@
             <table class="yc-table">
                 <thead>
                 <tr>
-                    <th>添加时间</th>
-                    <th>用户ID</th>
-                    <th>用户名</th>
-                    <th>姓名</th>
+                    <th class="th90">添加时间</th>
+                    <th class="th80">用户ID</th>
+                    <th class="th100">用户名</th>
+                    <th class="th100">姓名</th>
                     <th>角色</th>
-                    <th>公司名称</th>
+                    <th>所属名称</th>
                     <th>部门</th>
-                    <th>状态</th>
-                    <th class="center">操作</th>
+                    <th class="th50">状态</th>
+                    <th class="center th120">操作</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr ng-repeat="item in items">
                     <td ng-bind="::item.createTime|dateYMD"></td>
                     <td ng-bind="::item.id"></td>
-                    <td ng-bind="::item.logName"></td>
-                    <td ng-bind="::item.trueName"></td>
-                    <td>
-                    <span ng-repeat="ro in item.roleList track by $index">
-                        {{ro.roleName}}<i ng-hide="$last">、</i>
-                    </span>
+                    <td title="{{item.logName}}">
+                        <span class="th100 ellipsis" ng-bind="::item.logName"></span>
                     </td>
-                    <td ng-bind="::item.companyName"></td>
-                    <td ng-bind="::item.agencyNames"></td>
+                    <td title="{{item.trueName}}">
+                        <span class="th100 ellipsis" ng-bind="::item.trueName"></span>
+                    </td>
+                    <td ng-init="_roleName = getRoleName(item.roleList)" title="{{_roleName}}">
+                        <span class="th270 ellipsis" ng-bind="_roleName"></span>
+                        <!--<span ng-repeat="ro in item.roleList track by $index">
+                            {{ro.roleName}}<i ng-hide="$last">、</i>
+                        </span>-->
+                    </td>
+                    <td title="{{item.companyName}}">
+                        <span class="th200 ellipsis" ng-bind="::item.companyName"></span>
+                    </td>
+                    <td title="{{item.agencyNames}}">
+                        <span class="th160 ellipsis" ng-bind="::item.agencyNames"></span>
+                    </td>
                     <td>{{::item.state==-1? "禁用" : "启用"}}</td>
                     <td class="center">
                         <a title="编辑信息" data-route="ViewUserEdit?id={{item.id}}" ng-if="systemManageRule['ManageUser']" href="javascript:void(0)">编辑</a>

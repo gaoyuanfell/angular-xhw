@@ -1,14 +1,90 @@
 /**
  * Created by moka on 16-6-21.
  */
-app.controller("trueAdvertisementAddCtrl", ['$scope', '$http','ResMediaFty','DefaultOrdersFty',
-    function ($scope, $http,ResMediaFty,DefaultOrdersFty) {
+app.controller("trueAdvertisementAddCtrl", ['$scope', '$http','ResMediaFty','DefaultOrdersFty','UploadKeyFty','SysUserFty',
+    function ($scope, $http,ResMediaFty,DefaultOrdersFty,UploadKeyFty,SysUserFty) {
         $scope.state = 0;
         $scope.priority = 0;
         $scope.landingPage = "http://";
         $scope.timeArr = [];
+
+        //公告信息
+        $scope.affche = {
+            state:0,
+            isPublic: 1,
+            isEmail: 1,
+            important: 0,
+            publishRange:0
+        };
+
+        $scope.$on('loginUserInfo',function (event,data) {
+            SysUserFty.userInfo({id: data.id}).then(function (res) {
+                if (res) {
+                    $scope.roleList = res.roleList;
+                    $scope.affche.publishUserId = res.id;
+                    $scope.affche.publishRoleId = $scope.roleList[0].id;
+                    $scope.affche.publishUser = res.trueName;
+                }
+            })
+        });
+
+        var upload = function (id) {
+            var key = '';
+            var config = {
+                server: fileUrl + "/contract/uploadNotice.htm",
+                pick: {
+                    id: '#'+id,
+                    multiple: false
+                },
+                accept: null,
+                error:function (uploader,err) {
+                    ycui.alert({
+                        content: "错误的文件类型",
+                        timeout: 10,
+                        error:true
+                    });
+                    ycui.loading.hide();
+                    uploader.reset();
+                },
+                uploadComplete:function () {
+                    ycui.loading.hide();
+                },
+                beforeFileQueued:function (uploader,file) {
+                    var size = 20*1024*1024;
+                    if(file.size > size){
+                        ycui.alert({
+                            content: "文件大小不能超过20M(1M等于1024KB)",
+                            timeout: 10,
+                            error:true
+                        });
+                        return false;
+                    }
+                    ycui.loading.show();
+                    uploader.stop(file);
+                    UploadKeyFty.uploadKey().then(function (da) {
+                        key = da.items;
+                        uploader.upload(file);
+                    });
+                },
+                uploadBeforeSend:function (uploader, file, data) {
+                    data.uploadKey = key;
+                },
+                uploadSuccess:function (uploader, file, res) {
+                    if(res && res.uploadFile){
+                        $scope.$apply(function(){
+                            $scope.affche.noticeAttachment = res.uploadFile;
+                        })
+                    }
+                }
+            }
+            return uploadInit(config);
+        };
+
+        upload('affcheAddUpload');
+
+
         //获取媒体名称
-        ResMediaFty.listForDefautOrder().success(function (response) {
+        ResMediaFty.listForDefautOrder().then(function (response) {
             $scope.media = response.mediaList;
         });
 
@@ -95,8 +171,12 @@ app.controller("trueAdvertisementAddCtrl", ['$scope', '$http','ResMediaFty','Def
                 mediaIds: $scope.mediaIds
             }
 
+            if($scope.priority == 99){
+               body.notice = $scope.affche; 
+            }
+
             ycui.loading.show();
-            DefaultOrdersFty.defaultOrdersAdd(body).success(function(res){
+            DefaultOrdersFty.defaultOrdersAdd(body).then(function(res){
                 ycui.loading.hide();
                 if (res && res.code == 200) {
                     ycui.alert({
@@ -124,13 +204,17 @@ app.controller("trueAdvertisementAddCtrl", ['$scope', '$http','ResMediaFty','Def
                 myUrl: {
                     required: true,
                     url: true
-                }
+                },
+                myTitle: "required",
+                myContent: "required"
             },
             messages: {
                 orderName: '必须填入订单名称',
                 myUrl: {
                     required: '必须填入落地页地址'
-                }
+                },
+                myTitle: "请输入公告名称",
+                myContent: "请输入公告内容"
             },
             errorClass: 'error-span',
             errorElement: 'span'

@@ -1,11 +1,10 @@
 /**
  * Created by moka on 16-6-17.
  */
-app.controller("advertiseManageCtrl", ["$scope", "$http", "ResAdvertisingFty",'$q','ResChannelFty','UploadKeyFty','$timeout',
-    function ($scope, $http, ResAdvertisingFty,$q,ResChannelFty,UploadKeyFty,$timeout) {
+app.controller("advertiseManageCtrl", ["$scope", "$http", "ResAdvertisingFty",'$q','ResChannelFty','UploadKeyFty','$timeout','SysUserFty',
+    function ($scope, $http, ResAdvertisingFty,$q,ResChannelFty,UploadKeyFty,$timeout,SysUserFty) {
         $scope.stateSel = {
             list:[
-                {name:'全部'},
                 {name:'启用',id:0},
                 {name:'禁用',id:-1}
             ]
@@ -13,7 +12,6 @@ app.controller("advertiseManageCtrl", ["$scope", "$http", "ResAdvertisingFty",'$
 
         $scope.checkStateSel = {
             list:[
-                {name:'全部'},
                 {name:'审核中',id:0},
                 {name:'审核通过',id:1},
                 {name:'审核未通过',id:2}
@@ -21,26 +19,31 @@ app.controller("advertiseManageCtrl", ["$scope", "$http", "ResAdvertisingFty",'$
         }
         $scope.hasDefaultSel = {
             list:[
-                {name:'全部'},
                 {name:'不展示',id:-1},
                 {name:'未上传',id:0},
                 {name:'已上传',id:1}
             ]
         };
 
-        
+        $scope.$on('loginUserInfo',function () {
+            SysUserFty.userInfo({id: $scope.$parent.user.id}).then(function (res) {
+                if (res) {
+                    $scope.$user = res;
+                }
+            })
+        });
 
         $scope.mediaListSel = {
             callback:function(e,d){
                 $scope.channelListSel.$destroy();
-                d && ResChannelFty.getChannelsByMedia({mediaId: d.id}).success(function (response) {
+                d && ResChannelFty.getChannelsByMedia({mediaId: d.id}).then(function (response) {
                     $scope.channelListSel.list = response.channels;
                 })
             },
             sessionBack:function(d){
                 if(d){
                     var key = this.key.split(',')[0];
-                    ResChannelFty.getChannelsByMedia({mediaId: d[key]}).success(function (response) {
+                    ResChannelFty.getChannelsByMedia({mediaId: d[key]}).then(function (response) {
                         $scope.channelListSel.list = response.channels;
                     })
                 }
@@ -51,7 +54,7 @@ app.controller("advertiseManageCtrl", ["$scope", "$http", "ResAdvertisingFty",'$
         $scope.sizeListSel = {};
 
         //媒体 频道  创意
-        var downListForSearch = ResAdvertisingFty.downListForSearch().success(function (response) {
+        var downListForSearch = ResAdvertisingFty.downListForSearch().then(function (response) {
             if(response){
                 $scope.mediaListSel.list = response.mediaList;
                 $scope.typeListSel.list = response.typeList;
@@ -62,7 +65,7 @@ app.controller("advertiseManageCtrl", ["$scope", "$http", "ResAdvertisingFty",'$
         $scope.$on('res-adCreate-create',function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            ResAdvertisingFty.ADSpaceList($scope.query).success(modView);
+            ResAdvertisingFty.ADSpaceList($scope.query).then(modView);
         })
 
         var pageSize = 10;
@@ -82,7 +85,7 @@ app.controller("advertiseManageCtrl", ["$scope", "$http", "ResAdvertisingFty",'$
 
         $scope.queryValue = {};
 
-        ResAdvertisingFty.ADSpaceList($scope.query).success(modView);
+        ResAdvertisingFty.ADSpaceList($scope.query).then(modView);
 
         $scope.copyHtml = "";
 
@@ -90,7 +93,7 @@ app.controller("advertiseManageCtrl", ["$scope", "$http", "ResAdvertisingFty",'$
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.adSpaceNameOrId = $scope.query.search;
-            ResAdvertisingFty.ADSpaceList($scope.query).success(modView);
+            ResAdvertisingFty.ADSpaceList($scope.query).then(modView);
         };
         //JS代码
         $scope.showJs = function (item) {
@@ -125,16 +128,23 @@ app.controller("advertiseManageCtrl", ["$scope", "$http", "ResAdvertisingFty",'$
             var checkState = item.checkState;
             var state = item.state;
             var id = item.id;
+            var adSpaceTypeId = item.adSpaceTypeId;
             var adSpaceName = item.adSpaceName;
             var price = item.price;
-            if (checkState != 0 && state == 0) {
+            var textLinkStyle = item.textLinkStyle;
+            var freeDistanceBot = item.freeDistanceBot;
+            var freeDistance = item.freeDistance;
+
+            // if (checkState != 0 && state == 0) {
+            /*if (state == 0) {
                 ycui.alert({
                     error:true,
                     content: "该广告位已经被审核，不能重复审核",
                     timeout: 10
                 })
                 return
-            } else if(!price){
+            } else */
+            if(!price){
                 ycui.alert({
                     error:true,
                     content: "该广告位未填写刊例价，不能进行审核",
@@ -157,6 +167,7 @@ app.controller("advertiseManageCtrl", ["$scope", "$http", "ResAdvertisingFty",'$
             }
 
             $scope._isPassModule = angular.copy(item);
+
             var jsCode = jsssssssss.replace("<%id%>", id);
             $scope._isPassModule.jsCode = jsCode;
             $scope._isPassModule.copyBtn = function(){
@@ -165,7 +176,25 @@ app.controller("advertiseManageCtrl", ["$scope", "$http", "ResAdvertisingFty",'$
                 $scope._isPassModule.copyBtnSuccess = true;
             }
 
-            $scope._isPassModule.checkState = 1;
+            $scope._isPassModule.checkState = checkState || 1;
+
+            /*广告类型为：画中画16、旗帜4、通栏2、矩形广告6*/
+            $scope._isPassModule.$adSpaceType1 = [16,4,2,6].indexOf(+adSpaceTypeId) != -1;
+            /*广告位类型为：纯文字链10、标题文字链19、图文文字链17、热点聚焦区文字链20*/
+            $scope._isPassModule.$adSpaceType2 = [10,19,17,20].indexOf(+adSpaceTypeId) != -1;
+            //默认值
+            $scope._isPassModule.freeDistanceBot = freeDistanceBot == undefined?5:freeDistanceBot;
+            $scope._isPassModule.freeDistance = freeDistance == undefined?5:freeDistance;;
+            $scope._isPassModule.textLinkStyle = textLinkStyle || 1;
+
+            $scope.$adSpaceTypeSel = [
+                {id:5,name:'5像素'},
+                {id:10,name:'10像素'},
+                {id:20,name:'20像素'},
+                {id:0,name:'无'},
+                {id:-1,name:'其他'}
+            ]
+
             $scope.isPassModule = {
                 title:'【'+ adSpaceName +'】' + '广告位审核',
                 okClick:function(){
@@ -174,9 +203,21 @@ app.controller("advertiseManageCtrl", ["$scope", "$http", "ResAdvertisingFty",'$
                     var focusTemplate = $scope._isPassModule.focusTemplate;
                     var checkRemark = $scope._isPassModule.checkRemark;
                     var checkState = $scope._isPassModule.checkState;
+
+                    var freeDistance = $scope._isPassModule.freeDistance;
+                    var freeDistanceBot = $scope._isPassModule.freeDistanceBot;
+                    var textLinkStyle = $scope._isPassModule.textLinkStyle;
+
                     var body = {
                         id:id,
                         checkState:checkState
+                    }
+                    if($scope._isPassModule.$adSpaceType1){
+                        body.freeDistance = freeDistance;
+                        body.freeDistanceBot = freeDistanceBot;
+                    }
+                    if($scope._isPassModule.$adSpaceType2){
+                        body.textLinkStyle = textLinkStyle;
                     }
                     if(focusTemplate){
                         body.focusTemplate = focusTemplate;
@@ -185,12 +226,12 @@ app.controller("advertiseManageCtrl", ["$scope", "$http", "ResAdvertisingFty",'$
                         if(!checkRemark)return true;
                         body.checkRemark = checkRemark;
                     }
-                    ResAdvertisingFty.checkADSpace(body).success(function (response) {
+                    ResAdvertisingFty.checkADSpace(body).then(function (response) {
                         if (response.code == 200) {
                             ycui.alert({
                                 content: response.msg,
                                 okclick: function () {
-                                    ResAdvertisingFty.ADSpaceList($scope.query).success(modView);
+                                    ResAdvertisingFty.ADSpaceList($scope.query).then(modView);
                                 },
                                 timeout: 10
                             });
@@ -208,7 +249,7 @@ app.controller("advertiseManageCtrl", ["$scope", "$http", "ResAdvertisingFty",'$
         //刊例价导出
         $scope._kanliModule = {mediaListSel:{}};
         $scope.kanliPricExport = function () {
-            var downListForSearch = ResAdvertisingFty.downListForSearch().success(function (response) {
+            var downListForSearch = ResAdvertisingFty.downListForSearch().then(function (response) {
                 if(response){
                     $scope._kanliModule.mediaListSel.list = response.mediaList;
                 }
@@ -252,7 +293,7 @@ app.controller("advertiseManageCtrl", ["$scope", "$http", "ResAdvertisingFty",'$
                 beforeFileQueued:function (uploader,file) {
                     ycui.loading.show();
                     uploader.stop(file);
-                    UploadKeyFty.uploadKey().success(function (da) {
+                    UploadKeyFty.uploadKey().then(function (da) {
                         key = da.items;
                         uploader.upload(file);
                     });
@@ -431,20 +472,22 @@ app.controller("advertiseManageCtrl", ["$scope", "$http", "ResAdvertisingFty",'$
                 okClick:function(){
                     var ad = $scope._moduleDefaultShow;
                     ad.$valid = true;
-
-                    var bo = false;
-                    if(ad.urlLoadType == 0){
-                        bo = ad.sizeError || !ad.defaultLandingPage
-                    }else{
-                        bo = ad.$sizesError1 || ad.$sizesError2 || !ad.defaultLandingPage
-                    }
-                    if(bo) return true;
                     var enableBaseAd = ad.enableBaseAd;
                     var urlLoadType = ad.urlLoadType;
                     var defaultUrl1 = ad.defaultUrl1;
                     var defaultUrl2 = ad.defaultUrl2;
                     var defaultLandingPage = ad.defaultLandingPage;
 
+                    var bo = false;
+                    if(ad.urlLoadType == 0){
+                        bo = ad.sizeError || !ad.defaultLandingPage;
+                    }else{
+                        bo = ad.$sizesError1 || ad.$sizesError2 || !ad.defaultLandingPage;
+                    }
+                    if(ad.size2 && (!defaultUrl2 || !defaultUrl1)){
+                        bo = true;
+                    }
+                    if(bo) return true;
                     var query = {
                         id:ad.id,
                         enableBaseAd:enableBaseAd,
@@ -455,220 +498,52 @@ app.controller("advertiseManageCtrl", ["$scope", "$http", "ResAdvertisingFty",'$
                     if(ad.size2){
                         query.defaultUrl2 = defaultUrl2;
                     }
-                    ResAdvertisingFty.upDefaultUrl(query).success(function (res) {
+                    ResAdvertisingFty.upDefaultUrl(query).then(function (res) {
                         if(res && res.code == 200){
-                            ResAdvertisingFty.ADSpaceList($scope.query).success(modView);
                             ycui.alert({
                                 content:res.msg,
-                                timeout:10
+                                timeout:10,
+                                okclick:function () {
+                                    ResAdvertisingFty.ADSpaceList($scope.query).then(modView);
+                                }
                             })
                         }
                     })
 
-                }
+                },
+                noClick:function () {}
             }
         }
 
-                //             $scope._moduleDefaultShow.$valid = true;
-        //             if($scope._moduleDefaultShow.sizeError || !$scope._moduleDefaultShow.defaultLandingPage)return true
-        //             var data1 = $scope._moduleDefaultShow.data1;
-        //             var data2 = $scope._moduleDefaultShow.data2;
-        //             if(!data1 || !data1.src){
-        //                 return true;
-        //             }
-        //             var id = data1.id;
-        //             var defaultUrl1 = data1.src
-        //             var enableBaseAd = $scope._moduleDefaultShow.enableBaseAd;
-        //             var query = {
-        //                 id:id,enableBaseAd:enableBaseAd,
-        //                 defaultUrl1:defaultUrl1,
-        //                 defaultLandingPage:$scope._moduleDefaultShow.defaultLandingPage
-        //             }
-        //             if($scope._moduleDefaultShow.$$is2){
-        //                 if(!data2 || !data2.src){
-        //                     return true;
-        //                 }
-        //                 var defaultUrl2 = data2.src;
-        //                 if(!defaultUrl2){return true;}
-        //                 query.defaultUrl2 = defaultUrl2;
-        //             }
-        //             ResAdvertisingFty.upDefaultUrl(query).success(function (res) {
-        //                 if(res && res.code == 200){
-        //                     ResAdvertisingFty.ADSpaceList($scope.query).success(modView);
-        //                     ycui.alert({
-        //                         content:res.msg,
-        //                         timeout:10
-        //                     })
-        //                 }
-        //             })
-
-        
-        
-        // $scope.moduleDefaultShow = function(item){
-        //     $scope._moduleDefaultShow = {enableBaseAd:1,size:item.size,size2:item.size2}
-        //     var key = '';
-        //     var upload = function (item) {
-        //         var config = {
-        //             server: fileUrl + "/orderAdCreative/upload.htm",
-        //             pick: {
-        //                 id: '#'+ item.uploadId,
-        //                 multiple: false
-        //             },
-        //             beforeFileQueued:function (uploader,file) {
-        //                 ycui.loading.show();
-        //                 uploader.stop(file);
-        //                 UploadKeyFty.uploadKey().success(function (da) {
-        //                     key = da.items;
-        //                     uploader.upload(file);
-        //                 });
-        //             },
-        //             uploadBeforeSend:function (uploader,file, data) {
-        //                 data.uploadKey = key;
-        //                 data.fileSize = item.fileSize;
-        //                 var size;
-        //                 if(item.$$is2){
-        //                     size = item.size2.split('*')
-        //                 }else{
-        //                     size = item.size.split('*')
-        //                 }
-        //                 var sw = size[0];
-        //                 var sh = size[1];
-        //                 data.width = sw;
-        //                 data.height = sh;
-        //             },
-        //             uploadComplete:function () {
-        //                 ycui.loading.hide();
-        //             },
-        //             error:function (uploader,err) {
-        //                 ycui.alert({
-        //                     content: "错误的文件类型",
-        //                     timeout: 10,
-        //                     error:true
-        //                 });
-        //                 ycui.loading.hide();
-        //                 uploader.reset();
-        //             },
-        //             uploadSuccess:function (uploader, file, res) {
-        //                 if (res && res.code == 200) {
-        //                     $scope._moduleDefaultShow.sizeError = false;
-
-        //                     var data = {
-        //                         id:item.id,
-        //                         src: res.adCreative.fileHttpUrl,
-        //                         width: 100,
-        //                         height: 100,
-        //                         size: item.size.split('*')
-        //                     }
-        //                     var html = photoAndSwfPreview(data)
-        //                     if(item.$$is2){
-        //                         $scope.$apply(function () {
-        //                             $scope._moduleDefaultShow.html2 = html
-        //                         })
-        //                         $scope._moduleDefaultShow.data2 = data;
-        //                     }else{
-        //                         $scope.$apply(function () {
-        //                             $scope._moduleDefaultShow.html1 = html
-        //                         })
-        //                         $scope._moduleDefaultShow.data1 = data;
-        //                     }
-        //                     $uploader.reset();
-        //                 }else if(res && res.code == 500){
-        //                     $scope.$apply(function () {
-        //                         $scope._moduleDefaultShow.sizeError = true
-        //                         $scope._moduleDefaultShow.sizeErrorStr = res.msg
-        //                     });
-        //                 }
-        //             }
-        //         }
-        //         return uploadInit(config);
-        //     }
-
-        //     $uploader && $uploader.destroy();
-        //     $uploader2 && $uploader2.destroy();
-        //     var item1 = angular.copy(item);
-        //     $scope._moduleDefaultShow.defaultLandingPage = item1.defaultLandingPage;
-        //     $scope._moduleDefaultShow.enableBaseAd = item1.enableBaseAd;
-
-        //     if(item1.enableBaseAd == 1){
-        //         item1.uploadId = 'enableBaseAd';
-        //         var item2;
-        //         if(item1.size2){
-        //             item2 = angular.copy(item);
-        //             item2.size = item1.size2;
-        //             item2.$$is2 = true;
-        //             $scope._moduleDefaultShow.$$is2 = true;
-        //             item2.uploadId = 'enableBaseAd2';
-        //         }
-        //         $uploader = upload(item1);
-        //         item2 && ($uploader2 = upload(item2))
-        //     }
-
-        //     if(item1.defaultUrl1){
-        //         var size = {
-        //             size1:item.size.split('*')
-        //         };
-        //         if(item.defaultUrl1){
-        //             var data1 = $scope._moduleDefaultShow.data1 = {
-        //                 id:item.id,
-        //                 src: item.defaultUrl1,
-        //                 width: 100,
-        //                 height: 100,
-        //                 size: item.size.split('*')
-        //             }
-        //             $scope._moduleDefaultShow.html1 = photoAndSwfPreview(data1)
-        //         }
-        //         if(item1.defaultUrl2){
-        //             var data2 = $scope._moduleDefaultShow.data2 = {
-        //                 id:item.id,
-        //                 src: item.defaultUrl2,
-        //                 width: 100,
-        //                 height: 100,
-        //                 size: item.size2.split('*')
-        //             }
-        //             $scope._moduleDefaultShow.html2 = photoAndSwfPreview(data2)
-        //         }
-        //     }
-
-        //     $scope.moduleDefault = {
-        //         title:'【'+ item.adSpaceName +'】上传打底广告',
-        //         okClick:function(){
-        //             $scope._moduleDefaultShow.$valid = true;
-        //             if($scope._moduleDefaultShow.sizeError || !$scope._moduleDefaultShow.defaultLandingPage)return true
-        //             var data1 = $scope._moduleDefaultShow.data1;
-        //             var data2 = $scope._moduleDefaultShow.data2;
-        //             if(!data1 || !data1.src){
-        //                 return true;
-        //             }
-        //             var id = data1.id;
-        //             var defaultUrl1 = data1.src
-        //             var enableBaseAd = $scope._moduleDefaultShow.enableBaseAd;
-        //             var query = {
-        //                 id:id,enableBaseAd:enableBaseAd,
-        //                 defaultUrl1:defaultUrl1,
-        //                 defaultLandingPage:$scope._moduleDefaultShow.defaultLandingPage
-        //             }
-        //             if($scope._moduleDefaultShow.$$is2){
-        //                 if(!data2 || !data2.src){
-        //                     return true;
-        //                 }
-        //                 var defaultUrl2 = data2.src;
-        //                 if(!defaultUrl2){return true;}
-        //                 query.defaultUrl2 = defaultUrl2;
-        //             }
-        //             ResAdvertisingFty.upDefaultUrl(query).success(function (res) {
-        //                 if(res && res.code == 200){
-        //                     ResAdvertisingFty.ADSpaceList($scope.query).success(modView);
-        //                     ycui.alert({
-        //                         content:res.msg,
-        //                         timeout:10
-        //                     })
-        //                 }
-        //             })
-        //         },
-        //         noClick:function(){}
-        //     }
-        // };
-
+        //撤销打底广告
+        $scope.recoveryDefaultAd = function (id, name) {
+            ycui.confirm({
+                title:'【'+ name +'】撤销打底广告',
+                content:'是否撤销打底广告？',
+                okclick:function () {
+                    var body = {
+                        id:id,
+                        defaultUrl1:'',
+                        defaultUrl2:'',
+                        defaultLandingPage:''
+                    }
+                    ycui.loading.show();
+                    ResAdvertisingFty.cancelDefault(body).then(function (res) {
+                        ycui.loading.hide();
+                        if(res && res.code == 200){
+                            ycui.alert({
+                                content:res.msg,
+                                timeout:10,
+                                okclick:function () {
+                                    ResAdvertisingFty.ADSpaceList($scope.query).then(modView);
+                                }
+                            })
+                        }
+                    })
+                },
+                noclick:function () {}
+            })
+        }
 
         /**
          * 修改刊例价
@@ -694,10 +569,10 @@ app.controller("advertiseManageCtrl", ["$scope", "$http", "ResAdvertisingFty",'$
                         remark:remark
                     }
                     ycui.loading.show()
-                    ResAdvertisingFty.updatePrice(body).success(function(res){
+                    ResAdvertisingFty.updatePrice(body).then(function(res){
                         ycui.loading.hide()
                         if(res && res.code == 200){
-                            ResAdvertisingFty.ADSpaceList($scope.query).success(modView);
+                            ResAdvertisingFty.ADSpaceList($scope.query).then(modView);
                         }
                     })
                 },
@@ -712,7 +587,7 @@ app.controller("advertiseManageCtrl", ["$scope", "$http", "ResAdvertisingFty",'$
         $scope.priceCycleInfo = function (id,name) {
             var data = "";
             ycui.loading.show();
-            ResAdvertisingFty.getPriceRecord({id:id}).success(function (res) {
+            ResAdvertisingFty.getPriceRecord({id:id}).then(function (res) {
                 ycui.loading.hide();
                 if(res && res.code == 200){
                     res.records.forEach(function (da) {
@@ -729,19 +604,104 @@ app.controller("advertiseManageCtrl", ["$scope", "$http", "ResAdvertisingFty",'$
         /**
          * 禁用广告位
          */
+        var upload2 = function (ob) {
+            var key = '';
+            var config = {
+                server: fileUrl + "/contract/uploadNotice.htm",
+                pick: {
+                    id: '#'+ ob.uploadId,
+                    multiple: false
+                },
+                accept: null,
+                error:function (uploader,err) {
+                    ycui.alert({
+                        content: "错误的文件类型",
+                        timeout: 10,
+                        error:true
+                    });
+                    ycui.loading.hide();
+                    uploader.reset();
+                },
+                uploadComplete:function () {
+                    ycui.loading.hide();
+                },
+                beforeFileQueued:function (uploader,file) {
+                    var size = 20*1024*1024;
+                    if(file.size > size){
+                        ycui.alert({
+                            content: "文件大小不能超过20M(1M等于1024KB)",
+                            timeout: 10,
+                            error:true
+                        });
+                        return false;
+                    }
+                    ycui.loading.show();
+                    uploader.stop(file);
+                    UploadKeyFty.uploadKey().then(function (da) {
+                        key = da.items;
+                        uploader.upload(file);
+                    });
+                },
+                uploadBeforeSend:function (uploader, file, data) {
+                    data.uploadKey = key;
+                },
+                uploadSuccess:function (uploader, file, res) {
+                    if(res && res.uploadFile){
+                        $scope.$apply(function(){
+                            ob.noticeAttachment = res.uploadFile;
+                        })
+                    }
+                }
+            }
+            return uploadInit(config);
+        };
+        var affcheAddUpload;
         $scope.removeAdvertise = function (id,name) {
-            $scope._disableModule = {}
+            $scope._disableModule = {publishRange:0,isAddaffche:0,uploadId:'affcheAddUpload'};
+
+            $scope._disableModule.roleList = $scope.$user.roleList;
+            $scope._disableModule.publishUserId = $scope.$user.id;
+            $scope._disableModule.publishRoleId = $scope.$user.roleList[0].id;
+            $scope._disableModule.publishUser = $scope.$user.trueName;
+
+            affcheAddUpload && (affcheAddUpload.destroy());
+            affcheAddUpload = upload2($scope._disableModule);
+
             $scope.disableModule = {
                 title:'【'+ name +'】' + '禁用',
                 okClick:function(){
                     $scope._disableModule.$valid = true;
                     var remark = $scope._disableModule.remark;
-                    if(!remark){
+                    var title = $scope._disableModule.title;
+                    var content = $scope._disableModule.content;
+                    var publishRange = $scope._disableModule.publishRange;
+                    var publishUserId = $scope._disableModule.publishUserId;
+                    var publishRoleId = $scope._disableModule.publishRoleId;
+                    var noticeAttachment = $scope._disableModule.noticeAttachment;
+                    if(!remark || !title || !content){
                         return true;
                     }
-                    ResAdvertisingFty.remove({id:id,disableRemark:remark}).success(function (res) {
+                    var notice = {
+                        title:title,
+                        content:content,
+                        publishRange:publishRange,
+                        publishUserId:publishUserId,
+                        publishRoleId:publishRoleId
+                    }
+                    if(noticeAttachment){
+                        notice.noticeAttachment = noticeAttachment;
+                    }
+                    ycui.loading.show();
+                    ResAdvertisingFty.remove({id:id,disableRemark:remark,notice:notice}).then(function (res) {
+                        ycui.loading.hide();
                         if(res && res.code == 200){
-                            ResAdvertisingFty.ADSpaceList($scope.query).success(modView);
+                            ycui.alert({
+                                content:res.msg,
+                                timeout:10,
+                                okclick:function () {
+                                    ResAdvertisingFty.ADSpaceList($scope.query).then(modView);
+                                }
+                            })
                         }
                     })
                 },
@@ -753,11 +713,39 @@ app.controller("advertiseManageCtrl", ["$scope", "$http", "ResAdvertisingFty",'$
 
         $scope.reStartAdvertise = function (id) {
             ycui.loading.show();
-            ResAdvertisingFty.reStart({id:id}).success(function (res) {
+            ResAdvertisingFty.reStart({id:id}).then(function (res) {
                 ycui.loading.hide();
                 if(res && res.code == 200){
-                    ResAdvertisingFty.ADSpaceList($scope.query).success(modView);
+                    ResAdvertisingFty.ADSpaceList($scope.query).then(modView);
                 }
             })
+        }
+
+        $scope.invalidAD = function (id, name) {
+            $scope.invalidADModule = {
+                title: '【'+ name +'】作废',
+                okClick:function () {
+                    if(!this.remark){
+                        this.$valid = true;
+                        return true;
+                    }
+                    ycui.loading.show();
+                    ResAdvertisingFty.invalidAD({id:id,remark:this.remark}).then(function (res) {
+                        ycui.loading.hide();
+                        if(res && res.code == 200){
+                            ycui.alert({
+                                content:res.msg,
+                                timeout:10,
+                                okclick:function () {
+                                    ResAdvertisingFty.ADSpaceList($scope.query).then(modView);
+                                }
+                            })
+                        }
+                    })
+                },
+                noClick:function(){
+
+                }
+            }
         }
     }]);

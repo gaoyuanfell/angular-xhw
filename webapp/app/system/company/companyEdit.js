@@ -12,7 +12,7 @@ app.controller('companyEditCtrl', ['$scope', '$http', 'SysCompanyFty', 'Dictiona
         disabled:1
     }
     ycui.loading.show();
-    SysCompanyFty.companyEditInfo({id: id}).success(function (response) {
+    SysCompanyFty.companyEditInfo({id: id}).then(function (response) {
         ycui.loading.hide();
         if(!response) return;
         $scope.companyName = response.companyName;
@@ -44,7 +44,7 @@ app.controller('companyEditCtrl', ['$scope', '$http', 'SysCompanyFty', 'Dictiona
     // };
 
     //获取地域
-    DictionaryFty.provinceListForCompany().success(function (response) {
+    DictionaryFty.provinceListForCompany().then(function (response) {
         $scope.areaList = response;
     });
 
@@ -73,6 +73,7 @@ app.controller('companyEditCtrl', ['$scope', '$http', 'SysCompanyFty', 'Dictiona
         }
 
         if (pass) {
+            ycui.loading.show();
             SysCompanyFty.companyEdit({
                 id: id,
                 companyName: $scope.companyName,
@@ -84,7 +85,8 @@ app.controller('companyEditCtrl', ['$scope', '$http', 'SysCompanyFty', 'Dictiona
                 companyAreaId: $scope.companyAreaId,
                 email: $scope.email,
                 telephone:$scope.telephone
-            }).success(function (response) {
+            }).then(function (response) {
+                ycui.loading.hide();
                 if (response.code == 200) {
                     ycui.alert({
                         content: response.msg,

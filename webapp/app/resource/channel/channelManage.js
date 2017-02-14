@@ -1,25 +1,65 @@
 /**
  * Created by moka on 16-6-17.
  */
-app.controller("channelManageCtrl", ['$scope', '$http', 'ResChannelFty', 'ResMediaFty','$q','ResChannelLevelFty',
-    function ($scope, $http, ResChannelFty, ResMediaFty,$q,ResChannelLevelFty) {
+app.controller("channelManageCtrl", ['$scope', '$http', 'ResChannelFty', 'ResMediaFty','$q','ResChannelLevelFty','SysCompanyFty','SysDepartmentFty',
+    function ($scope, $http, ResChannelFty, ResMediaFty,$q,ResChannelLevelFty,SysCompanyFty,SysDepartmentFty) {
+
+        $scope.departmentListSel = {
+            callback:function(e,d){
+                if(d){
+                    $scope.query.depScope = d.agencyNumber;
+                }else{
+                    $scope.query.depScope = $scope.companyListSel.$placeholder.agencyNumber;//从暂存数据取出
+                }
+                ycui.loading.show();
+                $scope.query.pageIndex = 1;
+                ResChannelFty.channelPageList($scope.query).then(modView)
+            }
+        };
+        $scope.companyListSel = {
+            callback:function(e,d){
+                $scope.departmentListSel.$destroy();
+                if(d && d.id == 3){
+                    SysDepartmentFty.parentDeps({ companyId: d.id }).then(function (res) {
+                        if(res && res.code == 200){
+                            $scope.departmentListSel.list = res.departmentList;
+                        }
+                    });
+                }
+            },
+            sessionBack:function(d){
+                if(d && d.id == 3){
+                    SysDepartmentFty.parentDeps({ companyId: d.id }).then(function (res) {
+                        if(res && res.code == 200){
+                            $scope.departmentListSel.list = res.departmentList;
+                        }
+                    });
+                }
+            }
+        };
+
+        SysCompanyFty.companyList().then(function(res){
+            if(res instanceof Array){
+                $scope.companyListSel.list = res;
+            }
+        })
+
         $scope.mediaListSel = {};
         
         $scope.levelNameSel = {}
         $scope.levelNameSel2 = {}
-        ResChannelLevelFty.channelLevelList().success(function(res){
+        ResChannelLevelFty.channelLevelList().then(function(res){
             $scope.levelNameSel.list = res.levels;
             $scope.levelNameSel2.list = angular.copy(res.levels);
         })
 
         $scope.hasImageSel = {
             list:[
-                {name:'全部'},
                 {name:'已上传',id:1},
                 {name:'未上传',id:0}
             ]
         };
-        var listForOrder = ResChannelFty.mediaListForSea().success(function (res) {
+        var listForOrder = ResChannelFty.mediaListForSea().then(function (res) {
             if (res && res.code == 200) {
                 $scope.mediaListSel.list = res.mediaList
             }
@@ -30,7 +70,7 @@ app.controller("channelManageCtrl", ['$scope', '$http', 'ResChannelFty', 'ResMed
         $scope.$on('res-channe-list',function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            ResChannelFty.channelPageList($scope.query).success(modView)
+            ResChannelFty.channelPageList($scope.query).then(modView)
         })
 
         ycui.loading.show();
@@ -43,7 +83,7 @@ app.controller("channelManageCtrl", ['$scope', '$http', 'ResChannelFty', 'ResMed
             $scope.items = response.items;
             $scope.total_page = response.total_page;
         }
-        ResChannelFty.channelPageList($scope.query).success(modView)
+        ResChannelFty.channelPageList($scope.query).then(modView)
 
         var postApi = "/channel/batchUpdateLevel.htm";
        
@@ -51,7 +91,7 @@ app.controller("channelManageCtrl", ['$scope', '$http', 'ResChannelFty', 'ResMed
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.channelNameOrId = $scope.query.search;
-            ResChannelFty.channelPageList($scope.query).success(modView)
+            ResChannelFty.channelPageList($scope.query).then(modView)
         };
 
         $scope.channeCheckAll = function(e){
@@ -89,12 +129,12 @@ app.controller("channelManageCtrl", ['$scope', '$http', 'ResChannelFty', 'ResMed
                         $http.post(baseUrl + postApi, {
                             channels: arrId,
                             level: $scope._setMoreLevelModule.level
-                        }).success(function (response) {
+                        }).then(function (response) {
                             if (response.code == 200) {
                                 ycui.alert({
                                     content: response.msg,
                                     okclick: function () {
-                                        ResChannelFty.channelPageList($scope.query).success(modView)
+                                        ResChannelFty.channelPageList($scope.query).then(modView)
                                     },
                                     timeout: 10
                                 });

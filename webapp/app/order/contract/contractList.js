@@ -18,13 +18,13 @@ app.controller('contractListCtrl', ['$scope', 'ContractFty','UploadKeyFty',
             $scope.total_page = response.total_page;
         };
         $scope.query = {pageSize: 10, pageIndex: 1};
-        ContractFty.listContracts($scope.query).success(modViewA);
+        ContractFty.listContracts($scope.query).then(modViewA);
 
         $scope.redirect = function (num,con) {
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.param1 = $scope.query.search
-            ContractFty.listContracts($scope.query).success(modViewA);
+            ContractFty.listContracts($scope.query).then(modViewA);
         };
 
         var upload = function(id){
@@ -55,7 +55,7 @@ app.controller('contractListCtrl', ['$scope', 'ContractFty','UploadKeyFty',
                 beforeFileQueued:function(uploader,file){
                     ycui.loading.show();
                     uploader.stop(file);
-                    UploadKeyFty.uploadKey().success(function (da) {
+                    UploadKeyFty.uploadKey().then(function (da) {
                         key = da.items;
                         uploader.upload(file);
                     });
@@ -70,7 +70,7 @@ app.controller('contractListCtrl', ['$scope', 'ContractFty','UploadKeyFty',
                             content: '<div style="max-height: 300px;overflow-y: auto;width: auto;">'+ arr +'</div>',
                             timeout: 10,
                             okclick:function () {
-                                ContractFty.listContracts(query).success(modViewA);
+                                ContractFty.listContracts(query).then(modViewA);
                             }
                         });
                         ycui.loading.hide();
@@ -127,7 +127,7 @@ app.controller('contractListCtrl', ['$scope', 'ContractFty','UploadKeyFty',
         //     uploader.on('beforeFileQueued', function (file) {
         //         ycui.loading.show();
         //         uploader.stop(file);
-        //         UploadKeyFty.uploadKey().success(function (da) {
+        //         UploadKeyFty.uploadKey().then(function (da) {
         //             key = da.items;
         //             uploader.upload(file);
         //         });
@@ -150,7 +150,7 @@ app.controller('contractListCtrl', ['$scope', 'ContractFty','UploadKeyFty',
         //             content: '<div style="max-height: 300px;overflow-y: auto;width: auto;">'+ arr +'</div>',
         //             timeout: -1,
         //             okclick:function () {
-        //                 ContractFty.listContracts(query).success(modViewA);
+        //                 ContractFty.listContracts(query).then(modViewA);
         //             }
         //         });
         //         ycui.loading.hide();
@@ -197,7 +197,7 @@ app.controller('contractAddCtrl', ['$scope', 'ContractFty',
                 contractName:$scope.contract.contractName
             }
             ycui.loading.show();
-            ContractFty.addContracts(query).success(function (res) {
+            ContractFty.addContracts(query).then(function (res) {
                 ycui.loading.hide();
                 if (res && res.code == 200) {
                     ycui.alert({
@@ -250,7 +250,7 @@ app.controller('contractEditCtrl', ['$scope', 'ContractFty',
         $scope.contract = {};
         var id = getSearch("id");
         $scope.id = id;
-        ContractFty.findContracts({id: id}).success(function (res) {
+        ContractFty.findContracts({id: id}).then(function (res) {
             if (res && res.code == 200) {
                 $scope.contract = res.items;
                 $scope.contract.discount = $scope.contract.discount*100;
@@ -272,7 +272,7 @@ app.controller('contractEditCtrl', ['$scope', 'ContractFty',
                 contractName:$scope.contract.contractName
             };
             ycui.loading.show();
-            ContractFty.updateContracts(query).success(function (res) {
+            ContractFty.updateContracts(query).then(function (res) {
                 ycui.loading.hide();
                 if(res && res.code == 200){
                     ycui.alert({

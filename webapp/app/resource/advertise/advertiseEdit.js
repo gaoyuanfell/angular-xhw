@@ -12,7 +12,7 @@ app.controller("advertiseEditCtrl", ["$scope", "$http", "ResAdvertisingFty", "$q
         $scope.mediaListSel = {
             callback:function(e,d){
                 $scope.channelListSel.$destroy();
-                d && ResChannelFty.getChannelsByMedia({mediaId:d.id}).success(function (response) {
+                d && ResChannelFty.getChannelsByMedia({mediaId:d.id}).then(function (response) {
                     $scope.channelListSel.list = response.channels;
                 })
             }
@@ -80,7 +80,7 @@ app.controller("advertiseEditCtrl", ["$scope", "$http", "ResAdvertisingFty", "$q
             {name:'H5',value:3}
         ]
 
-        var aDSpaceDownListForAdd = ResAdvertisingFty.aDSpaceDownListForAdd().success(function (response) {
+        var aDSpaceDownListForAdd = ResAdvertisingFty.aDSpaceDownListForAdd().then(function (response) {
             $scope.mediaListSel.list = response.mediaList;
             $scope.typeListSel.list = response.typeList;
             $scope.sizeListSel.list = response.sizeList;
@@ -108,8 +108,9 @@ app.controller("advertiseEditCtrl", ["$scope", "$http", "ResAdvertisingFty", "$q
         }
 
         var id = getSearch("id");
+        $scope.editManage = getSearch("editManage");
         ycui.loading.show();
-        var aDSpaceDetail = ResAdvertisingFty.aDSpaceDetail({id: id}).success(function (response) {
+        var aDSpaceDetail = ResAdvertisingFty.aDSpaceDetail({id: id}).then(function (response) {
             ycui.loading.hide();
             if (response && response.code == 200) {
                 $scope.adStatus = response.adSpace.adStatus;
@@ -148,6 +149,7 @@ app.controller("advertiseEditCtrl", ["$scope", "$http", "ResAdvertisingFty", "$q
                 $scope.creativeSize = response.adSpace.creativeSize;
                 $scope.creativeSize2 = response.adSpace.creativeSize2;
                 $scope.adEqCreative = response.adSpace.adEqCreative;
+                $scope.distanceValue = response.adSpace.distanceValue;
 
                 // $scope._effectList = response.adSpace.effectList;
                 //审核状态 0 审核中 1 审核通过 2审核未通过
@@ -242,7 +244,7 @@ app.controller("advertiseEditCtrl", ["$scope", "$http", "ResAdvertisingFty", "$q
         //         beforeFileQueued:function (uploader,file) {
         //             ycui.loading.show();
         //             uploader.stop(file);
-        //             UploadKeyFty.uploadKey().success(function (da) {
+        //             UploadKeyFty.uploadKey().then(function (da) {
         //                 key = da.items;
         //                 uploader.upload(file);
         //             });
@@ -342,10 +344,14 @@ app.controller("advertiseEditCtrl", ["$scope", "$http", "ResAdvertisingFty", "$q
                 query.size2 = $scope.size2;
             }
 
+            if($scope.adSpaceTypeId == 11){
+                query.distanceValue = $scope.distanceValue;
+            }
+
             if(catagorys.length > 0){
                 query.catagorys = catagorys.join(',')
             }
-
+            
             /**
              * 视频通栏
              */
@@ -395,7 +401,7 @@ app.controller("advertiseEditCtrl", ["$scope", "$http", "ResAdvertisingFty", "$q
                 query.maxAdCount = $scope.maxAdCount;
             }
 
-            //特效 //TODO
+            //特效
             // var effects = [];
             // $scope.effectList.forEach(function (da) {
             //     if(da.check){
@@ -403,8 +409,9 @@ app.controller("advertiseEditCtrl", ["$scope", "$http", "ResAdvertisingFty", "$q
             //     }
             // });
             // effects.length > 0 &&(query.effects = effects.join(','));
-
-            ResAdvertisingFty.aDSpaceUpdate(query).success(function (response) {
+            ycui.loading.show();
+            ResAdvertisingFty.aDSpaceUpdate(query).then(function (response) {
+                ycui.loading.hide();
                 if (response.code == 200) {
                     ycui.alert({
                         content: response.msg,
@@ -431,6 +438,11 @@ app.controller("advertiseEditCtrl", ["$scope", "$http", "ResAdvertisingFty", "$q
                 multiLimit:{
                     required: true,
                     number: true
+                },
+                distanceValue:{
+                    required: true,
+                    number:true,
+                    min:0
                 }
             },
             messages: {
@@ -446,6 +458,11 @@ app.controller("advertiseEditCtrl", ["$scope", "$http", "ResAdvertisingFty", "$q
                 multiLimit:{
                     number: "请输入有效的数字",
                     required: "请输入轮播上限"
+                },
+                distanceValue:{
+                    required: "请输入距离顶部的距离",
+                    number: "请输入有效的数字",
+                    min:"输入大于0的数字"
                 }
             },
             errorClass: "error-span",

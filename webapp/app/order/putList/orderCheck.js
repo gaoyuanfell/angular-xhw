@@ -13,7 +13,7 @@ app.controller("PutCheckCtrl", ["$scope", "$http", "OrdersFty", "ScheduleFty", "
         $scope.adListInfo = [];//广告位列表集合
 
         var id = getSearch('id');
-        var orderDetail = OrdersFty.orderDetail({id:id}).success(function (res) {
+        var orderDetail = OrdersFty.orderDetail({id:id}).then(function (res) {
             if(res && res.code == 200){
                 $scope.order = res.orders;
                 $scope.order.checkState = 1;
@@ -35,7 +35,7 @@ app.controller("PutCheckCtrl", ["$scope", "$http", "OrdersFty", "ScheduleFty", "
                     /**
                      * 有合同号 拉取最新合同信息
                      */
-                    ContractFty.getContractsByCode({contractCode: $scope.order.contractCode}).success(function (res) {
+                    ContractFty.getContractsByCode({contractCode: $scope.order.contractCode}).then(function (res) {
                         if (res && res.code == 200 && res.items) {
                             $scope.order.totalMoney = res.items.contractMoney;
                             $scope.order.discount = res.items.discount*100;
@@ -178,7 +178,7 @@ app.controller("PutCheckCtrl", ["$scope", "$http", "OrdersFty", "ScheduleFty", "
         /**
          * 订单审核详情
          */
-        OrdersFty.orderCheckInfo({id: id}).success(function (res) {
+        OrdersFty.orderCheckInfo({id: id}).then(function (res) {
             if (res && res.code == 200) {
                 var _checkInfoList = [];
 
@@ -545,17 +545,17 @@ app.controller("PutCheckCtrl", ["$scope", "$http", "OrdersFty", "ScheduleFty", "
             ycui.confirm({
                 content:stateValue,
                 okclick:function () {
-                    OrdersFty.orderCheck(query).success(function (res) {
+                    OrdersFty.orderCheck(query).then(function (res) {
                         if (res.code == 200) {
                             ycui.alert({
                                 content: res.msg,
                                 okclick: function () {
                                     //改变审核数量
-                                    SysUserFty.getCheckOrdersCount().success(function (res) {
+                                    SysUserFty.getCheckOrdersCount().then(function (res) {
                                         if (res && res.code == 200) {
                                             var count = res.count;
                                             count = count > 99?99:count;
-                                            window.top.$checkNumChange && window.top.$setCheckNumChange(count);
+                                            window.top.$setCheckNumChange && window.top.$setCheckNumChange(count);
                                         }
                                     });
                                     goRoute('ViewPutOrder');
@@ -584,7 +584,7 @@ app.controller("PutCheckCtrl", ["$scope", "$http", "OrdersFty", "ScheduleFty", "
             //         ycui.confirm({
             //             content: "<div style='text-align: left;max-width: 800px;overflow-y: auto;max-height: 400px;'>" + (str || '<p style="text-align: center">' + stateValue + '</p>') + "</div>",
             //             okclick: function () {
-            //                 OrdersFty.orderCheck(query).success(function (res) {
+            //                 OrdersFty.orderCheck(query).then(function (res) {
             //                     if (res.code == 200) {
             //                         ycui.alert({
             //                             content: res.msg,

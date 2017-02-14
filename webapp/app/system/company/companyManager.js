@@ -19,13 +19,13 @@ app.controller('companyManageCtrl', ['$scope', '$http', 'SysCompanyFty',
 
         $scope.query = {pageSize: pageSize,pageIndex:1};
 
-        SysCompanyFty.companyPageList($scope.query).success(modView);
+        SysCompanyFty.companyPageList($scope.query).then(modView);
 
         $scope.redirect = function (num, con) {
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
             $scope.query.companyNameOrAbbr = $scope.query.search;
-            SysCompanyFty.companyPageList($scope.query).success(modView);
+            SysCompanyFty.companyPageList($scope.query).then(modView);
         };
 
         ycui.select(".yc-select", function (valueId) {
@@ -39,7 +39,7 @@ app.controller('companyManageCtrl', ['$scope', '$http', 'SysCompanyFty',
             }
             var query = {pageSize: pageSize, pageIndex: 1};
             $scope.companyType && (query.companyType = $scope.companyType);
-            SysCompanyFty.companyPageList(query).success(modView);
+            SysCompanyFty.companyPageList(query).then(modView);
         })
         
     }]);

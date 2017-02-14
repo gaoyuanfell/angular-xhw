@@ -6,19 +6,19 @@ app.controller('hourCtrl', ["$scope", "$http", "ReportAdvertiseFty", "ResAdverti
         $scope.orderListSel = {};
         $scope.customerListSel = {};
         //订单下拉框
-        var allNDefaultOrderNames = ReportAdvertiseFty.allNDefaultOrderNames().success(function (response) {
+        var allNDefaultOrderNames = ReportAdvertiseFty.allNDefaultOrderNames().then(function (response) {
             $scope.orderListSel.list = response.items;
         });
         //客户下拉
-        var getPartCustomer = CustomerFty.getPartCustomer({customerType: 2}).success(function (response) {
+        var getPartCustomer = CustomerFty.getPartCustomer({customerType: 2}).then(function (response) {
             $scope.customerListSel.list = response.items;
         });
 
         $scope.$on('ad-report-hour',function(){
             ycui.loading.show();
             $scope.query.pageIndex = 1;
-            ReportAdvertiseFty.totalHour($scope.query).success(modViewG);
-            ReportAdvertiseFty.collectHour($scope.query).success(summarizingG);
+            ReportAdvertiseFty.totalHour($scope.query).then(modViewG);
+            ReportAdvertiseFty.collectHour($scope.query).then(summarizingG);
         })
 
         ycui.loading.show();
@@ -35,21 +35,21 @@ app.controller('hourCtrl', ["$scope", "$http", "ReportAdvertiseFty", "ResAdverti
         $scope.query = {pageSize:10,pageIndex:1};
 
         //列表
-        ReportAdvertiseFty.totalHour($scope.query).success(modViewG);
+        ReportAdvertiseFty.totalHour($scope.query).then(modViewG);
 
         //汇总
         var summarizingG = function (response) {
             if(!response) return;
             $scope.summarizing = response.items;
         };
-        ReportAdvertiseFty.collectHour($scope.query).success(summarizingG);
+        ReportAdvertiseFty.collectHour($scope.query).then(summarizingG);
 
         //搜索框
         $scope.redirect = function (num) {
             ycui.loading.show();
             $scope.query.pageIndex = num || 1;
-            ReportAdvertiseFty.totalHour($scope.query).success(modViewG);
-            ReportAdvertiseFty.collectHour($scope.query).success(summarizingG);
+            ReportAdvertiseFty.totalHour($scope.query).then(modViewG);
+            ReportAdvertiseFty.collectHour($scope.query).then(summarizingG);
         };
 
         //日历查询
@@ -66,8 +66,8 @@ app.controller('hourCtrl', ["$scope", "$http", "ReportAdvertiseFty", "ResAdverti
                 $scope.query.pageIndex = 1;
                 $scope.query.startTime = obj.startDate;
                 $scope.query.endTime = obj.endDate;
-                ReportAdvertiseFty.totalHour($scope.query).success(modViewG);
-                ReportAdvertiseFty.collectHour($scope.query).success(summarizingG);
+                ReportAdvertiseFty.totalHour($scope.query).then(modViewG);
+                ReportAdvertiseFty.collectHour($scope.query).then(summarizingG);
             }
         });
 

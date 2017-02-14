@@ -1,9 +1,17 @@
 /**
  * Created by moka on 16-6-17.
  */
-app.controller("resLimitCtrl", ['$scope', 'SysRuleUserFty',
-    function ($scope, SysRuleUserFty) {
-        SysRuleUserFty.getUserRightsByParentId({rightsParentId: 2}).success(function (res) {
+app.controller("resLimitCtrl", ['$scope', 'SysRuleUserFty','SysLoginUserFty',
+    function ($scope, SysRuleUserFty,SysLoginUserFty) {
+
+        var loginUserInfo = SysLoginUserFty.loginUserInfo().then(function (res) {
+            if (res && res.code == 200) {
+                $scope.user = res;
+                $scope.$broadcast('loginUserInfo',$scope.user);
+            }
+        });
+
+        SysRuleUserFty.getUserRightsByParentId({rightsParentId: 2}).then(function (res) {
             var _object = {};
             if(res && res.code == 200){
                 var items = res.items;
@@ -17,6 +25,10 @@ app.controller("resLimitCtrl", ['$scope', 'SysRuleUserFty',
              */
             $scope.resourceRule = _object;
         })
+
+        $scope.removePageIndex = function () {
+            window.sessionStorage.removeItem('session_page_index');
+        }
     }]);
 
 
